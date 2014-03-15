@@ -379,6 +379,15 @@ ul, ol {
 			}
 		/* #canvasContainer */
 	/* #middleSection */
+	#page {
+		padding: 20px;
+	}
+		#page h1 {
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 16px;
+		}
+	/* #page */
 	#bottomSection {
 		position: absolute;
 		height: 92px;
@@ -920,6 +929,31 @@ ul, ol {
 	bottom: 0;
 	border-left: 2px solid #666;
 }
+	.widget {
+		margin: 0 10px;
+		padding: 10px 0;
+		border-bottom: 2px dotted #333;
+	}
+	.widget h2 {
+		font-weight: bold;
+		text-align: center;
+	}
+	.widget h2,
+	.widget p,
+	.widget a{
+		color: #333;
+	}
+	.widget h2,
+	.widget p {
+		margin-bottom: 4px;
+	}
+	.widget a {
+		text-decoration: underline;
+	}
+	.widget input {
+		width: 100%;
+		margin-bottom: 8px;
+	}
 #tooltip {
 	background: #333;
 	padding: 8px 18px;
@@ -1019,10 +1053,16 @@ ul, ol {
 	-ms-transform: translateY(-50%);
 	-webkit-transform: translateY(-50%);
 }
-.error {
-	display: inline-block;
-	margin: 16px 0 0 32px;
-	color: red;
+.errors {
+	background: #ccc;
+	margin: 8px 0;
+	padding: 8px 8px 0;
+	color: #f33;
+	font-size: 12px;
+	font-weight: bold;
+}
+.errors li {
+	padding-bottom: 8px;
 }
 .hidden {
 	display: none;

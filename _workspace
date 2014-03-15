@@ -1,0 +1,55 @@
+<NotepadPlus>
+    <Project name="Clanimate">
+        <Folder name="core">
+            <Folder name="database">
+                <File name="C:\Wamp\www\core\database\connect.php" />
+            </Folder>
+            <Folder name="functions">
+                <File name="C:\Wamp\www\core\functions\general.php" />
+                <File name="C:\Wamp\www\core\functions\hash.php" />
+                <File name="C:\Wamp\www\core\functions\login.php" />
+                <File name="C:\Wamp\www\core\functions\logout.php" />
+                <File name="C:\Wamp\www\core\functions\users.php" />
+            </Folder>
+            <File name="C:\Wamp\www\core\init.php" />
+        </Folder>
+        <Folder name="css">
+            <File name="C:\Wamp\www\css\style.css" />
+        </Folder>
+        <Folder name="img">
+            <File name="C:\Wamp\www\img\favicon.png" />
+        </Folder>
+        <Folder name="includes">
+            <Folder name="layout">
+                <File name="C:\Wamp\www\includes\layout\head.php" />
+                <File name="C:\Wamp\www\includes\layout\header.php" />
+                <File name="C:\Wamp\www\includes\layout\menu.php" />
+                <File name="C:\Wamp\www\includes\layout\sidecolumn.php" />
+                <File name="C:\Wamp\www\includes\layout\editor_scripts.php" />
+            </Folder>
+            <Folder name="overall">
+                <File name="C:\Wamp\www\includes\overall\top.php" />
+            </Folder>
+            <Folder name="widgets">
+                <File name="C:\Wamp\www\includes\widgets\login.php" />
+                <File name="C:\Wamp\www\includes\widgets\register.php" />
+                <File name="C:\Wamp\www\includes\widgets\usercount.php" />
+                <File name="C:\Wamp\www\includes\widgets\userinfo.php" />
+            </Folder>
+        </Folder>
+        <Folder name="js">
+            <File name="C:\Wamp\www\js\controller.js" />
+            <File name="C:\Wamp\www\js\data.js" />
+            <File name="C:\Wamp\www\js\paper.js" />
+            <File name="C:\Wamp\www\js\site.js" />
+            <File name="C:\Wamp\www\js\ui.js" />
+        </Folder>
+        <File name="C:\Wamp\www\deny.php" />
+        <File name="C:\Wamp\www\EDITOR.html" />
+        <File name="C:\Wamp\www\editor.php" />
+        <File name="C:\Wamp\www\index.php" />
+        <File name="C:\Wamp\www\player.php" />
+        <File name="C:\Wamp\www\portal.php" />
+        <File name="C:\Wamp\www\profile.php" />
+    </Project>
+</NotepadPlus>

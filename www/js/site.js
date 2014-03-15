@@ -60,12 +60,6 @@ window.onload = function() {
         });
     });
     
-    // fullscreen handler
-    fullscreen = document.getElementById("fullscreenButton");
-    fullscreen.addEventListener("mouseup", function() {
-        controller.toggle_fullscreen();
-    });
-    
     // play / pause / stop handlers
     play = document.getElementById("play");
     play.addEventListener("mouseup", function() {
