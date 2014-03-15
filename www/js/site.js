@@ -89,11 +89,6 @@ window.onload = function() {
     
     // Tooltips
     ui.tooltip.set({
-        element: fullscreen,
-        message: "Toggle fullscreen mode",
-        position: "below"
-    });
-    ui.tooltip.set({
         element: addLayer,
         message: "Add a new layer",
         position: "above"

@@ -7,4 +7,7 @@ include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		<h1>Home</h1>
 	</div>
 </div>
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/bottom.php" ?>
+</div>
+<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/layout/sidecolumn.php" ?>
+</body>
+</html>

@@ -587,41 +587,44 @@ data = (function() {
         tools.pan = new Tool();
         
         tools.pan.onSelect = function() {
+			var canvas = document.getElementById("canvas");
+			
+			tools.pan.mouse_down_handler = function(e) {
+				var cRect = canvas.getBoundingClientRect(),
+					oldView = view.center.clone(),
+					downPoint = new Point(
+						e.clientX - cRect.left,
+						e.clientY - cRect.top
+					),
+				
+				mouse_move_handler = function(e) {
+					var d = new Point(
+						e.clientX - cRect.left - downPoint.x,
+						e.clientY - cRect.top - downPoint.y
+					);
+					view.center = new Point(
+						oldView.x - d.x,
+						oldView.y - d.y
+					);
+				},
+				
+				mouse_up_handler = function() {
+					ui.stage.setCursor("grab");
+					window.removeEventListener("mousemove", mouse_move_handler);
+					window.removeEventListener("mouseup", mouse_up_handler);
+				};
+				
+				ui.stage.setCursor("grabbing");
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+			}
+			canvas.addEventListener("mousedown", tools.pan.mouse_down_handler);
             ui.stage.setCursor("grab");
         };
-        
-        tools.pan.onMouseDown = function(e) {
-            var canvas = document.getElementById("canvas"),
-                oldView = view.center.clone(),
-                downPoint = e.point,
-            
-            mouse_move_handler = function(e) {
-                var d, cRect;
-                cRect = canvas.getBoundingClientRect();
-                d = new Point(
-                    e.clientX - cRect.left - downPoint.x,
-                    e.clientY - cRect.top - downPoint.y
-                );
-                view.center = new Point(
-                    oldView.x - d.x,
-                    oldView.y - d.y
-                );
-                tools.pan.centerMarker.position = view.center;
-            };
-            
-            this.mouse_up_handler = function() {
-                window.removeEventListener("mousemove", mouse_move_handler);
-                window.removeEventListener("mouseup", this.mouse_up_handler);
-            };
-            
-            ui.stage.setCursor("grabbing");
-            window.addEventListener("mousemove", mouse_move_handler);
-        };
-        
-        tools.pan.onMouseUp = function() {
-            ui.stage.setCursor("grab");
-            this.mouse_up_handler();
-        };
+			
+		tools.pan.onDeselect = function() {
+			canvas.removeEventListener("mousedown", tools.pan.mouse_down_handler);
+		};
         
         // Square tool
         tools.square = new Tool();

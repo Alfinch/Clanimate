@@ -186,10 +186,15 @@ ul, ol {
 	/* #subheader */
 	#middleSection {
 		position: absolute;
-		top: 100px;
 		right: 0;
-		bottom: 64px;
 		left: 0;
+		top: 70px;
+		bottom: 0;
+		background: #666;
+	}
+	#middleSection.editor {
+		top: 100px;
+		bottom: 64px;
 		z-index: 0;
 	}
 		#toolbar {
@@ -349,7 +354,6 @@ ul, ol {
 			right: 0;
 			bottom: 0;
 			left: 50px;
-			background: #666;
 			z-index: 0;
 		}
 			#canvasContainer.cursor {
@@ -381,6 +385,9 @@ ul, ol {
 	/* #middleSection */
 	#page {
 		padding: 20px;
+		margin: 10px auto;
+		max-width: 800px;
+		background: #fff;
 	}
 		#page h1 {
 			font-size: 20px;

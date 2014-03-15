@@ -22,7 +22,7 @@ include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		<li>Redo</li>
 	</ul>
 </div>
-<div id="middleSection">
+<div id="middleSection" class="editor">
 	<div id="toolbar">
 		<div id="tools" class="vCenter">
 			<div id="stageTools">
