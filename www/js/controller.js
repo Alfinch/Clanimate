@@ -10,6 +10,14 @@ controller = (function(){
     tickTimer,
     
     // Public functions
+	
+	// Centers the stage within the viewport
+	center_stage = function() {
+		var x = data.settings.get("stageWidth") * 0.5,
+		    y = data.settings.get("stageHeight") * 0.5;
+		
+		ui.stage.center(x, y);
+	},
     
     // Removes the current keycell
     delete_keycell = function() {
@@ -369,6 +377,7 @@ controller = (function(){
         data.undo();
     };
     
+	o.center_stage        = center_stage;
     o.delete_keycell      = delete_keycell;
     o.delete_layer        = delete_layer;
     o.draw                = draw;

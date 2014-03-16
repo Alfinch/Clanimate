@@ -13,7 +13,7 @@ window.onload = function() {
         layerIndex, layerName, frameIndex,
         i, initFrames = 20,
         toolButtons, toolOptionsButton, toolOptions,
-        fullscreen,
+        centerStage,
         play, pause,
         addLayer, setFrames;
     
@@ -44,6 +44,9 @@ window.onload = function() {
     
     // Select the brush tool
     controller.set_tool("brush");
+	
+	// Center the stage
+	controller.center_stage();
     
     // Events
     
@@ -59,15 +62,22 @@ window.onload = function() {
             controller.set_tool(el.getAttribute("id"));
         });
     });
+	
+	// centerStage handler
+    centerStage = document.getElementById("centerStage");
+    centerStage.addEventListener("mouseup", function() {
+		controller.center_stage();
+    });
     
-    // play / pause / stop handlers
+    // play / pause / reset handlers
     play = document.getElementById("play");
     play.addEventListener("mouseup", function() {
-        controller.play();
-    });
-    pause = document.getElementById("pause");
-    pause.addEventListener("mouseup", function() {
-        controller.pause();
+		play.classList.toggle("selected")
+		if (play.classList.contains("selected")) {
+			controller.play();
+		} else {
+			controller.pause();
+		}
     });
     
     // addLayer handler

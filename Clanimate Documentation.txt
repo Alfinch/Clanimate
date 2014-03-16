@@ -1,0 +1,123 @@
+Clanimate object model
+
+data
+  
+  delete_group()
+  delete_layer(int layer)
+  fromJSON()
+  get_frame_num()
+  get_group_frame()
+  get_layer_name(int layer)
+  get_layer_num()
+  get_target_frame()
+  get_target_layer()
+  hide_layer(int layer)
+  is_layer_visible(int layer)
+  new_group()
+  new_layer(string name)
+  redo()
+  rename_layer(int layer, string name)
+  set_frames(int value)
+  target_cell(int layer, int frame)
+  toJSON()
+  undo()
+  unhide_layer(int layer)
+
+  settings
+
+    get(string key)
+    set(string key, any value)
+
+  tools
+
+    getDefault()
+    set(string id)
+
+ui
+
+  prompt(object spec)
+    message: string
+    [input: bool]
+    [placeholder: string]
+    button1: object
+      name: string
+      [callback: function]
+    [button2: object]
+      name: string
+      [callback: function]
+
+  tooltip
+
+    set(object spec)
+      element: element
+      message: string
+      position: string ["above", "right", "below", "left"]
+      [target: element]
+
+    remove(element element)
+
+  slider(object spec)
+    parent: element
+    child: element
+    upper: float
+    [lower: float]
+    callback: function
+
+  toolOptions
+
+    toggle()
+
+  stage
+
+	center(int x, int y);
+    setCursor(string style)
+    update()
+
+  timeline
+    
+    get_layer(int layer)
+    get_top_layer()
+    new_layer(int index, string name)
+    set_frames(int value)
+
+    layer
+
+      deselect()
+      get_cell(int frameIndex)
+      hide()
+      new_cell()
+	remove()
+      rename(string name)
+      select()
+      unhide()
+
+      cell
+
+        deselect()
+        remove()
+        select()
+        set_empty()
+        set_empty_key()
+        set_key()
+
+controller
+
+  delete_keycell()
+  delete_layer(int layerIndex)
+  load()
+  new_keycell()
+  new_layer()
+  play()
+  pause()
+  redo()
+  rename_layer()
+  save()
+  select_cell(int layerIndex, int frameIndex)
+  select_frame(int frameIndex)
+  select_layer(int layerIndex)
+  set_color(string color)
+  set_frames(int value)
+  set_tool(string toolId)
+  toggle_fullscreen()
+  toggle_layer(int layerIndex)
+  undo()

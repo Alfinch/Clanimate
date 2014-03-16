@@ -324,11 +324,11 @@ data = (function() {
         tools.brush.minDistance = settings.get("strokeWidth") * 0.5;
         
         tools.brush.onSelect = function() {
-            ui.stage.setCursor("draw");
+            ui.stage.set_cursor("draw");
         };
         
         tools.brush.onMouseDown = function(event) {
-            ui.stage.setCursor("none");
+            ui.stage.set_cursor("none");
             this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
             this.stroke.fillColor = settings.get("strokeColor");
             this.firstDrag = true;
@@ -376,7 +376,7 @@ data = (function() {
         };
         
         tools.brush.onMouseUp = function(event) {
-            ui.stage.setCursor("draw");
+            ui.stage.set_cursor("draw");
             this.stroke.remove();
             
             if (!this.firstDrag) {
@@ -397,7 +397,7 @@ data = (function() {
         tools.circle = new Tool();
         
         tools.circle.onSelect = function() {
-            ui.stage.setCursor("draw");
+            ui.stage.set_cursor("draw");
         };
         
         tools.circle.onMouseDrag = function(event) {
@@ -436,7 +436,7 @@ data = (function() {
         tools.line = new Tool();
         
         tools.line.onSelect = function() {
-            ui.stage.setCursor("draw");
+            ui.stage.set_cursor("draw");
         };
         
         tools.line.onMouseDown = function(event) {
@@ -503,7 +503,7 @@ data = (function() {
         tools.manipulate = new Tool();
         
         tools.manipulate.onSelect = function() {
-            ui.stage.setCursor("cursor");
+            ui.stage.set_cursor("cursor");
         };
         
         tools.manipulate.onMouseDown = function(event) {
@@ -609,17 +609,17 @@ data = (function() {
 				},
 				
 				mouse_up_handler = function() {
-					ui.stage.setCursor("grab");
+					ui.stage.set_cursor("grab");
 					window.removeEventListener("mousemove", mouse_move_handler);
 					window.removeEventListener("mouseup", mouse_up_handler);
 				};
 				
-				ui.stage.setCursor("grabbing");
+				ui.stage.set_cursor("grabbing");
 				window.addEventListener("mousemove", mouse_move_handler);
 				window.addEventListener("mouseup", mouse_up_handler);
 			}
 			canvas.addEventListener("mousedown", tools.pan.mouse_down_handler);
-            ui.stage.setCursor("grab");
+            ui.stage.set_cursor("grab");
         };
 			
 		tools.pan.onDeselect = function() {
@@ -630,7 +630,7 @@ data = (function() {
         tools.square = new Tool();
         
         tools.square.onSelect = function() {
-            ui.stage.setCursor("draw");
+            ui.stage.set_cursor("draw");
         };
         
         tools.square.onMouseDrag = function(e) {

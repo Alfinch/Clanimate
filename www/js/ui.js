@@ -164,8 +164,13 @@ ui = (function() {
         
         // Public functions
         
+		// Centers the stage within the viewport
+		center = function(x, y) {
+			view.center = new Point(x, y);
+		},
+		
         // Sets the mouse cursor visible on the stage
-        setCursor = function(style) {
+        set_cursor = function(style) {
             cc.classList.remove("cursor", "draw", "grab", "grabbing", "none", "pointer");
             cc.classList.add(style);
         },
@@ -173,9 +178,7 @@ ui = (function() {
         // Clears, resizes and redraws the stage
         update = function() {
             var cw = parseFloat(getComputedStyle(cc).width),
-                ch = parseFloat(getComputedStyle(cc).height),
-                sw = data.settings.get("stageWidth"),
-                sh = data.settings.get("stageHeight");
+                ch = parseFloat(getComputedStyle(cc).height);
                 
             c.setAttribute("width",  cw);
             c.setAttribute("height", ch);
@@ -184,8 +187,9 @@ ui = (function() {
             view.draw();
         };
         
-        o.setCursor = setCursor;
-        o.update    = update;
+		o.center     = center;
+        o.set_cursor = set_cursor;
+        o.update     = update;
         
         return o;
     }()),

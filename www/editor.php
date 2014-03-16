@@ -6,21 +6,28 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="subheader">
 	<ul class="submenu">
-		<li><a href="#">Settings</a></li>
-		<li><a href="#">New</a></li>
-		<li><a href="#">Save</a></li>
-		<li><a href="#">Load</a></li>
-		<li><a href="#">Publish</a></li>
+		<li><span>Settings</span></li>
+		<li><span>New</span></li>
+		<li><span>Save</span></li>
+		<li><span>Load</span></li>
+		<li><span>Publish</span></li>
 	</ul>
 	<ul class="submenu">
-		<li>Selection</li>
-		<li>Actual</li>
-		<li>Stage</li>
-		<li>Extents</li>
+		<li id="play"><span>Play/Pause</span></li>
+		<li><span>Reset</li>
 	</ul>
 	<ul class="submenu">
-		<li>Undo</li>
-		<li>Redo</li>
+		<li><span>Selection</span></li>
+		<li><span>Actual</span></li>
+		<li><span>Stage</span></li>
+		<li><span>Extents</span></li>
+	</ul>
+	<ul class="submenu">
+		<li id="centerStage"><span>Center Stage</span></li>
+	</ul>
+	<ul class="submenu">
+		<li><span>Undo</span></li>
+		<li><span>Redo</span></li>
 	</ul>
 </div>
 <div id="middleSection" class="editor">
@@ -79,10 +86,6 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 	</div>
 </div>
 <div id="bottomSection">
-	<div id="timelineOptions">
-		<div id="play"></div>
-		<div id="pause"></div>
-	</div>
 	<div id="addLayer">+</div>
 	<div id="layerControls"></div>
 	<div id="timeline">
