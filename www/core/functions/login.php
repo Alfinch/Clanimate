@@ -21,7 +21,8 @@ if (empty($_POST) === false) {
 			$errors[] = "Incorrect username or password.";
 		} else {
 			$_SESSION['id'] = $login;
-			header("Location: http://" . $_SERVER["SERVER_NAME"] . "/index.php");
+			$to = (isset($_GET['to']) && !empty($_GET['to'])) ? "/" . $_GET['to'] . ".php" : "";
+			header("Location: http://" . $_SERVER["SERVER_NAME"] . $to);
 			exit();
 		}
 	}

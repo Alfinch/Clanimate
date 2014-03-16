@@ -1,6 +1,7 @@
 <?php
+$page = "editor";
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
-protect_page();
+protect_page($page);
 include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="subheader">

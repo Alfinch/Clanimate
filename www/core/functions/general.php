@@ -11,9 +11,10 @@ function logged_in_redirect() {
 	}
 }
 
-function protect_page() {
+function protect_page($page) {
 	if (!logged_in()) {
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/deny.php");
+		$target = "http://" . $_SERVER["SERVER_NAME"] . "/deny.php?from=" . $page;
+		header("Location: " . $target);
 		exit();
 	}
 }
