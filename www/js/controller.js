@@ -375,7 +375,59 @@ controller = (function(){
     // Undoes the previous action
     undo = function() {
         data.undo();
-    };
+    },
+	
+	// Zooms the stage by a factor of 1, everything shown actual size
+	zoom_actual = function() {
+		var sw = data.settings.get("stageWidth"),
+			sh = data.settings.get("stageHeight");
+			
+		ui.stage.center(sw * 0.5, sh * 0.5);
+		ui.stage.zoom(1);
+	},
+	
+	// Zooms out to show everything at once
+	zoom_extents = function() {
+		var zp = data.settings.get("zoomPadding") * 2,
+			vw = view.viewSize.width - zp,
+			vh = view.viewSize.height - zp,
+			extents = data.get_frame_extents(),
+			viewRatio = vw / vh,
+			extentsRatio = (extents.width + zp) / (extents.height + zp);
+			
+		ui.stage.center(extents.center.x, extents.center.y);
+		
+		// If the extents are wider than the view
+		if (extentsRatio > viewRatio) {
+			ui.stage.zoom(vw / (extents.width + zp));
+		} else {
+			ui.stage.zoom(vh / (extents.height + zp));
+		}
+	},
+	
+	// Zooms in to show the current selection as large as possible
+	zoom_selection = function() {
+	},
+	
+	// Zooms in to show the stage as large as possible
+	zoom_stage = function() {
+		var sw = data.settings.get("stageWidth"),
+			sh = data.settings.get("stageHeight"),
+			zp = data.settings.get("zoomPadding") * 2,
+			vw = view.viewSize.width - zp,
+			vh = view.viewSize.height - zp,
+			stageRatio = sw / sh,
+			viewRatio  = vw / vh;
+			
+		ui.stage.center(sw * 0.5, sh * 0.5);
+		
+		// If the stage is wider than the view
+		if (stageRatio > viewRatio) {
+			ui.stage.zoom(vw / sw);
+		} else {
+			ui.stage.zoom(vh / sh);
+		}
+	};
     
 	o.center_stage        = center_stage;
     o.delete_keycell      = delete_keycell;
@@ -395,6 +447,10 @@ controller = (function(){
     o.toggle_fullscreen   = toggle_fullscreen;
     o.toggle_layer        = toggle_layer;
     o.undo                = undo;
+	o.zoom_actual         = zoom_actual;
+	o.zoom_extents        = zoom_extents;
+	o.zoom_selection      = zoom_selection;
+	o.zoom_stage          = zoom_stage;
     
     return o;
 }());

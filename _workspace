@@ -18,6 +18,15 @@
         </Folder>
         <Folder name="img">
             <File name="C:\Wamp\www\img\favicon.png" />
+            <Folder name="svg">
+                <File name="www\img\svg\brush_icon.svg" />
+                <File name="www\img\svg\circle_icon.svg" />
+                <File name="www\img\svg\line_icon.svg" />
+                <File name="www\img\svg\logo.svg" />
+                <File name="www\img\svg\manipulate_icon.svg" />
+                <File name="www\img\svg\pan_icon.svg" />
+                <File name="www\img\svg\square_icon.svg" />
+            </Folder>
         </Folder>
         <Folder name="includes">
             <Folder name="layout">

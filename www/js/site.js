@@ -12,9 +12,12 @@ window.onload = function() {
     var sw, sh, bg,
         layerIndex, layerName, frameIndex,
         i, initFrames = 20,
+		settings,
+		newAnim, save, load, publish,
+        play, pause, reset, tbo, tlo,
+		zoomSelection, zoomActual, zoomStage, zoomExtents,
+		undo, redo,
         toolButtons, toolOptionsButton, toolOptions,
-        centerStage,
-        play, pause,
         addLayer, setFrames;
     
     paper.setup("canvas");
@@ -49,6 +52,95 @@ window.onload = function() {
 	controller.center_stage();
     
     // Events
+	
+	// settings handler
+    settings = document.getElementById("settings");
+    settings.addEventListener("mouseup", function() {
+		// Show animation settings
+    });
+	// new handler
+	newAnim = document.getElementById("new");
+	newAnim.addEventListener("mouseup", function() {
+		// Create a new animation
+	});
+	// save handler
+	save = document.getElementById("save");
+	save.addEventListener("mouseup", function() {
+		// Save current animation
+	});
+	// load handler
+	load = document.getElementById("load");
+	load.addEventListener("mouseup", function() {
+		// Load current animation
+	});
+	// publish handler
+	publish = document.getElementById("publish");
+	publish.addEventListener("mouseup", function() {
+		// Publish current animation
+	});
+    // play / pause handlers
+	tbo = document.getElementById("toolbarOverlay");
+	tlo = document.getElementById("timelineOverlay");
+    play = document.getElementById("play");
+    pause = document.getElementById("pause");
+    play.addEventListener("mouseup", function() {;
+		if (!play.classList.contains("selected")) {
+			controller.play();
+			play.classList.add("selected");
+			pause.classList.remove("selected");
+			tbo.classList.remove("hidden");
+			tlo.classList.remove("hidden");
+		}
+    });
+    pause.addEventListener("mouseup", function() {
+		if (!pause.classList.contains("selected")) {
+			controller.pause();
+			pause.classList.add("selected");
+			play.classList.remove("selected");
+			tbo.classList.add("hidden");
+			tlo.classList.add("hidden");
+		}
+    });
+	// reset handler
+	reset = document.getElementById("reset");
+    reset.addEventListener("mouseup", function() {
+		controller.pause();
+		controller.select_frame(1);
+		pause.classList.add("selected");
+		play.classList.remove("selected");
+		tbo.classList.add("hidden");
+		tlo.classList.add("hidden");
+    });
+	// zoomSelection handler
+	zoomSelection = document.getElementById("zoomSelection");
+	zoomSelection.addEventListener("mouseup", function() {
+		controller.zoom_selection();
+	});
+	// zoomActual handler
+	zoomActual = document.getElementById("zoomActual");
+	zoomActual.addEventListener("mouseup", function() {
+		controller.zoom_actual();
+	});
+	// zoomStage handler
+	zoomStage = document.getElementById("zoomStage");
+	zoomStage.addEventListener("mouseup", function() {
+		controller.zoom_stage();
+	});
+	// zoomExtents handler
+	zoomExtents = document.getElementById("zoomExtents");
+	zoomExtents.addEventListener("mouseup", function() {
+		controller.zoom_extents();
+	});
+	// undo handler
+	undo = document.getElementById("undo");
+	undo.addEventListener("mouseup", function() {
+		// Undo last action
+	});
+	// redo handler
+	redo = document.getElementById("redo");
+	redo.addEventListener("mouseup", function() {
+		// Redo last action
+	});
     
     // Tool buttons
     toolButtons = document.getElementsByClassName("tool");
@@ -61,23 +153,6 @@ window.onload = function() {
         el.addEventListener("mouseup", function() {
             controller.set_tool(el.getAttribute("id"));
         });
-    });
-	
-	// centerStage handler
-    centerStage = document.getElementById("centerStage");
-    centerStage.addEventListener("mouseup", function() {
-		controller.center_stage();
-    });
-    
-    // play / pause / reset handlers
-    play = document.getElementById("play");
-    play.addEventListener("mouseup", function() {
-		play.classList.toggle("selected")
-		if (play.classList.contains("selected")) {
-			controller.play();
-		} else {
-			controller.pause();
-		}
     });
     
     // addLayer handler
@@ -98,6 +173,16 @@ window.onload = function() {
     });
     
     // Tooltips
+    ui.tooltip.set({
+        element: settings,
+        message: "Animation settings",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: newAnim,
+        message: "Create a new animation",
+        position: "above"
+    });
     ui.tooltip.set({
         element: addLayer,
         message: "Add a new layer",

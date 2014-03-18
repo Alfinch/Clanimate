@@ -80,6 +80,21 @@ data = (function() {
     from_JSON = function(json) {
         var o = JSON.parse(json);
     },
+	
+	// Returns the bounding rectangle for everything in the current frame
+	// Returns false if the frame is empty
+	get_frame_extents = function() {
+		var i, b, x1, y1, x2, y2;
+		if (visibleGroups.length === 0) return false;
+		for (i = 0; i < visibleGroups.length; i++) {
+			b = visibleGroups[i].bounds;
+			if (x1 === undefined || x1 > b.x)            x1 = b.x;
+			if (y1 === undefined || y1 > b.y)            y1 = b.y;
+			if (x2 === undefined || x2 < b.x + b.width)  x2 = b.x + b.width;
+			if (y2 === undefined || y2 < b.y + b.height) y2 = b.y + b.height;
+		}
+		return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+	},
     
     // Returns the current number of frames
     get_frame_num = function() {
@@ -191,24 +206,40 @@ data = (function() {
     // Returns false if the target layer does not exist
     target_cell = function(layerIndex, frameIndex) {
         var i, j, g;
+		
+		// Check if the given layer actually exists
         if (cells[layerIndex] == null) {
             return false;
         }
+		
+		// Set all visible groups to be invisible, clear the visibleGroups array
         for (i = 0; i < visibleGroups.length; i += 1) {
             visibleGroups[i].visible = false;
         }
         visibleGroups = [];
+		
+		// For each layer which is being used...
         for (i = 1; i < cells.length; i += 1) {
             if (cells[i] != null) {
+			
+				// For each cell starting with the current frame and counting backwards...
                 for (j = frameIndex; j > 0; j -= 1) {
+				
+					// If there is a group in this cell
                     g = cells[i][j];
                     if (g != null) {
+					
+						// Set it to visible
                         g.visible = true;
                         visibleGroups.push(g);
+						
+						// If this is the currently selected layer, set this group as the target group for drawing
                         if (i === layerIndex) {
                             targetGroup = g;
                             targetGroupFrame = j;
                         }
+						
+						// Go to the next layer
                         break;
                     }
                 }
@@ -258,7 +289,8 @@ data = (function() {
             stageHeight: 450,
             stageWidth:  800,
             color: "#000000",
-            strokeWidth: 8
+            strokeWidth: 8,
+			zoomPadding: 4
         },
         
         // Public functions
@@ -684,24 +716,25 @@ data = (function() {
         return o;
     }());
 
-    o.delete_group     = delete_group;
-    o.delete_layer     = delete_layer;
-    o.get_frame_num    = get_frame_num;
-    o.get_group_frame  = get_group_frame;
-    o.get_layer_name   = get_layer_name;
-    o.get_layer_num    = get_layer_num;
-    o.get_target_frame = get_target_frame;
-    o.get_target_layer = get_target_layer;
-    o.hide_layer       = hide_layer;
-    o.is_layer_visible = is_layer_visible;
-    o.new_group        = new_group;
-    o.new_layer        = new_layer;
-    o.redo             = redo;
-    o.rename_layer     = rename_layer;
-    o.set_frames       = set_frames;
-    o.target_cell      = target_cell;
-    o.undo             = undo;
-    o.unhide_layer     = unhide_layer;
+    o.delete_group      = delete_group;
+    o.delete_layer      = delete_layer;
+	o.get_frame_extents = get_frame_extents;
+    o.get_frame_num     = get_frame_num;
+    o.get_group_frame   = get_group_frame;
+    o.get_layer_name    = get_layer_name;
+    o.get_layer_num     = get_layer_num;
+    o.get_target_frame  = get_target_frame;
+    o.get_target_layer  = get_target_layer;
+    o.hide_layer        = hide_layer;
+    o.is_layer_visible  = is_layer_visible;
+    o.new_group         = new_group;
+    o.new_layer         = new_layer;
+    o.redo              = redo;
+    o.rename_layer      = rename_layer;
+    o.set_frames        = set_frames;
+    o.target_cell       = target_cell;
+    o.undo              = undo;
+    o.unhide_layer      = unhide_layer;
     
     o.settings = settings;
     o.tools    = tools;

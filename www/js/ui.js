@@ -164,7 +164,7 @@ ui = (function() {
         
         // Public functions
         
-		// Centers the stage within the viewport
+		// Centers the stage on a given point
 		center = function(x, y) {
 			view.center = new Point(x, y);
 		},
@@ -185,11 +185,17 @@ ui = (function() {
             
             view.viewSize = new Size(cw, ch);
             view.draw();
-        };
+        },
+		
+		// Zooms the stage by a given factor
+		zoom = function(z) {
+			view.zoom = z;
+		};
         
 		o.center     = center;
         o.set_cursor = set_cursor;
         o.update     = update;
+		o.zoom       = zoom;
         
         return o;
     }()),
