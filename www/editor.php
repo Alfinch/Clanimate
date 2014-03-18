@@ -6,28 +6,28 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="subheader">
 	<ul class="submenu">
-		<li><span>Settings</span></li>
-		<li><span>New</span></li>
-		<li><span>Save</span></li>
-		<li><span>Load</span></li>
-		<li><span>Publish</span></li>
+		<li id="settings"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/settings_icon.svg" alt="Settings icon"/><span>Settings</span></li>
 	</ul>
 	<ul class="submenu">
-		<li id="play"><span>Play/Pause</span></li>
-		<li><span>Reset</li>
+		<li id="new"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/new_icon.svg" alt="New animation icon"/><span>New Animation</span></li>
+		<li id="save"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/save_icon.svg" alt="Save animation icon"/><span>Save Animation</span></li>
+		<li id="load"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/load_icon.svg" alt="Load animation icon"/><span>Load Animation</span></li>
+		<li id="publish"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/publish_icon.svg" alt="Publish animation icon"/><span>Publish Animation</span></li>
 	</ul>
 	<ul class="submenu">
-		<li><span>Selection</span></li>
-		<li><span>Actual</span></li>
-		<li><span>Stage</span></li>
-		<li><span>Extents</span></li>
+		<li id="play"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/play_icon.svg" alt="Play animation icon"/><span>Play</span></li>
+		<li id="pause" class="selected"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/pause_icon.svg" alt="Pause animation icon"/><span>Pause</span></li>
+		<li id="reset"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/reset_icon.svg" alt="Reset animation icon"/><span>Reset</li>
 	</ul>
 	<ul class="submenu">
-		<li id="centerStage"><span>Center Stage</span></li>
+		<li id="zoomSelection"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_selection_icon.svg" alt="Zoom selection icon"/><span>Zoom Selection</span></li>
+		<li id="zoomActual"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_actual_icon.svg" alt="Zoom actual icon"/><span>Zoom Actual</span></li>
+		<li id="zoomStage"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_stage_icon.svg" alt="Zoom stage icon"/><span>Zoom Stage</span></li>
+		<li id="zoomExtents"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_extents_icon.svg" alt="Zoom extents icon"/><span>Zoom Extents</span></li>
 	</ul>
 	<ul class="submenu">
-		<li><span>Undo</span></li>
-		<li><span>Redo</span></li>
+		<li id="undo"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/undo_icon.svg" alt="Undo icon"/><span>Undo</span></li>
+		<li id="redo"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/redo_icon.svg" alt="Redo icon"/><span>Redo</span></li>
 	</ul>
 </div>
 <div id="middleSection" class="editor">
@@ -80,6 +80,7 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				<div id="strokeWidthSlider" class="sliderTrack"><div class="sliderHandle"></div></div>
 			</div>
 		</div>
+		<div id="toolbarOverlay" class="hidden"></div>
 	</div>
 	<div id="canvasContainer">
 		<canvas id="canvas"></canvas>
@@ -96,6 +97,7 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 	<div id="timelineHScroll"><div></div></div>
 	<div id="setFrames"><span>+</span></div>
 	<div id="timelineVScroll"><div></div></div>
+	<div id="timelineOverlay" class="hidden"></div>
 </div>
 </div>
 <?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/layout/sidecolumn.php" ?>
