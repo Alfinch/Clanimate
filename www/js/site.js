@@ -49,7 +49,7 @@ window.onload = function() {
     controller.set_tool("brush");
 	
 	// Center the stage
-	controller.center_stage();
+	controller.zoom_actual();
     
     // Events
 	
@@ -181,6 +181,66 @@ window.onload = function() {
     ui.tooltip.set({
         element: newAnim,
         message: "Create a new animation",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: save,
+        message: "Save the current animation",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: load,
+        message: "Load a previously saved animation",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: publish,
+        message: "Publish the current animation",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: play,
+        message: "Play",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: pause,
+        message: "Pause",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: reset,
+        message: "Go back to the first frame",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: zoomSelection,
+        message: "Zoom in on the current selection",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: zoomActual,
+        message: "Zoom to actual size",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: zoomStage,
+        message: "Zoom to fit the entire stage",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: zoomExtents,
+        message: "Zoom to fit everything in the current frame",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: undo,
+        message: "Undo",
+        position: "above"
+    });
+    ui.tooltip.set({
+        element: redo,
+        message: "Redo",
         position: "above"
     });
     ui.tooltip.set({

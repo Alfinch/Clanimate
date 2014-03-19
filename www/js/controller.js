@@ -10,14 +10,6 @@ controller = (function(){
     tickTimer,
     
     // Public functions
-	
-	// Centers the stage within the viewport
-	center_stage = function() {
-		var x = data.settings.get("stageWidth") * 0.5,
-		    y = data.settings.get("stageHeight") * 0.5;
-		
-		ui.stage.center(x, y);
-	},
     
     // Removes the current keycell
     delete_keycell = function() {
@@ -389,19 +381,17 @@ controller = (function(){
 	// Zooms out to show everything at once
 	zoom_extents = function() {
 		var zp = data.settings.get("zoomPadding") * 2,
-			vw = view.viewSize.width - zp,
-			vh = view.viewSize.height - zp,
 			extents = data.get_frame_extents(),
-			viewRatio = vw / vh,
-			extentsRatio = (extents.width + zp) / (extents.height + zp);
+			vw = view.viewSize.width - zp,
+			vh = view.viewSize.height - zp;
 			
 		ui.stage.center(extents.center.x, extents.center.y);
 		
 		// If the extents are wider than the view
-		if (extentsRatio > viewRatio) {
-			ui.stage.zoom(vw / (extents.width + zp));
+		if (extents.width / extents.height > vw / vh) {
+			ui.stage.zoom(vw / extents.width);
 		} else {
-			ui.stage.zoom(vh / (extents.height + zp));
+			ui.stage.zoom(vh / extents.height);
 		}
 	},
 	
@@ -429,7 +419,6 @@ controller = (function(){
 		}
 	};
     
-	o.center_stage        = center_stage;
     o.delete_keycell      = delete_keycell;
     o.delete_layer        = delete_layer;
     o.draw                = draw;

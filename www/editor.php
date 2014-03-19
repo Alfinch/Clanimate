@@ -61,25 +61,6 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				</div>
 			</div>
 		</div>
-		<div id="drawingToolOptionsDialog" class="hidden">
-			<p id="drawingToolOptionsTitle">Drawing Tool Options</p>
-			<div id="colorRGB">
-				<p>Red, green, blue</p>
-				<div id="strokeRed" class="colorSlider"><span>R</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-				<div id="strokeGreen" class="colorSlider"><span>G</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-				<div id="strokeBlue" class="colorSlider"><span>B</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-			</div>
-			<div id="colorHSL">
-				<p>Hue, Saturation, Lightness</p>
-				<div id="fillRed" class="colorSlider"><span>H</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-				<div id="fillGreen" class="colorSlider"><span>S</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-				<div id="fillBlue" class="colorSlider"><span>L</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
-			</div>
-			<div id="strokeWidth">
-				<p>Stroke Width: <span>0</span></p>
-				<div id="strokeWidthSlider" class="sliderTrack"><div class="sliderHandle"></div></div>
-			</div>
-		</div>
 		<div id="toolbarOverlay" class="hidden"></div>
 	</div>
 	<div id="canvasContainer">
@@ -106,6 +87,25 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 </div>
 
 <div id="overlay" class="hidden">
+	<div id="drawingToolOptionsDialog" class="hidden">
+		<p id="drawingToolOptionsTitle">Drawing Options</p>
+		<div id="colorRGB">
+			<p>Red, green, blue</p>
+			<div id="redComponent" class="slider"><span>R</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+			<div id="greenComponent" class="slider"><span>G</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+			<div id="blueComponent" class="slider"><span>B</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+		</div>
+		<div id="colorHSL">
+			<p>Hue, Saturation, Lightness</p>
+			<div id="hueComponent" class="slider"><span>H</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+			<div id="saturationComponent" class="slider"><span>S</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+			<div id="lightnessComponent" class="slider"><span>L</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+		</div>
+		<div>
+			<p>Stroke Width</p>
+			<div id="strokeWidth" class="slider"><span>0</span><div class="sliderTrack"><div class="sliderHandle"></div></div></div>
+		</div>
+	</div>
 	<div id="overlayContainer" class="hidden">
 		<div id="prompt" class="hidden">
 			<p id="promptMessage"></p>

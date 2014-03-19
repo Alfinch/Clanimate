@@ -84,14 +84,18 @@ data = (function() {
 	// Returns the bounding rectangle for everything in the current frame
 	// Returns false if the frame is empty
 	get_frame_extents = function() {
-		var i, b, x1, y1, x2, y2;
+		var i, b,
+			x1 = 0,
+			y1 = 0,
+			x2 = settings.get("stageWidth"),
+			y2 = settings.get("stageHeight");
 		if (visibleGroups.length === 0) return false;
 		for (i = 0; i < visibleGroups.length; i++) {
 			b = visibleGroups[i].bounds;
-			if (x1 === undefined || x1 > b.x)            x1 = b.x;
-			if (y1 === undefined || y1 > b.y)            y1 = b.y;
-			if (x2 === undefined || x2 < b.x + b.width)  x2 = b.x + b.width;
-			if (y2 === undefined || y2 < b.y + b.height) y2 = b.y + b.height;
+			if (x1 > b.x)            x1 = b.x;
+			if (y1 > b.y)            y1 = b.y;
+			if (x2 < b.x + b.width)  x2 = b.x + b.width;
+			if (y2 < b.y + b.height) y2 = b.y + b.height;
 		}
 		return new Rectangle(x1, y1, x2 - x1, y2 - y1);
 	},
@@ -288,7 +292,7 @@ data = (function() {
             frameRate:   30,
             stageHeight: 450,
             stageWidth:  800,
-            color: "#000000",
+            color: new Color(0),
             strokeWidth: 8,
 			zoomPadding: 8
         },
@@ -362,7 +366,7 @@ data = (function() {
         tools.brush.onMouseDown = function(event) {
             ui.stage.set_cursor("none");
             this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
-            this.stroke.fillColor = settings.get("strokeColor");
+            this.stroke.fillColor = settings.get("color");
             this.firstDrag = true;
         };
         
@@ -404,7 +408,7 @@ data = (function() {
             this.stroke.arcTo(this.leftPath.firstSegment.point);
             this.stroke.join(this.leftPath.clone());
             this.stroke.arcTo(this.stroke.firstSegment.point);
-            this.stroke.fillColor = settings.get("strokeColor");
+            this.stroke.fillColor = settings.get("color");
         };
         
         tools.brush.onMouseUp = function(event) {
@@ -418,7 +422,7 @@ data = (function() {
                 this.stroke.arcTo(this.leftPath.firstSegment.point);
                 this.stroke.join(this.leftPath.clone());
                 this.stroke.arcTo(this.stroke.firstSegment.point);
-                this.stroke.fillColor = settings.get("strokeColor");
+                this.stroke.fillColor = settings.get("color");
             }
             
             targetGroup.addChild(this.stroke);
@@ -454,7 +458,7 @@ data = (function() {
                     new Path.Circle(c, r + (settings.get("strokeWidth") * 0.5)),
                     new Path.Circle(c, r - (settings.get("strokeWidth") * 0.5))
                 ],
-                fillColor: settings.get("strokeColor")
+                fillColor: settings.get("color")
             });
         };
         
@@ -473,7 +477,7 @@ data = (function() {
         
         tools.line.onMouseDown = function(event) {
             this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
-            this.stroke.fillColor = settings.get("strokeColor");
+            this.stroke.fillColor = settings.get("color");
             this.firstDrag = true;
         };
         
@@ -487,7 +491,7 @@ data = (function() {
                 event.point.y - event.downPoint.y
             );
             outlineVector = outlineVector.normalize();
-            outlineVector.length *= settings.get("strokeWidth") * 0.5;
+            outlineVector.length *= settings.get("color") * 0.5;
             outlineVector.angle += 90;
             
             p1l = new Point(
@@ -513,7 +517,7 @@ data = (function() {
             this.stroke.lineTo(p2r);
             this.stroke.arcTo(p2l);
             this.stroke.closePath();
-            this.stroke.fillColor = settings.get("strokeColor");
+            this.stroke.fillColor = settings.get("color");
         };
         
         tools.line.onMouseUp = function(event) {
@@ -524,7 +528,7 @@ data = (function() {
                 this.stroke.arcTo(this.leftPath.firstSegment.point);
                 this.stroke.join(this.leftPath.clone());
                 this.stroke.arcTo(this.stroke.firstSegment.point);
-                this.stroke.fillColor = settings.get("strokeColor");
+                this.stroke.fillColor = settings.get("color");
             }
             
             targetGroup.addChild(this.stroke);
@@ -695,7 +699,7 @@ data = (function() {
                         )
                     )
                 ],
-                fillColor: settings.get("strokeColor")
+                fillColor: settings.get("color")
             });
             this.stroke.children[0].position =
             this.stroke.children[1].position =

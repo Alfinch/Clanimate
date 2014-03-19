@@ -105,52 +105,6 @@ ui = (function() {
         }
     },
     
-    // Creates a slider
-    slider = function(spec) {
-        var
-        
-        // Private variables
-        
-        sliderWidth,
-        leftLimit,
-        rightLimit,
-        upper = spec.upper,
-        lower = spec.lower || 0,
-        
-        // Private functions
-        
-        mouse_down_handler = function(e) {
-            sliderWidth = spec.parent.clientWidth - spec.child.clientWidth;
-            leftLimit   = spec.child.clientWidth * 0.5;
-            rightLimit  = leftLimit + sliderWidth;
-            window.addEventListener("mousemove", mouse_move_handler);
-            window.addEventListener("mouseup", mouse_up_handler);
-            mouse_move_handler(e);
-        },
-        
-        mouse_move_handler = function(e) {
-            var x = e.pageX - spec.parent.getBoundingClientRect().left - leftLimit - spec.child.clientWidth * 0.5;
-            
-            if (x < 0) {
-                spec.child.style.left = "0px";
-            } else if (x > sliderWidth) {
-                spec.child.style.left = sliderWidth + "px";
-            } else {
-                spec.child.style.left = x + "px";
-            }
-        },
-        
-        mouse_up_handler = function() {
-            window.removeEventListener("mousemove", mouse_move_handler);
-            window.removeEventListener("mouseup", mouse_up_handler);
-            spec.callback();
-        };
-        
-        // Setup
-        
-        spec.parent.addEventListener("mousedown", mouse_down_handler);
-    },
-    
     // Public objects
     
     // Manages the stage and visual aspects of paper.js
@@ -752,54 +706,283 @@ ui = (function() {
         
         // Private variables
         
+		overlay            = document.getElementById("overlay"),
         toolOptionsElement = document.getElementById("drawingToolOptionsDialog"),
-        toolOptionsButton = document.getElementById("drawingToolOptionsButton"),
+        toolOptionsButton  = document.getElementById("drawingToolOptionsButton"),
+		sliders            = [],
+		
+		// Private objects
+		
+		// Creates a slider
+		slider = function(spec) {
+			var o = {},
+			
+			// Private variables
+			
+			sliderWidth,
+			leftLimit,
+			rightLimit,
+			parent   = spec.parent,
+			child    = spec.child,
+			upper    = spec.upper,
+			lower    = spec.lower || 0,
+			value    = spec.initial || 0,
+			callback = spec.callback,
+			
+			// Private functions
+			
+			mouse_down_handler = function(e) {
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+				mouse_move_handler(e);
+			},
+			
+			mouse_move_handler = function(e) {
+				var x = e.pageX - parent.getBoundingClientRect().left - leftLimit - child.clientWidth * 0.5;
+				
+				if (x < 0) {
+					child.style.left = "0px";
+					value = lower;
+				} else if (x > sliderWidth) {
+					child.style.left = sliderWidth + "px";
+					value = upper;
+				} else {
+					child.style.left = x + "px";
+					value = lower + ((parseFloat(child.style.left) / sliderWidth) * (upper - lower));
+				}
+				
+				callback(value);
+				set_slider_values();
+				set_button_graphic();
+			},
+			
+			mouse_up_handler = function() {
+				window.removeEventListener("mousemove", mouse_move_handler);
+				window.removeEventListener("mouseup", mouse_up_handler);
+			},
+			
+			// Public functions
+			
+			set_values = function() {
+				value = spec.set();
+				sliderWidth = parent.clientWidth - child.clientWidth;
+				leftLimit   = child.clientWidth * 0.5;
+				rightLimit  = leftLimit + sliderWidth;
+				child.style.left = ((sliderWidth / (upper - lower)) * (value - lower)) + "px";
+			};
+			
+			// Setup
+			
+			parent.addEventListener("mousedown", mouse_down_handler);
+			
+			// Assignment
+			
+			o.set_values = set_values;
+			
+			return o;
+		},
+		
+		// Private functions
+		
+		set_button_graphic = function() {
+			toolOptionsButton.children[0].style.width =
+			toolOptionsButton.children[0].style.height =
+			data.settings.get("strokeWidth") + "px";
+			toolOptionsButton.children[0].style.backgroundColor =
+			data.settings.get("color").toCSS();
+			
+		},
+		
+		set_gradient = function (element, stops) {
+			var value = "linear-gradient(to right," + stops.join(", ") + ");";
+			var styleString = "background-image: " + value +
+			"background-image: -o-" + value +
+			"background-image: -ms-" + value +
+			"background-image: -moz-" + value +
+			"background-image: -webkit-" + value;
+			element.setAttribute("style", styleString);
+		},
+		
+		overlay_handler = function(e) {
+			if(e.srcElement === overlay || e.target === overlay) {
+				toggle();
+			}
+		},
+		
+		set_slider_values = function() {
+			var i;
+			for (i = 0; i < sliders.length; i += 1) {
+				sliders[i].set_values();
+			}
+		},
         
         // Public functions
         
         toggle = function(e) {
+            overlay.classList.toggle("hidden");
             toolOptionsElement.classList.toggle("hidden");
             if(toolOptionsElement.classList.contains("hidden")) {
-                console.log("Options hidden");
-                window.removeEventListener("mouseup", toggle);
-                toolOptionsButton.addEventListener("mouseup", toggle);
+                overlay.removeEventListener("mouseup", overlay_handler);
             } else {
-                console.log("Options visible");
-                e.stopPropagation();
-                toolOptionsButton.removeEventListener("mouseup", toggle);
-                window.addEventListener("mouseup", toggle);
+                overlay.addEventListener("mouseup", overlay_handler);
+				toolOptionsElement.style.top = toolOptionsButton.getBoundingClientRect().top - 80 + "px";
+				set_slider_values();
             }
         };
         
         // Setup
         
-        toolOptionsButton.children[0].style.width =
-        toolOptionsButton.children[0].style.height =
-        data.settings.get("strokeWidth") + "px";
-        
+        set_button_graphic();
+		
         toolOptionsButton.addEventListener("mouseup", toggle);
         tooltip.set({
             element: toolOptionsButton,
-            message: "Drawing tool options",
+            message: "Drawing options",
             position: "right"
         });
         
+        sliders.push(
+		slider({
+            parent: document.getElementById("redComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("redComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  1,
+            initial:  data.settings.get("color").red,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.red = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					color, stops = [];
+				color = new Color(currentColor);
+				color.red = 0;
+				stops.push(color.toCSS());
+				color.red = 1;
+				stops.push(color.toCSS());
+				set_gradient(document.querySelectorAll("#redComponent>div.sliderTrack")[0], stops);
+				return currentColor.red;
+			}
+        }),
         slider({
-            parent: document.getElementById("strokeRed").querySelectorAll("div.sliderTrack")[0],
-            child:  document.getElementById("strokeRed").querySelectorAll("div.sliderHandle")[0],
-            upper:  255,
-            callback: function() {
-                console.log("Slider Callback")
-            }
-        });
+            parent: document.getElementById("greenComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("greenComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  1,
+            initial:  data.settings.get("color").green,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.green = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					color, stops = [];
+				color = new Color(currentColor);
+				color.green = 0;
+				stops.push(color.toCSS());
+				color.green = 1;
+				stops.push(color.toCSS());
+				set_gradient(document.querySelectorAll("#greenComponent>div.sliderTrack")[0], stops);
+				return currentColor.green;
+			}
+        }),
         slider({
-            parent: document.getElementById("strokeGreen").querySelectorAll("div.sliderTrack")[0],
-            child:  document.getElementById("strokeGreen").querySelectorAll("div.sliderHandle")[0],
-            upper:  255,
-            callback: function() {
-                console.log("Slider Callback");
-            }
-        });
+            parent: document.getElementById("blueComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("blueComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  1,
+            initial:  data.settings.get("color").blue,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.blue = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					color, stops = [];
+				color = new Color(currentColor);
+				color.blue = 0;
+				stops.push(color.toCSS());
+				color.blue = 1;
+				stops.push(color.toCSS());
+				set_gradient(document.querySelectorAll("#blueComponent>div.sliderTrack")[0], stops);
+				return currentColor.blue;
+			}
+        }),
+        slider({
+            parent: document.getElementById("hueComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("hueComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  360,
+            initial:  data.settings.get("color").hue,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.hue = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					i, color, numStops = 6, stops = [];
+				color = new Color(currentColor);
+				for (i = 0; i < numStops; i++) {
+					color.hue = i * (360 / numStops);
+					stops.push(color.toCSS());
+				}
+				set_gradient(document.querySelectorAll("#hueComponent>div.sliderTrack")[0], stops);
+				return currentColor.hue;
+			}
+        }),
+        slider({
+            parent: document.getElementById("saturationComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("saturationComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  1,
+            initial:  data.settings.get("color").saturation,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.saturation = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					color, stops = [];
+				color = new Color(currentColor);
+				color.saturation = 0;
+				stops.push(color.toCSS());
+				color.saturation = 1;
+				stops.push(color.toCSS());
+				set_gradient(document.querySelectorAll("#saturationComponent>div.sliderTrack")[0], stops);
+				return currentColor.saturation;
+			}
+        }),
+        slider({
+            parent: document.getElementById("lightnessComponent").querySelectorAll("div.sliderTrack")[0],
+            child:  document.getElementById("lightnessComponent").querySelectorAll("div.sliderHandle")[0],
+            upper:  1,
+            initial:  data.settings.get("color").lightness,
+            callback: function(value) {
+				var currentColor = data.settings.get("color");
+				currentColor.lightness = value;
+            },
+			set: function() {
+				var currentColor = data.settings.get("color"),
+					i, color, numStops = 3, stops = [];
+				color = new Color(currentColor);
+				for (i = 0; i < numStops; i++) {
+					color.lightness = i * (1 / numStops);
+					stops.push(color.toCSS());
+				}
+				set_gradient(document.querySelectorAll("#lightnessComponent>div.sliderTrack")[0], stops);
+				return currentColor.lightness;
+			}
+        }),
+        slider({
+            parent: document.getElementById("strokeWidth").querySelectorAll("div.sliderTrack")[0],
+            child: document.getElementById("strokeWidth").querySelectorAll("div.sliderHandle")[0],
+            upper: 99,
+			lower: 4,
+            initial: data.settings.get("strokeWidth"),
+            callback: function(value) {
+				data.settings.set("strokeWidth", Math.floor(value));
+            },
+			set: function() {
+				var strokeWidth = data.settings.get("strokeWidth");
+                document.querySelectorAll("#strokeWidth>span")[0].innerHTML = strokeWidth;
+				return strokeWidth;
+			}
+        }));
         
         // Assignment
         

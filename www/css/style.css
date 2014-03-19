@@ -267,95 +267,6 @@ ul, ol {
 					-webkit-transform: translate(-50%, -50%);
 				}
 			/* #tools */
-			#drawingToolOptionsDialog {
-				position: fixed;
-				top: 50%;
-				left: 62px;
-				width: 200px;
-				min-height: 30px;
-				background: #FFF;
-				border: 2px solid #999;
-				padding: 18px;
-				font-size: 14px;
-				transform: translateY(-50%);
-				-ms-transform: translateY(-50%);
-				-webkit-transform: translateY(-50%);
-				z-index: 100;
-				cursor: auto;
-			}
-			#drawingToolOptionsDialog:before {
-				content: "";
-				display: block;
-				position: absolute;
-				top: 35%;
-				left: -12px;
-				width: 18px;
-				height: 18px;
-				background: #FFF;
-				border: 2px solid #999;
-				border-top: none;
-				border-right: none;
-				transform: translateY(-50%) rotate(45deg);
-				-ms-transform: translateY(-50%) rotate(45deg);
-				-webkit-transform: translateY(-50%) rotate(45deg);
-				z-index: 50;
-			}
-				#drawingToolOptionsTitle {
-					font-weight: bold;
-					color: #333;
-				}
-				#drawingToolOptionsTitle,
-				#colorRGB,
-				#colorHSL {
-					margin-bottom: 8px;
-				}
-				#colorRGB>p,
-				#colorHSL>p,
-				#strokeWidth>p {
-					display: inline-block;
-					padding-bottom: 4px;
-				}
-					.colorSlider {
-						position: relative;
-						height: 22px;
-						margin-bottom: 2px;
-					}
-						.colorSlider>span {
-							display: block;
-							line-height: 22px;
-							
-						}
-						.colorSlider>div {
-							position: absolute;
-							top: 0;
-							right: 0;
-							left: 18px;
-							height: 18px;
-							border: 2px solid #999;
-							background: #F33;
-						}
-							.colorSlider>div>div {
-								position: absolute;
-								height: 18px;
-								width: 4px;
-								background: #666;
-							}
-					#strokeWidthSlider {
-						position: relative;
-						margin-left: 18px;
-						padding: 8px 0;
-						height: 2px;
-						background: #CCC;
-						border: 2px solid #999;
-					}
-						#strokeWidthSlider>div {
-							position: absolute;
-							top: 0;
-							height: 18px;
-							width: 4px;
-							background: #666;
-						}
-			/* #toolOptions */
 			#toolbarOverlay {
 				position: absolute;
 				top: 0;
@@ -1000,6 +911,89 @@ ul, ol {
 #overlay.dim {
 	background: rgba(0, 0, 0, 0.5);
 }
+	#drawingToolOptionsDialog {
+		position: fixed;
+		left: 62px;
+		width: 200px;
+		min-height: 30px;
+		background: #FFF;
+		border: 2px solid #999;
+		padding: 18px;
+		font-size: 14px;
+		z-index: 100;
+		cursor: auto;
+	}
+	#drawingToolOptionsDialog:before {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 35%;
+		left: -12px;
+		width: 18px;
+		height: 18px;
+		background: #FFF;
+		border: 2px solid #999;
+		border-top: none;
+		border-right: none;
+		transform: translateY(-50%) rotate(45deg);
+		-ms-transform: translateY(-50%) rotate(45deg);
+		-webkit-transform: translateY(-50%) rotate(45deg);
+		z-index: 50;
+	}
+		#drawingToolOptionsTitle {
+			font-weight: bold;
+			color: #333;
+		}
+		#drawingToolOptionsTitle,
+		#colorRGB,
+		#colorHSL {
+			margin-bottom: 8px;
+		}
+		#drawingToolOptionsDialog>div>p {
+			display: inline-block;
+			padding-bottom: 4px;
+		}
+			.slider {
+				position: relative;
+				height: 22px;
+				margin-bottom: 2px;
+			}
+				.slider>span {
+					display: block;
+					line-height: 22px;
+					
+				}
+				.sliderTrack {
+					position: absolute;
+					top: 0;
+					right: 0;
+					left: 18px;
+					height: 18px;
+					border: 2px solid #999;
+					background: #CCC;
+				}
+					.sliderHandle {
+						position: absolute;
+						height: 18px;
+						width: 4px;
+						background: #666;
+					}
+			#strokeWidthSlider {
+				position: relative;
+				margin-left: 18px;
+				padding: 8px 0;
+				height: 2px;
+				background: #CCC;
+				border: 2px solid #999;
+			}
+				#strokeWidthSlider>div {
+					position: absolute;
+					top: 0;
+					height: 18px;
+					width: 4px;
+					background: #666;
+				}
+	/* #toolOptions */
 	#overlayContainer {
 		position: absolute;
 		padding: 18px;

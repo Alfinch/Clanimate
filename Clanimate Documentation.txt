@@ -61,6 +61,7 @@ ui
     child: element
     upper: float
     [lower: float]
+	[initial: float]
     callback: function
 
   toolOptions
