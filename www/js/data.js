@@ -290,7 +290,7 @@ data = (function() {
             stageWidth:  800,
             color: "#000000",
             strokeWidth: 8,
-			zoomPadding: 4
+			zoomPadding: 8
         },
         
         // Public functions
@@ -635,8 +635,8 @@ data = (function() {
 						e.clientY - cRect.top - downPoint.y
 					);
 					view.center = new Point(
-						oldView.x - d.x,
-						oldView.y - d.y
+						oldView.x - (d.x / view.zoom),
+						oldView.y - (d.y / view.zoom)
 					);
 				},
 				
