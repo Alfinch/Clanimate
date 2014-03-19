@@ -916,10 +916,10 @@ ui = (function() {
             },
 			set: function() {
 				var currentColor = data.settings.get("color"),
-					i, color, numStops = 6, stops = [];
+					i, color, numStops = 10, stops = [];
 				color = new Color(currentColor);
 				for (i = 0; i < numStops; i++) {
-					color.hue = i * (360 / numStops);
+					color.hue = i * (360 / (numStops - 1));
 					stops.push(color.toCSS());
 				}
 				set_gradient(document.querySelectorAll("#hueComponent>div.sliderTrack")[0], stops);
@@ -961,7 +961,7 @@ ui = (function() {
 					i, color, numStops = 3, stops = [];
 				color = new Color(currentColor);
 				for (i = 0; i < numStops; i++) {
-					color.lightness = i * (1 / numStops);
+					color.lightness = i * (1 / (numStops - 1));
 					stops.push(color.toCSS());
 				}
 				set_gradient(document.querySelectorAll("#lightnessComponent>div.sliderTrack")[0], stops);
