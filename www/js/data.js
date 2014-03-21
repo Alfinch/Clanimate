@@ -17,8 +17,44 @@ data = (function() {
     targetGroup      = null,
     targetLayer      = 1,
     visibleGroups    = [],
+	selectedPaths    = [],
     
     // Private functions
+    
+	// Adds a path to the current target group
+	add_stroke = function(stroke) {
+		var i, color,
+			paths = targetGroup.removeChildren(),
+			strokeColor = stroke.fillColor;
+			
+		stroke.remove();
+		
+		// For each path in the current target group...
+		for (i = 0; i < paths.length; i += 1) {
+		
+			// If the stroke intersects...
+			if(paths[i].getIntersections(stroke).length > 0) {
+				
+				// If the colours of this path and the stroke match, unite them
+				if (paths[i].fillColor.equals(stroke.fillColor)) {
+					
+					stroke = stroke.unite(paths[i]);
+				// If the colours do not match, subtract the stroke from the path uderneath
+				} else {
+					
+					color = paths[i].fillColor;
+					paths[i] = paths[i].subtract(stroke);
+					paths[i].fillColor = color;
+					targetGroup.addChild(paths[i]);
+				}
+			} else {
+				targetGroup.addChild(paths[i]);
+			}
+		}
+		
+		stroke.fillColor = strokeColor;
+		targetGroup.addChild(stroke);
+	},
     
     // Returns a project layer with the given index
     // Returns false if no layer with the given index is found
@@ -44,7 +80,7 @@ data = (function() {
     },
     
     // Public functions
-    
+	
     // Removes the group at the current target cell and returns true
     // Returns false if the current target cell does not contain a group
     delete_group = function() {
@@ -354,8 +390,8 @@ data = (function() {
         getDefault = function() {
             return defaultTool;
         };
-        
-        // Brush tool
+		
+		// Brush tool
         tools.brush = new Tool();
         tools.brush.minDistance = settings.get("strokeWidth") * 0.5;
         
@@ -422,10 +458,12 @@ data = (function() {
                 this.stroke.arcTo(this.leftPath.firstSegment.point);
                 this.stroke.join(this.leftPath.clone());
                 this.stroke.arcTo(this.stroke.firstSegment.point);
+				this.stroke.closePath();
+				this.stroke = this.stroke.unite(this.stroke);
                 this.stroke.fillColor = settings.get("color");
             }
             
-            targetGroup.addChild(this.stroke);
+            add_stroke(this.stroke);
             controller.draw();
         };
         
@@ -463,8 +501,7 @@ data = (function() {
         };
         
         tools.circle.onMouseUp = function(event) {
-            this.stroke.remove();
-            targetGroup.addChild(this.stroke.clone());
+            targetGroup.addChild(this.stroke);
             controller.draw();
         };
         
@@ -543,38 +580,37 @@ data = (function() {
         };
         
         tools.manipulate.onMouseDown = function(event) {
-            var i, j, hitResult, hit = false;
-            this.selectBox = null;
-            this.ePoint = new Point(
-                window.event.clientX,
-                window.event.clientY
-            );
+            var i,
+				hitResult,
+				hit = false;
+				this.ePoint = event.point;
             
-            for (i = 0; i < visibleGroups.length; i += 1) {
-                for (j=0; j < visibleGroups[i].children.length; j += 1) {
-                    hitResult = visibleGroups[i].children[j].hitTest(event.point);
-                    if (hitResult != null && hit === false) {
-                        visibleGroups[i].children[j].strokeColor = "#009DEC";
-                        this.selected = visibleGroups[i].children[j];
-                        hit = true;
-                    } else {
-                        visibleGroups[i].children[j].strokeColor = null;
-                    }
-                }
-            }
-            
-            if (hit) {
-                this.pPoint = this.selected.position.clone();
-            } else {
-                this.selected = null;
-            }
+			// If a path within the current target group is hit, select it
+			// Deselect it if it is already selected
+			for (i = 0; i < targetGroup.children.length; i += 1) {
+				hitResult = targetGroup.children[i].hitTest(event.point);
+				if (hitResult != null && hit === false) {
+					this.target = targetGroup.children[i];
+					this.target.strokeColor = "#FF3333";
+					selectedPaths.push(this.target);
+					hit = true;
+					break;
+				}
+			}
+			
+			if (!hit) {
+				this.onDeselect();
+			}
         };
         
         tools.manipulate.onMouseDrag = function(event) {
-            if (this.selected == null) {
-                
-                if (this.selectBoxFill != null)   this.selectBoxFill.remove();
-                if (this.selectBoxBorder != null) this.selectBoxBorder.remove();
+		
+			// If a path was not hit, begin box selection
+            if (this.target == null) {
+			
+				this.selectBox = null;
+				if (this.selectBoxFill != null)   this.selectBoxFill.remove();
+				if (this.selectBoxBorder != null) this.selectBoxBorder.remove();
                 
                 this.selectBox = new Rectangle(
                     new Point(event.downPoint.x, event.downPoint.y),
@@ -582,41 +618,49 @@ data = (function() {
                 );
                 
                 this.selectBoxFill = new Shape.Rectangle(this.selectBox);
-                this.selectBoxFill.fillColor = "#009DEC";
+                this.selectBoxFill.fillColor = "#FF3333";
                 this.selectBoxFill.opacity   = 0.2;
                 
                 this.selectBoxBorder = new Shape.Rectangle(this.selectBox);
-                this.selectBoxBorder.strokeColor = "#009DEC";
+                this.selectBoxBorder.strokeColor = "#FF3333";
                 this.selectBoxBorder.strokeWidth = 1;
-                
+               
+			// If a path was hit, begin drag
             } else {
-                this.selected.position = new Point(
-                    this.pPoint.x + (window.event.clientX - this.ePoint.x),
-                    this.pPoint.y + (window.event.clientY - this.ePoint.y)
+			
+                this.target.position = new Point(
+                    this.target.position.x + event.delta.x,
+                    this.target.position.y + event.delta.y
                 );
+				
             }
         };
         
         tools.manipulate.onMouseUp = function(event) {
-            var i, j, s;
+            var i, path;
             if (this.selectBoxFill != null)   this.selectBoxFill.remove();
             if (this.selectBoxBorder != null) this.selectBoxBorder.remove();
+			
+			// If a box selection was made
             if (this.selectBox != null) {
-                this.selected = [];
-                for (i = 0; i < visibleGroups.length; i += 1) {
-                    for (j=0; j < visibleGroups[i].children.length; j += 1) {
-                        s = visibleGroups[i].children[j];
-                        if (this.selectBox.contains(s.bounds)) {
-                            s.strokeColor = "#009DEC";
-                            this.selected.push(s);
-                        }
-                    }
-                }
+				for (i = 0; i < targetGroup.children.length; i += 1) {
+					path = targetGroup.children[i];
+					if (this.selectBox.contains(path.bounds)) {
+						path.strokeColor = "#FF3333";
+						selectedPaths.push(path);
+					}
+				}
             }
         };
         
         tools.manipulate.onDeselect = function() {
-            if (this.selected != null) this.selected.strokeColor = null;
+			var i;
+			for (i = 0; i < selectedPaths.length; i += 1) {
+				selectedPaths[i].strokeColor = null;	
+			}
+			selectedPaths = [];
+			this.target = null;
+			view.draw();
         };
         
         // Pan tool
@@ -710,8 +754,7 @@ data = (function() {
         };
         
         tools.square.onMouseUp = function(event) {
-            this.stroke.remove();
-            targetGroup.addChild(this.stroke.clone());
+            targetGroup.addChild(this.stroke);
             controller.draw();
         };
         

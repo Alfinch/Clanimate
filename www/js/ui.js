@@ -958,7 +958,7 @@ ui = (function() {
             },
 			set: function() {
 				var currentColor = data.settings.get("color"),
-					i, color, numStops = 3, stops = [];
+					i, color, numStops = 5, stops = [];
 				color = new Color(currentColor);
 				for (i = 0; i < numStops; i++) {
 					color.lightness = i * (1 / (numStops - 1));
