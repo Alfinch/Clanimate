@@ -59,6 +59,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				<div id="line" class="tool">
 					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/line_icon.svg" alt="Line tool icon"/>
 				</div>
+				<div id="eraser" class="tool">
+					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/eraser_icon.svg" alt="Eraser tool icon"/>
+				</div>
 			</div>
 		</div>
 		<div id="toolbarOverlay" class="hidden"></div>

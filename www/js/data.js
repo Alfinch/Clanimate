@@ -17,43 +17,127 @@ data = (function() {
     targetGroup      = null,
     targetLayer      = 1,
     visibleGroups    = [],
-	selectedPaths    = [],
     
     // Private functions
     
 	// Adds a path to the current target group
-	add_stroke = function(stroke) {
-		var i, color,
+	add_stroke = function(stroke, subtract) {
+		var i, j, color, splitPaths, subtract = subtract || false,
 			paths = targetGroup.removeChildren(),
 			strokeColor = stroke.fillColor;
 			
 		stroke.remove();
+			
+		console.log("===== Adding stroke =====");
 		
 		// For each path in the current target group...
 		for (i = 0; i < paths.length; i += 1) {
 		
 			// If the stroke intersects...
-			if(paths[i].getIntersections(stroke).length > 0) {
+			if (paths[i].hitTest(stroke.firstSegment.point)  != null ||
+				paths[i].getIntersections(stroke).length > 0) {
+			
+				console.log("Hit at path " + (i + 1) + "!");
 				
 				// If the colours of this path and the stroke match, unite them
-				if (paths[i].fillColor.equals(stroke.fillColor)) {
+				if (paths[i].fillColor.equals(stroke.fillColor) && subtract === false) {
+				
+					console.log("Color match - uniting paths.");
 					
+					stroke.remove();
 					stroke = stroke.unite(paths[i]);
+					stroke.fillColor = strokeColor;
 				// If the colours do not match, subtract the stroke from the path uderneath
 				} else {
+				
+					console.log("No match - subtracting from path.");
 					
 					color = paths[i].fillColor;
 					paths[i] = paths[i].subtract(stroke);
 					paths[i].fillColor = color;
-					targetGroup.addChild(paths[i]);
+					console.log("Type is " + paths[i]._type + " after subtract.");
+					
+					// If the path is compound, seperate the children then add them to the target group individually
+					if (paths[i]._type === "compound-path") {
+						splitPaths = split_compound_path(paths[i]);
+						for (j = 0; j < splitPaths; j += 1) {
+							splitPaths[j].fillColor = color;
+							splitPaths[j].selectedColor = "#FF3333";
+							targetGroup.addChild(splitPaths[j]);
+						}
+					
+					// If the path is not compound, add it to the target group
+					} else {
+						paths[i].selectedColor = "#FF3333";
+						targetGroup.addChild(paths[i]);
+					}
 				}
 			} else {
+				paths[i].selectedColor = "#FF3333";
 				targetGroup.addChild(paths[i]);
 			}
 		}
+		if (subtract === false) {
+			console.log("Adding new stroke to target group.");
+			
+			stroke.fillColor = strokeColor;
+			stroke.selectedColor = "#FF3333";
+			targetGroup.addChild(stroke);
+		}
+	},
+	
+	split_compound_path = function(compoundPath) {
+		var i, j, k, compoundChildren, returnPaths = [], hits = [];
+	
+		console.log("Splitting path into " + compoundChildren.length + " children");
 		
-		stroke.fillColor = strokeColor;
-		targetGroup.addChild(stroke);
+		compoundChildren = compoundPath.removeChildren();
+		for (i = 0; i < compoundChildren.length; i += 1) {
+			hits[i] = [];
+		}
+		
+		console.log("Calculating hirarchy");
+		
+		// For every possible combination of paths
+		for (i = 0; i < compoundChildren.length; i += 1) {
+			for (j = i + 1; j < compoundChildren.length; j += 1) {
+			
+				// If the second path is inside the first path
+				if (compoundChildren[i].hitTest(compoundChildren[j].firstSegment.point)  != null) {
+					hits[i].push(j);
+					
+				// If the first path is inside the second path
+				} else if (compoundChildren[j].hitTest(compoundChildren[i].firstSegment.point)  != null) {
+					hits[j].push(i);
+				}
+			}
+		}
+		
+		console.log(hits);
+		
+		hits.sort(function(a, b) {
+			return a.length - b.length;
+		});
+		
+		console.log(hits);
+		
+		for (i = 0; i < hits.length; i += 1) {
+			for (j = 0; j < hits[i].length; j += 1) {
+				for (k = i; k < hits.length; k += 1) {
+					hits.splice(hits.indexOf(hits[i][j]), 1);
+				}
+			}
+		}
+		
+		for (i = 0; i < hits.length; i += 1) {
+			if (hits[i].length > 1) {
+				returnPaths.push(
+				);
+			} else {
+			}
+		}
+		
+		return returnPaths;
 	},
     
     // Returns a project layer with the given index
@@ -416,16 +500,18 @@ data = (function() {
             outlineVector.angle += 90;
             
             if (this.firstDrag) {
-                this.leftPath = new Path();
-                this.rightPath = new Path();
-                this.leftPath.add(new Point(
-                    event.lastPoint.x + outlineVector.x,
-                    event.lastPoint.y + outlineVector.y
-                ));
-                this.rightPath.add(new Point(
-                    event.lastPoint.x - outlineVector.x,
-                    event.lastPoint.y - outlineVector.y
-                ));
+                this.leftPath = new Path([
+					new Point(
+						event.lastPoint.x + outlineVector.x,
+						event.lastPoint.y + outlineVector.y
+					)
+				]);
+                this.rightPath = new Path([
+					new Point(
+						event.lastPoint.x - outlineVector.x,
+						event.lastPoint.y - outlineVector.y
+					)
+				]);
                 this.firstDrag = false;
             }
             
@@ -437,12 +523,13 @@ data = (function() {
                 event.middlePoint.x - outlineVector.x,
                 event.middlePoint.y - outlineVector.y
             );
-            this.leftPath.insert(0, leftPoint);
+            this.leftPath.add(leftPoint);
             this.rightPath.add(rightPoint);
             
-            this.stroke = this.rightPath.clone();
-            this.stroke.arcTo(this.leftPath.firstSegment.point);
-            this.stroke.join(this.leftPath.clone());
+            this.stroke = this.leftPath.clone();
+			this.stroke.reverse();
+            this.stroke.arcTo(this.rightPath.firstSegment.point);
+            this.stroke.join(this.rightPath.clone());
             this.stroke.arcTo(this.stroke.firstSegment.point);
             this.stroke.fillColor = settings.get("color");
         };
@@ -452,6 +539,7 @@ data = (function() {
             this.stroke.remove();
             
             if (!this.firstDrag) {
+				this.leftPath.reverse();
                 this.leftPath.simplify(4);
                 this.rightPath.simplify(4);
                 this.stroke = this.rightPath.clone();
@@ -459,6 +547,7 @@ data = (function() {
                 this.stroke.join(this.leftPath.clone());
                 this.stroke.arcTo(this.stroke.firstSegment.point);
 				this.stroke.closePath();
+				this.stroke.reduce();
 				this.stroke = this.stroke.unite(this.stroke);
                 this.stroke.fillColor = settings.get("color");
             }
@@ -501,7 +590,89 @@ data = (function() {
         };
         
         tools.circle.onMouseUp = function(event) {
-            targetGroup.addChild(this.stroke);
+            add_stroke(this.stroke);
+            this.stroke = null;
+            controller.draw();
+        };
+		
+		// Eraser tool
+        tools.eraser = new Tool();
+        tools.eraser.minDistance = settings.get("strokeWidth") * 0.5;
+        
+        tools.eraser.onSelect = function() {
+            ui.stage.set_cursor("draw");
+        };
+        
+        tools.eraser.onMouseDown = function(event) {
+            this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
+            this.stroke.fillColor = new Color(0);
+			this.stroke.blendMode = "destination-out";
+            this.firstDrag = true;
+        };
+        
+        tools.eraser.onMouseDrag = function(event) {
+            var outlineVector, leftPoint, rightPoint;
+            
+            this.stroke.remove();
+            
+            outlineVector= event.delta.normalize();
+            outlineVector.length *= settings.get("strokeWidth") * 0.5;
+            outlineVector.angle += 90;
+            
+            if (this.firstDrag) {
+                this.leftPath = new Path([
+					new Point(
+						event.lastPoint.x + outlineVector.x,
+						event.lastPoint.y + outlineVector.y
+					)
+				]);
+                this.rightPath = new Path([
+					new Point(
+						event.lastPoint.x - outlineVector.x,
+						event.lastPoint.y - outlineVector.y
+					)
+				]);
+                this.firstDrag = false;
+            }
+            
+            leftPoint = new Point(
+                event.middlePoint.x + outlineVector.x,
+                event.middlePoint.y + outlineVector.y
+            );
+            rightPoint = new Point(
+                event.middlePoint.x - outlineVector.x,
+                event.middlePoint.y - outlineVector.y
+            );
+            this.leftPath.add(leftPoint);
+            this.rightPath.add(rightPoint);
+            
+            this.stroke = this.leftPath.clone();
+			this.stroke.reverse();
+            this.stroke.arcTo(this.rightPath.firstSegment.point);
+            this.stroke.join(this.rightPath.clone());
+            this.stroke.arcTo(this.stroke.firstSegment.point);
+            this.stroke.fillColor = new Color(0);
+			this.stroke.blendMode = "destination-out";
+        };
+        
+        tools.eraser.onMouseUp = function(event) {
+            this.stroke.remove();
+            
+            if (!this.firstDrag) {
+				this.leftPath.reverse();
+                this.leftPath.simplify(4);
+                this.rightPath.simplify(4);
+                this.stroke = this.rightPath.clone();
+                this.stroke.arcTo(this.leftPath.firstSegment.point);
+                this.stroke.join(this.leftPath.clone());
+                this.stroke.arcTo(this.stroke.firstSegment.point);
+				this.stroke.closePath();
+				this.stroke.reduce();
+				this.stroke = this.stroke.unite(this.stroke);
+				this.stroke.fillColor = new Color(0);
+            }
+            
+            add_stroke(this.stroke, true);
             controller.draw();
         };
         
@@ -528,7 +699,7 @@ data = (function() {
                 event.point.y - event.downPoint.y
             );
             outlineVector = outlineVector.normalize();
-            outlineVector.length *= settings.get("color") * 0.5;
+            outlineVector.length *= settings.get("strokeWidth") * 0.5;
             outlineVector.angle += 90;
             
             p1l = new Point(
@@ -554,6 +725,7 @@ data = (function() {
             this.stroke.lineTo(p2r);
             this.stroke.arcTo(p2l);
             this.stroke.closePath();
+			this.stroke.reduce();
             this.stroke.fillColor = settings.get("color");
         };
         
@@ -568,98 +740,84 @@ data = (function() {
                 this.stroke.fillColor = settings.get("color");
             }
             
-            targetGroup.addChild(this.stroke);
+            add_stroke(this.stroke);
             controller.draw();
         };
         
         // Manipulate tool
         tools.manipulate = new Tool();
-        
+		
         tools.manipulate.onSelect = function() {
             ui.stage.set_cursor("cursor");
         };
         
-        tools.manipulate.onMouseDown = function(event) {
-            var i,
-				hitResult,
-				hit = false;
-				this.ePoint = event.point;
+        tools.manipulate.onMouseDown = function(e) {
+            var hitResult;
             
 			// If a path within the current target group is hit, select it
 			// Deselect it if it is already selected
-			for (i = 0; i < targetGroup.children.length; i += 1) {
-				hitResult = targetGroup.children[i].hitTest(event.point);
-				if (hitResult != null && hit === false) {
-					this.target = targetGroup.children[i];
-					this.target.strokeColor = "#FF3333";
-					selectedPaths.push(this.target);
-					hit = true;
-					break;
-				}
-			}
-			
-			if (!hit) {
+			hitResult = targetGroup.hitTest(e.point);
+			if (hitResult != null) {
+				hitResult.item.selected = true;
+				this.mode = "drag";
+			} else {
 				this.onDeselect();
+				this.mode = "deselect";
 			}
         };
         
-        tools.manipulate.onMouseDrag = function(event) {
-		
-			// If a path was not hit, begin box selection
-            if (this.target == null) {
+        tools.manipulate.onMouseDrag = function(e) {
+			var i;
 			
-				this.selectBox = null;
-				if (this.selectBoxFill != null)   this.selectBoxFill.remove();
-				if (this.selectBoxBorder != null) this.selectBoxBorder.remove();
-                
-                this.selectBox = new Rectangle(
-                    new Point(event.downPoint.x, event.downPoint.y),
-                    new Point(event.point.x, event.point.y)
-                );
-                
-                this.selectBoxFill = new Shape.Rectangle(this.selectBox);
-                this.selectBoxFill.fillColor = "#FF3333";
-                this.selectBoxFill.opacity   = 0.2;
-                
-                this.selectBoxBorder = new Shape.Rectangle(this.selectBox);
-                this.selectBoxBorder.strokeColor = "#FF3333";
-                this.selectBoxBorder.strokeWidth = 1;
-               
-			// If a path was hit, begin drag
-            } else {
-			
-                this.target.position = new Point(
-                    this.target.position.x + event.delta.x,
-                    this.target.position.y + event.delta.y
-                );
-				
-            }
+			switch (this.mode) {
+				case "drag":
+					for (i = 0; i < project.selectedItems.length; i += 1) {
+						project.selectedItems[i].position = new Point(
+							project.selectedItems[i].position.x + e.delta.x,
+							project.selectedItems[i].position.y + e.delta.y
+						);
+					}
+					break;
+				default: // deselect -> box
+					if (this.mode === "deselect") this.mode = "box";
+					if (this.selectBox != null) this.selectBox.remove();
+                    this.selectBox = new Path.Rectangle({
+						point: [
+							e.downPoint.x,
+							e.downPoint.y
+						],
+						size: [
+							e.point.x - e.downPoint.x,
+							e.point.y - e.downPoint.y
+						],
+						strokeColor: "#FF3333"
+					});
+					break;
+			}
         };
         
-        tools.manipulate.onMouseUp = function(event) {
+        tools.manipulate.onMouseUp = function(e) {
             var i, path;
-            if (this.selectBoxFill != null)   this.selectBoxFill.remove();
-            if (this.selectBoxBorder != null) this.selectBoxBorder.remove();
 			
-			// If a box selection was made
-            if (this.selectBox != null) {
+			// If a box selection was made, select all items within the select box
+            if (this.mode === "box") {
+				if (this.selectBox != null) this.selectBox.remove();
 				for (i = 0; i < targetGroup.children.length; i += 1) {
 					path = targetGroup.children[i];
 					if (this.selectBox.contains(path.bounds)) {
-						path.strokeColor = "#FF3333";
-						selectedPaths.push(path);
+						path.selected = true;
 					}
 				}
             }
         };
         
         tools.manipulate.onDeselect = function() {
-			var i;
-			for (i = 0; i < selectedPaths.length; i += 1) {
-				selectedPaths[i].strokeColor = null;	
+			var i, paths = project.selectedItems;
+			project.deselectAll();
+			for (i = 0; i < paths.length; i += 1) {
+				paths[i].remove();
+				add_stroke(paths[i]);
 			}
-			selectedPaths = [];
-			this.target = null;
 			view.draw();
         };
         
@@ -743,7 +901,7 @@ data = (function() {
                         )
                     )
                 ],
-                fillColor: settings.get("color")
+                fillColor: settings.get("color"),
             });
             this.stroke.children[0].position =
             this.stroke.children[1].position =
@@ -754,7 +912,8 @@ data = (function() {
         };
         
         tools.square.onMouseUp = function(event) {
-            targetGroup.addChild(this.stroke);
+            add_stroke(this.stroke);
+            this.stroke = null;
             controller.draw();
         };
         
