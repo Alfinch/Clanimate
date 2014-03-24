@@ -4,8 +4,8 @@ include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 protect_page($page);
 include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
-<div id="middleSection">
-	<div id="page">
+<div id="middleSection" class="page">
+	<div>
 		<h1>Profile</h1>
 	</div>
 </div>

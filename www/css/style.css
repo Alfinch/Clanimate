@@ -196,8 +196,6 @@ ul, ol {
 		position: absolute;
 		right: 0;
 		left: 0;
-		top: 70px;
-		bottom: 0;
 		background: #666;
 	}
 	#middleSection.editor {
@@ -205,12 +203,19 @@ ul, ol {
 		bottom: 64px;
 		z-index: 0;
 	}
+	#middleSection.page {
+		border-top: 2px solid #666;
+		top: 70px;
+		bottom: 0;
+		overflow: auto;
+	}
 		#toolbar {
-			position: relative;
+			position: absolute;
 			background: #999;
 			border-right: 2px solid #666;
-			float: left;
-			height: 100%;
+			top: 0;
+			bottom: 0;
+			left: 0;
 			z-index: 50;
 		}
 			#tools {
@@ -311,19 +316,22 @@ ul, ol {
 				height: 100%;
 			}
 		/* #canvasContainer */
-	/* #middleSection */
-	#page {
-		padding: 20px;
-		margin: 10px auto;
-		max-width: 800px;
-		background: #fff;
-	}
-		#page h1 {
-			font-size: 20px;
-			font-weight: bold;
-			margin-bottom: 16px;
+		#middleSection.page>div {
+			padding: 20px;
+			margin: 10px auto;
+			max-width: 800px;
+			background: #fff;
 		}
-	/* #page */
+			#middleSection.page>div h1 {
+				font-size: 20px;
+				font-weight: bold;
+				margin-bottom: 16px;
+			}
+			#middleSection.page>div p {
+				margin-bottom: 16px;
+			}
+		/* #page */
+	/* #middleSection */
 	#bottomSection {
 		position: absolute;
 		height: 92px;
