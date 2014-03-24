@@ -58,27 +58,32 @@ window.onload = function() {
     settings.addEventListener("mouseup", function() {
 		// Show animation settings
     });
+	
 	// new handler
 	newAnim = document.getElementById("new");
 	newAnim.addEventListener("mouseup", function() {
 		// Create a new animation
 	});
+	
 	// save handler
 	save = document.getElementById("save");
 	save.addEventListener("mouseup", function() {
 		// Save current animation
 	});
+	
 	// load handler
 	load = document.getElementById("load");
 	load.addEventListener("mouseup", function() {
 		// Load current animation
 	});
+	
 	// publish handler
 	publish = document.getElementById("publish");
 	publish.addEventListener("mouseup", function() {
 		// Publish current animation
 	});
-    // play / pause handlers
+    
+	// play / pause handlers
 	tbo = document.getElementById("toolbarOverlay");
 	tlo = document.getElementById("timelineOverlay");
     play = document.getElementById("play");
@@ -101,6 +106,7 @@ window.onload = function() {
 			tlo.classList.add("hidden");
 		}
     });
+	
 	// reset handler
 	reset = document.getElementById("reset");
     reset.addEventListener("mouseup", function() {
@@ -111,31 +117,37 @@ window.onload = function() {
 		tbo.classList.add("hidden");
 		tlo.classList.add("hidden");
     });
+	
 	// zoomSelection handler
 	zoomSelection = document.getElementById("zoomSelection");
 	zoomSelection.addEventListener("mouseup", function() {
 		controller.zoom_selection();
 	});
+	
 	// zoomActual handler
 	zoomActual = document.getElementById("zoomActual");
 	zoomActual.addEventListener("mouseup", function() {
 		controller.zoom_actual();
 	});
+	
 	// zoomStage handler
 	zoomStage = document.getElementById("zoomStage");
 	zoomStage.addEventListener("mouseup", function() {
 		controller.zoom_stage();
 	});
+	
 	// zoomExtents handler
 	zoomExtents = document.getElementById("zoomExtents");
 	zoomExtents.addEventListener("mouseup", function() {
 		controller.zoom_extents();
 	});
+	
 	// undo handler
 	undo = document.getElementById("undo");
 	undo.addEventListener("mouseup", function() {
 		// Undo last action
 	});
+	
 	// redo handler
 	redo = document.getElementById("redo");
 	redo.addEventListener("mouseup", function() {

@@ -305,6 +305,10 @@ ui = (function() {
             nameString    = document.createElement("span"),
             removeButton  = document.createElement("div"),
             selected      = false,
+			
+			// Private objects
+			
+			
             
             // Public functions
             
@@ -432,9 +436,13 @@ ui = (function() {
             // Changes the nameString for this layer
             rename = function(name) {
                 nameString.innerHTML = name;
-                tooltip.set(name, nameString);
+                tooltip.set({
+					element: nameString,
+					message: name
+				});
             },
             
+			// Selects this layer
             select = function() {
                 if (selectedLayer != null) {
                     selectedLayer.deselect();
@@ -577,6 +585,7 @@ ui = (function() {
         return o;
     }()),
     
+	// Adds a tooltip to an element
     tooltip = (function() {
         var o = {},
         
@@ -700,7 +709,8 @@ ui = (function() {
         
         return o;
     }()),
-
+	
+	// Manages the tool options dialog
     toolOptions = (function(){
         var o = {},
         

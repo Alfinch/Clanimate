@@ -13,7 +13,7 @@ if (!empty($_POST)) {
 		if (!ctype_alnum(str_replace(array('_', '-'), '', $_POST['username']))) {
 			$errors[] = "Usernames can only contain letters, numbers, underscores and hyphens - no spaces, punctuation or special characters.";
 		}
-		if ($_POST['password'] !== $_POST['confirm_password']) {
+		if (trim($_POST['password']) !== trim($_POST['confirm_password'])) {
 			$errors[] = "Your passwords do not match.";
 		}
 		if (strlen($_POST['password']) < 6) {
@@ -33,6 +33,7 @@ if (!empty($_POST)) {
 	if ($_GET['register'] === 'success') {
 	?>
 	<p>You have been registered successfully! A confirmation email will arrive shortly and allow you to activate your account.</p>
+	<p><a href="?">Return</a></p>
 	<?php
 	} else {
 		if (!empty($_POST) && empty($errors)) {
@@ -59,5 +60,6 @@ if (!empty($_POST)) {
 		<input type="email" name="email">
 		<input type="submit" value="Register">
 	</form>
+	<p><a href="?">Cancel</a></p>
 	<?php } ?>
 </div>

@@ -1,6 +1,17 @@
 <?php
 require_once("hash.php");
 
+function change_email($id, $email) {
+	$queryString = "update `users` set `email` = '$email' where `id` = $id";
+	$query = mysql_query($queryString);
+}
+
+function change_password($id, $password) {
+	$hash = create_hash($password);
+	$queryString = "update `users` set `hash` = '$hash' where `id` = $id";
+	$query = mysql_query($queryString);
+}
+
 function register_user($data) {
 	array_walk($data, 'array_sanitize');
 	$data['hash'] = create_hash($data['password']);
@@ -23,7 +34,7 @@ function total_users() {
 function user_data($id) {
 	$data = array();
 	$id = (int)$id;
-	$queryString = "select `id`, `username`, `hash`, `email` from `users` where `id` = $id";
+	$queryString = "select `username`, `hash`, `email` from `users` where `id` = $id";
 	$query = mysql_query($queryString);
 	$data = mysql_fetch_assoc($query);
 	return $data;

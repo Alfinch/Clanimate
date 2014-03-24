@@ -86,6 +86,8 @@ data = (function() {
 		}
 	},
 	
+	// Separates all disconnected pathItems from a compound path
+	// Returns an array of pathItems
 	split_compound_path = function(compoundPath) {
 		var i, j, k, compoundChildren, returnPaths = [], hits = [];
 	
