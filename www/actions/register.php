@@ -29,9 +29,9 @@ if (!empty($_POST)) {
 	}
 	if(empty($errors)) {
 		$register_data = array(
-			'username' => $_POST['username'],
-			'password' => $_POST['password'],
-			'email'    => $_POST['email']
+			'username'   => $_POST['username'],
+			'password'   => $_POST['password'],
+			'email'      => $_POST['email'],
 		);
 		register_user($register_data);
 		header("Location: http://" . $_SERVER["SERVER_NAME"] . "?register=success");

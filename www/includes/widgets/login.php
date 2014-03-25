@@ -8,7 +8,7 @@ if (isset($_GET['from']) && !empty($_GET['from'])) {
 	$to = "";
 }
 if (isset($page)) {
-	$from = "&from=" . $page;
+	$from = "&amp;from=" . $page;
 } else {
 	$from = "";
 }
@@ -19,7 +19,9 @@ if (isset($page)) {
 	if (!empty($_SESSION["errors"])) {
 		output_errors($_SESSION["errors"]);
 		unset($_SESSION["errors"]);
-	}
+	} else if (isset($_GET["activated"]) && $_GET["activated"] === "true") { ?>
+		<p class="notification">You have successfully activated your account! Use the form below to log in.</p>
+	<?php }
 	?>
 	<form action="/actions/login.php<?php echo $to . $from ?>" method="post">
 		<p>Username:</p>

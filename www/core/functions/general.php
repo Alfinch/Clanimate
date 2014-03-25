@@ -1,4 +1,11 @@
 <?php
+function email($to, $subject, $body) {
+	$headers  = "From: noreply@clanimate.com\r\n";
+	$headers .= "MIME-Version: 1.0\r\n";
+	$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+	mail($to, $subject, $body, $headers);
+}
+
 function base_uri() {
 	$uri_get_array = explode("?", "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"]);
 	return $uri_get_array[0];
