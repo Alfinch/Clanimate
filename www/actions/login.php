@@ -1,5 +1,5 @@
 <?php
-include $_SERVER["DOCUMENT_ROOT"] . "/core/init.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 
 if (empty($_POST) === false) {
 	$username = $_POST["username"];
@@ -26,12 +26,17 @@ if (empty($_POST) === false) {
 			exit();
 		}
 	}
+	
+	$_SESSION["errors"] = $errors;
+	if (isset($_GET['from']) && !empty($_GET['from'])) {
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_GET['from'] . ".php?from=" . $_GET['to']);
+		exit();
+	} else {
+		header("Location: http://" . $_SERVER["SERVER_NAME"]);
+		exit();
+	}
 } else {
-	header("Location: http://" . $_SERVER["SERVER_NAME"] . "/index.php");
+	header("Location: http://" . $_SERVER["SERVER_NAME"]);
+	exit();
 }
-include $_SERVER["DOCUMENT_ROOT"] . "/includes/overall/top.php";
-if (isset($errors)) {
-	output_errors($errors);
-}
-include $_SERVER["DOCUMENT_ROOT"] . "/includes/overall/bottom.php" ;
 ?>

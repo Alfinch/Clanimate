@@ -852,6 +852,10 @@ ul, ol {
 	.widget p {
 		margin-bottom: 4px;
 	}
+	.widget p.small {
+		font-size: 12px;
+		text-align: justify;
+	}
 	.widget a {
 		text-decoration: underline;
 	}
@@ -860,6 +864,27 @@ ul, ol {
 		margin-bottom: 8px;
 		border-color: #999;
 	}
+		.errors {
+			background: #FFF;
+			margin: 8px 0;
+			padding: 8px 8px 0;
+			color: #f33;
+			font-size: 12px;
+			font-weight: bold;
+			border: 2px solid #F33;
+		}
+		.errors li {
+			padding-bottom: 8px;
+		}
+		.notification {
+			background: #FFF;
+			margin: 8px 0;
+			padding: 8px;
+			color: #333;
+			font-size: 12px;
+			font-weight: bold;
+			border: 2px solid #999;
+		}
 #tooltip {
 	background: #333;
 	padding: 8px 18px;
@@ -1041,17 +1066,6 @@ ul, ol {
 	transform: translateY(-50%);
 	-ms-transform: translateY(-50%);
 	-webkit-transform: translateY(-50%);
-}
-.errors {
-	background: #ccc;
-	margin: 8px 0;
-	padding: 8px 8px 0;
-	color: #f33;
-	font-size: 12px;
-	font-weight: bold;
-}
-.errors li {
-	padding-bottom: 8px;
 }
 .hidden {
 	display: none;

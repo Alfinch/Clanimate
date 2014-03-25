@@ -7,9 +7,9 @@
             <Folder name="functions">
                 <File name="C:\Wamp\www\core\functions\general.php" />
                 <File name="C:\Wamp\www\core\functions\hash.php" />
-                <File name="C:\Wamp\www\core\functions\login.php" />
                 <File name="C:\Wamp\www\core\functions\logout.php" />
                 <File name="C:\Wamp\www\core\functions\users.php" />
+                <File name="C:\Wamp\www\core\functions\login.php" />
             </Folder>
             <File name="C:\Wamp\www\core\init.php" />
         </Folder>
@@ -44,6 +44,8 @@
                 <File name="C:\Wamp\www\includes\widgets\register.php" />
                 <File name="C:\Wamp\www\includes\widgets\usercount.php" />
                 <File name="C:\Wamp\www\includes\widgets\userinfo.php" />
+                <File name="C:\Wamp\www\includes\widgets\change_password.php" />
+                <File name="C:\Wamp\www\includes\widgets\change_email.php" />
             </Folder>
         </Folder>
         <Folder name="js">

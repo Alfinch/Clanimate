@@ -27,7 +27,7 @@ function register_user($data) {
 function total_users() {
 	$queryString = "select count(`id`) from `users` where `active` = 1";
 	$query = mysql_query($queryString);
-	$result = mysql_result($query, 0);
+	$result = $query ? mysql_result($query, 0) : 0;
 	return $result;
 }
 
@@ -48,7 +48,7 @@ function user_exists($username) {
 	$username = sanitize($username);
 	$queryString = "select count(`id`) from `users` where `username` = '$username'";
 	$query = mysql_query($queryString);
-	$result = mysql_result($query, 0);
+	$result = $query ? mysql_result($query, 0) : 0;
 	return $result === "1";
 }
 
@@ -56,7 +56,7 @@ function email_exists($email) {
 	$email = sanitize($email);
 	$queryString = "select count(`id`) from `users` where `email` = '$email'";
 	$query = mysql_query($queryString);
-	$result = mysql_result($query, 0);
+	$result = $query ? mysql_result($query, 0) : 0;
 	return $result === "1";
 }
 
