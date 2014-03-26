@@ -21,11 +21,13 @@ if (!empty($_POST)) {
 	}
 	if (empty($errors)) {
 		change_password($_SESSION["id"], trim($_POST['password']));
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "?change-password=success");
+		$alerts[] = "You have successfully changed your password.";
+		$_SESSION['alerts'] = $alerts;
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 		exit();
 	} else {
 		$_SESSION["errors"] = $errors;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "?change-password");
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 		exit();
 	}
 } else {

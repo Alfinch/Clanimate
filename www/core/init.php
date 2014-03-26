@@ -15,19 +15,6 @@ if (logged_in()) {
 	}
 }
 
-if (isset($_GET['from']) && !empty($_GET['from'])) {
-	$to = "?to=" . $_GET['from'];
-} else if (isset($page)) {
-	if ($page === "deny") $page = "index";
-	$to = "?to=" . $page;
-} else {
-	$to = "";
-}
-if (isset($page)) {
-	$from = "&from=" . $page;
-} else {
-	$from = "";
-}
-
 $errors = array();
+$alerts = array();
 ?>

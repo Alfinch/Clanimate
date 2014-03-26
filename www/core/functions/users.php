@@ -9,9 +9,37 @@ function activate($email, $email_code) {
 	return mysql_query($queryString);
 }
 
-function change_email($id, $email) {
-	$queryString = "update `users` set `email` = '$email' where `id` = $id";
+function change_email($username, $email_code) {
+	$username   = mysql_real_escape_string($username);
+	$email_code = mysql_real_escape_string($email_code);
+	
+	$queryString = "update `users` set `email` = `new_email` where `username` = '$username' and `email_code` = '$email_code'";
 	$query = mysql_query($queryString);
+	return (mysql_affected_rows() > 0);
+}
+
+function confirm_email($id, $email) {
+	$id = (int)$id;
+	$email = mysql_real_escape_string($email);
+	$email_code = md5($_POST['username'] + microtime());
+	
+	$queryString = "update `users` set `new_email` = '$email', `email_code` = '$email_code' where `id` = $id";
+	$query = mysql_query($queryString);
+	
+	$queryString = "select `username` from `users` where `id` = $id";
+	$query = mysql_query($queryString);
+	$username = mysql_result($query, 0);
+	
+$email_body = <<<EOD
+<html><body style="font-family: sans-serif;">
+<p>Hello, {$username}!</p>
+<p>You recently requested to change your email address to {$email} on Clanimate. Click the link below to confirm this.</p>
+<p><a href="http://www.clanimate.com/actions/change_email.php?username={$username}&email_code={$email_code}">Confirm you new email address</a></p>
+<p>Regards,<br>Alfie Woodland</p>
+</html></body>
+EOD;
+	
+	email($email, "Confirm change of email on Clanimate", $email_body);
 }
 
 function change_password($id, $password) {
@@ -35,7 +63,7 @@ function register_user($data) {
 	$query = mysql_query($queryString);
 	
 $email_body = <<<EOD
-<html><body style="font-family: 'Open Sans', sans-serif;">
+<html><body style="font-family: sans-serif;">
 <p>Hello, {$data['username']}!</p>
 <p>Thank you for registering with Clanimate. Click the link below to activate your account and begin creating and sharing animations.</p>
 <p><a href="http://www.clanimate.com/actions/activate.php?email={$data['email']}&email_code={$data['email_code']}">Activate your account</a></p>

@@ -34,11 +34,19 @@ function sanitize($data) {
 	return mysql_real_escape_string($data);
 }
 
+function output_alerts($alerts) {
+	$list = "";
+	foreach($alerts as $alert) {
+		$list .= "<li>" . $alert . "</li>\n";
+	}
+	echo "<div class=\"widget\"><ul class=\"alerts\">" . $list . "</ul></div>";
+}
+
 function output_errors($errors) {
 	$list = "";
 	foreach($errors as $error) {
-		$list .= "<li class=\"error\">" . $error . "</li>\n";
+		$list .= "<li>" . $error . "</li>\n";
 	}
-	echo "<ol class=\"errors\">" . $list . "</ol>";
+	echo "<div class=\"widget\"><ul class=\"errors\">" . $list . "</ul></div>";
 }
 ?>

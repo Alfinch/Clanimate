@@ -17,19 +17,21 @@ if (empty($_POST) === false) {
 		}
 	
 		$login = login($username, $password);
-		if (!$login) {
-			$errors[] = "Incorrect username or password.";
-		} else {
+		if ($login) {
+			$alerts[] = "You have successfully logged in as " . $username . "!";
+			
 			$_SESSION['id'] = $login;
-			$to = (isset($_GET['to']) && !empty($_GET['to'])) ? "/" . $_GET['to'] . ".php" : "";
-			header("Location: http://" . $_SERVER["SERVER_NAME"] . $to);
+			$_SESSION['alerts'] = $alerts;
+			header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 			exit();
+		} else {
+			$errors[] = "Incorrect username or password.";
 		}
 	}
 	
 	$_SESSION["errors"] = $errors;
 	if (isset($_GET['from']) && !empty($_GET['from'])) {
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_GET['from'] . ".php?from=" . $_GET['to']);
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 		exit();
 	} else {
 		header("Location: http://" . $_SERVER["SERVER_NAME"]);

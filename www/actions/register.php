@@ -34,11 +34,14 @@ if (!empty($_POST)) {
 			'email'      => $_POST['email'],
 		);
 		register_user($register_data);
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "?register=success");
+		$alerts[] = "You have successfully registered as " . $_POST['username'] . "!";
+		$alerts[] = "You will receive an email shortly allowing you to activate your account.";
+		$_SESSION['alerts'] = $alerts;
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 		exit();
 	} else {
 		$_SESSION["errors"] = $errors;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "?register");
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
 		exit();
 	}
 } else {

@@ -1,7 +1,7 @@
 <?php
-$page = "profile";
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 protect_page($page);
+$_SESSION['page'] = "profile";
 include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="middleSection" class="page">

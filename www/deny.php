@@ -1,5 +1,4 @@
 <?php
-$page = "deny";
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>

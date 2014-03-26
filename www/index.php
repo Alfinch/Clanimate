@@ -1,6 +1,6 @@
 <?php
-$page = "index";
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
+$_SESSION["page"] = "index";
 include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="middleSection" class="page">
