@@ -181,7 +181,10 @@ window.onload = function() {
     
     // Window resize handler
     window.addEventListener("resize", function() {
-        ui.stage.update();
+        ui.stage
+			.update();
+		ui.timeline.scrollbars
+			.update_horizontal();
     });
     
     // Tooltips

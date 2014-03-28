@@ -73,11 +73,11 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 <div id="bottomSection">
 	<div id="addLayer">+</div>
 	<div id="layerControls"></div>
-	<div id="timeline">
+	<div id="headerCells">
 		<div id="indexCells"></div>
 		<div id="pointerCells"></div>
-		<div id="layerRows"></div>
 	</div>
+	<div id="layerRows"></div>
 	<div id="timelineHScroll"><div></div></div>
 	<div id="setFrames"><span>+</span></div>
 	<div id="timelineVScroll"><div></div></div>

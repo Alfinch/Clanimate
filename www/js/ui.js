@@ -168,6 +168,121 @@ ui = (function() {
         selectedCell     = null,
         selectedLayer    = null,
         
+		// Private objects
+		
+		// Scrollbars
+		
+		scrollbars = (function() {
+            var o = {},
+			
+			// Private variables
+			
+			headerCellsElement = document.getElementById("headerCells"),
+			layerRowsElement = document.getElementById("layerRows"),
+			layerControlsElement = document.getElementById("layerControls"),
+			hBar  = document.getElementById("timelineHScroll"),
+			vBar  = document.getElementById("timelineVScroll"),
+			hGrip = hBar.children[0],
+			vGrip = vBar.children[0],
+			
+			// Public functions
+			
+			update_horizontal = function() {
+				hGrip.style.width = (
+					layerRowsElement.clientWidth *
+					hBar.offsetWidth /
+					layerRowsElement.scrollWidth
+				) + "px";
+				hGrip.style.left  = (
+					layerRowsElement.scrollLeft *
+					hBar.offsetWidth /
+					layerRowsElement.scrollWidth
+				) + "px";
+			},
+			
+			update_vertical = function() {
+				vGrip.style.height = (
+					layerRowsElement.clientHeight *
+					vBar.offsetHeight /
+					layerRowsElement.scrollHeight
+				) + "px";
+				vGrip.style.top = (
+					layerRowsElement.scrollTop *
+					vBar.offsetHeight /
+					layerRowsElement.scrollHeight
+				) + "px";
+			};
+			
+			// Setup
+			
+			hGrip.addEventListener("mousedown", function(e) {
+				var downX = e.clientX,
+					downS = parseFloat(getComputedStyle(hGrip)['left']),
+					
+				mouse_move_handler = function(e) {
+					var dx   = e.clientX - downX,
+						left = downS + dx,
+						lMax = hBar.offsetWidth - hGrip.offsetWidth;
+					
+					left = left < 0 ? 0 : left > lMax ? lMax : left;
+					hGrip.style.left = left + "px";
+					
+					headerCellsElement.scrollLeft =
+					layerRowsElement.scrollLeft =
+						layerRowsElement.scrollWidth *
+						parseFloat(getComputedStyle(hGrip)['left']) /
+						hBar.offsetWidth;
+				},
+				
+				mouse_up_handler = function(e) {
+					window.removeEventListener("mousemove", mouse_move_handler);
+					window.removeEventListener("mouseup", mouse_up_handler);
+				};
+				
+				e.stopPropagation();
+				
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+			});
+			
+			vGrip.addEventListener("mousedown", function(e) {
+				var downY = e.clientY,
+					downS = parseFloat(getComputedStyle(vGrip)['top']),
+					
+				mouse_move_handler = function(e) {
+					var dy   = e.clientY - downY,
+						top  = downS + dy,
+						tMax = vBar.offsetHeight - vGrip.offsetHeight;
+					
+					top = top < 0 ? 0 : top > tMax ? tMax : top;
+					vGrip.style.top = top + "px";
+					
+					layerControlsElement.scrollTop =
+					layerRowsElement.scrollTop =
+						layerRowsElement.scrollHeight *
+						parseFloat(getComputedStyle(vGrip)['top']) /
+						vBar.offsetHeight;
+				},
+				
+				mouse_up_handler = function(e) {
+					window.removeEventListener("mousemove", mouse_move_handler);
+					window.removeEventListener("mouseup", mouse_up_handler);
+				};
+				
+				e.stopPropagation();
+				
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+			});
+			
+			// Assignment
+			
+			o.update_vertical   = update_vertical;
+			o.update_horizontal = update_horizontal;
+			
+			return o;
+		}()),
+		
         // Private functions
         
         // Creates new frame index cell on the timeline
@@ -457,17 +572,8 @@ ui = (function() {
                 hideButton.classList.remove("unhideLayer");
                 hideButton.classList.add("hideLayer");
             };
-            
-            o.defocus  = defocus;
-            o.deselect = deselect;
-            o.focus    = focus;
-            o.get_cell = get_cell;
-            o.hide     = hide;
-            o.new_cell = new_cell;
-            o.remove   = remove;
-            o.rename   = rename;
-            o.select   = select;
-            o.unhide   = unhide;
+			
+			// Setup
             
             // Create html elements
             
@@ -538,14 +644,26 @@ ui = (function() {
             // Add html elements to dom
             layerControls.insertBefore(layerControl, layerControls.firstChild);
             
-            // Add newLayer object to layers array
-            layers[layerIndex] = o;
-            
             // Select this new layer
             select();
             
             set_timeline_height();
             stage.update();
+			
+			// Assignment
+            
+            o.defocus  = defocus;
+            o.deselect = deselect;
+            o.focus    = focus;
+            o.get_cell = get_cell;
+            o.hide     = hide;
+            o.new_cell = new_cell;
+            o.remove   = remove;
+            o.rename   = rename;
+            o.select   = select;
+            o.unhide   = unhide;
+            
+            layers[layerIndex] = o;
         },
         
         // Sets the number of frames in the animation
@@ -576,7 +694,10 @@ ui = (function() {
             }
             frames = value;
         };
+		
+		// Assignment
         
+		o.scrollbars    = scrollbars;
         o.get_layer     = get_layer;
         o.get_top_layer = get_top_layer;
         o.new_layer     = new_layer;

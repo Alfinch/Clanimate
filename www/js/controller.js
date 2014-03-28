@@ -46,6 +46,8 @@ controller = (function(){
                 ui.timeline
                     .get_layer(layerIndex)
                     .remove();
+				ui.timeline.scrollbars
+					.update_vertical();
                 ui.stage
                     .update();
             }
@@ -109,6 +111,8 @@ controller = (function(){
             var f = data.get_target_frame();
                 data.rename_layer(layerIndex, input);
                 ui.timeline.new_layer(layerIndex, input);
+				ui.timeline.scrollbars
+					.update_vertical();
                 ui.timeline
                     .get_layer(layerIndex)
                     .get_cell(f)
@@ -259,6 +263,8 @@ controller = (function(){
                         callback: function() {
                             data.set_frames(1);
                             ui.timeline.set_frames(1);
+							ui.timeline.scrollbars
+								.update_horizontal();
                         }
                     },
                     button2: {
@@ -273,6 +279,8 @@ controller = (function(){
                         callback: function() {
                             data.set_frames(5000);
                             ui.timeline.set_frames(5000);
+							ui.timeline.scrollbars
+								.update_horizontal();
                         }
                     },
                     button2: {
@@ -282,6 +290,8 @@ controller = (function(){
             } else {
                 data.set_frames(frames);
                 ui.timeline.set_frames(frames);
+				ui.timeline.scrollbars
+					.update_horizontal();
             }
         };
         ui.prompt({

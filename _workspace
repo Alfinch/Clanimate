@@ -7,6 +7,7 @@
             <File name="C:\Wamp\www\actions\change_password.php" />
             <File name="C:\Wamp\www\actions\activate.php" />
             <File name="C:\Wamp\www\actions\logout.php" />
+            <File name="C:\Wamp\www\actions\recover_account.php" />
         </Folder>
         <Folder name="core">
             <Folder name="database">
@@ -78,7 +79,6 @@
             <File name="C:\Wamp\www\js\paper.js" />
             <File name="C:\Wamp\www\js\site.js" />
             <File name="C:\Wamp\www\js\ui.js" />
-            <File name="C:\Wamp\www\js\uservoice.php" />
         </Folder>
         <File name="C:\Wamp\www\deny.php" />
         <File name="C:\Wamp\www\editor.php" />

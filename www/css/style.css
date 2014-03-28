@@ -503,12 +503,20 @@ ul, ol {
 				}
 			/* .layerControl */
 		/* #layerControls */
-		#timeline {
+		#headerCells {
 			position: absolute;
 			overflow: hidden;
 			top: 2px;
 			right: 42px;
-			bottom: 22px;
+			height: 40px;
+			left: 202px;
+		}
+		#layerRows {
+			position: absolute;
+			overflow: hidden;
+			top: 42px;
+			right: 42px;
+			bottom: 20px;
 			left: 202px;
 		}
 			#indexCells,
