@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 
-if (!empty($_POST)) {
+if (!empty($_POST) && logged_in()) {
 	foreach ($_POST as $key=>$value) {
 		if (empty($value)) {
 			$errors[] = "All fields are required.";
@@ -23,15 +23,15 @@ if (!empty($_POST)) {
 		change_password($_SESSION["id"], trim($_POST['password']));
 		$alerts[] = "You have successfully changed your password.";
 		$_SESSION['alerts'] = $alerts;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $user_data['username']);
 		exit();
 	} else {
 		$_SESSION["errors"] = $errors;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $user_data['username']);
 		exit();
 	}
 } else {
-	header("Location: http://" . $_SERVER["SERVER_NAME"]);
+	go_home();
 	exit();
 }
 ?>

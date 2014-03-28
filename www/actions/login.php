@@ -1,5 +1,6 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
+logged_in_redirect();
 
 if (empty($_POST) === false) {
 	$username = $_POST["username"];
@@ -22,7 +23,7 @@ if (empty($_POST) === false) {
 			
 			$_SESSION['id'] = $login;
 			$_SESSION['alerts'] = $alerts;
-			header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+			go_to_page($_SESSION['page'], $username);
 			exit();
 		} else {
 			$errors[] = "Incorrect username or password.";
@@ -31,14 +32,14 @@ if (empty($_POST) === false) {
 	
 	$_SESSION["errors"] = $errors;
 	if (isset($_GET['from']) && !empty($_GET['from'])) {
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $username);
 		exit();
 	} else {
-		header("Location: http://" . $_SERVER["SERVER_NAME"]);
+		go_home();
 		exit();
 	}
 } else {
-	header("Location: http://" . $_SERVER["SERVER_NAME"]);
+	go_home();
 	exit();
 }
 ?>

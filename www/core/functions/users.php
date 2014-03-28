@@ -1,17 +1,42 @@
 <?php
 require_once("hash.php");
 
+function recover_account($email) {
+	$email = sanitize($email);
+	$password = substr(md5(microtime()), 0, 8);
+	$hash = create_hash($password);
+	
+	$queryString = "select `username` from `users` where `email` = '$email'";
+	$query = mysql_query($queryString);
+	$username = mysql_result($query, 0);
+	
+	$queryString = "update `users` set `hash` = '$hash' where `email` = '$email'";
+	$query = mysql_query($queryString);
+	
+	$email_body = <<<EOD
+<html><body style="font-family: sans-serif;">
+<p>Hello {$username}!,</p>
+<p>You recently requested to recover your account on Clanimate.</p>
+<p>Your username is <b>{$username}</b>.</p>
+<p>Your password is <b>{$password}</b>.</p>
+<p>Regards,<br>Alfie Woodland</p>
+</html></body>
+EOD;
+	
+	email($email, "Clanimate forgotten username", $email_body);
+}
+
 function activate($email, $email_code) {
-	$email      = mysql_real_escape_string($email);
-	$email_code = mysql_real_escape_string($email_code);
+	$email      = sanitize($email);
+	$email_code = sanitize($email_code);
 	
 	$queryString = "update `users` set `active` = 1 where `email` = '$email' and `email_code` = '$email_code' and `active` = 0";
 	return mysql_query($queryString);
 }
 
 function change_email($username, $email_code) {
-	$username   = mysql_real_escape_string($username);
-	$email_code = mysql_real_escape_string($email_code);
+	$username   = sanitize($username);
+	$email_code = sanitize($email_code);
 	
 	$queryString = "update `users` set `email` = `new_email` where `username` = '$username' and `email_code` = '$email_code'";
 	$query = mysql_query($queryString);
@@ -20,7 +45,7 @@ function change_email($username, $email_code) {
 
 function confirm_email($id, $email) {
 	$id = (int)$id;
-	$email = mysql_real_escape_string($email);
+	$email = sanitize($email);
 	$email_code = md5($_POST['username'] + microtime());
 	
 	$queryString = "update `users` set `new_email` = '$email', `email_code` = '$email_code' where `id` = $id";
@@ -117,6 +142,26 @@ function user_active($username) {
 	$query = mysql_query($queryString);
 	$result = mysql_result($query, 0);
 	return $result === "1";
+}
+
+function id_from_username($username) {
+	$username = sanitize($username);
+	$queryString = "select `id` from `users` where `username` = '$username'";
+	$query = mysql_query($queryString);
+	if ($query) {
+		$id = mysql_result($query, 0, 0);
+		return $id;
+	}
+}
+
+function id_from_email($email) {
+	$email = sanitize($email);
+	$queryString = "select `id` from `users` where `email` = '$email'";
+	$query = mysql_query($queryString);
+	if ($query) {
+		$id = mysql_result($query, 0, 0);
+		return $id;
+	}
 }
 
 function login($username, $password) {

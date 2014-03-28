@@ -8,6 +8,10 @@
 		<input type="submit" value="Log In">
 	</form>
 	<form action="" method="post">
+		<input type="hidden" name="widget" value="recover_account">
+		<input class="secondary" type="submit" value="Recover Account">
+	</form>
+	<form action="" method="post">
 		<input type="hidden" name="widget" value="register">
 		<input class="secondary" type="submit" value="Register">
 	</form>

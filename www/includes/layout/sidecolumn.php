@@ -16,9 +16,12 @@
 		} else {
 			include $_SERVER['DOCUMENT_ROOT'] . "/includes/widgets/userinfo.php";
 		}
+		include $_SERVER['DOCUMENT_ROOT'] . "/includes/widgets/uservoice.php";
 	} else {
 		if (isset($_POST['widget']) && $_POST['widget'] === "register") {
 			include $_SERVER['DOCUMENT_ROOT'] . "/includes/widgets/register.php";
+		} else if (isset($_POST['widget']) && $_POST['widget'] === "recover_account") {
+			include $_SERVER['DOCUMENT_ROOT'] . "/includes/widgets/recover_account.php";
 		} else {
 			include $_SERVER['DOCUMENT_ROOT'] . "/includes/widgets/login.php";
 		}

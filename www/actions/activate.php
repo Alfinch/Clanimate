@@ -1,6 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 logged_in_redirect();
+
 $target = (isset($_SESSION["page"]) ? "/" . $_SESSION["page"] . ".php" : "");
 
 if (isset($_GET["email"], $_GET["email_code"])) {
@@ -19,7 +20,7 @@ if (isset($_GET["email"], $_GET["email_code"])) {
 	}
 	
 	$_SESSION["errors"] = $errors;
-	header("Location: http://" . $_SERVER["SERVER_NAME"] . $target);
+	go_to_page($_SESSION['page'], $user_data['username']);
 	exit();
 	
 } else {

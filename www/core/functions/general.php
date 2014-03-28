@@ -18,20 +18,19 @@ function logged_in_redirect() {
 	}
 }
 
-function protect_page($page) {
+function protect_page() {
 	if (!logged_in()) {
-		$target = "http://" . $_SERVER["SERVER_NAME"] . "/deny.php?from=" . $page;
-		header("Location: " . $target);
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/deny.php");
 		exit();
 	}
 }
 
 function array_sanitize(&$item) {
-	$item = mysql_real_escape_string($item);
+	$item = sanitize($item);
 }
 
 function sanitize($data) {
-	return mysql_real_escape_string($data);
+	return htmlentities(strip_tags(mysql_real_escape_string($data)));
 }
 
 function output_alerts($alerts) {
@@ -48,5 +47,22 @@ function output_errors($errors) {
 		$list .= "<li>" . $error . "</li>\n";
 	}
 	echo "<div class=\"widget\"><ul class=\"errors\">" . $list . "</ul></div>";
+}
+
+function go_home() {
+	header("Location: http://" . $_SERVER["SERVER_NAME"]);
+}
+
+function go_to_page($page, $username) {
+	if (empty($page)) {
+		go_home();
+	} else {
+		if ($page === 'profile' && isset($username)) {
+			$page = $username;
+		} else {
+			$page = $page . ".php";
+		}
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $page);
+	}
 }
 ?>

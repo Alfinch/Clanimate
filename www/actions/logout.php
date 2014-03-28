@@ -1,5 +1,5 @@
 <?php
 	session_start();
 	session_destroy();
-	header("Location: http://" . $_SERVER["SERVER_NAME"]  . "/" . $_SESSION["page"] . ".php");
+	header("Location: http://" . $_SERVER["SERVER_NAME"]);
 ?>

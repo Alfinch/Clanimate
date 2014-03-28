@@ -1,5 +1,6 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
+logged_in_redirect();
 
 if (!empty($_POST)) {
 	foreach ($_POST as $key=>$value) {
@@ -24,7 +25,7 @@ if (!empty($_POST)) {
 		if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$errors[] = "A valid email address is required.";
 		} else if (email_exists($_POST['email'])) {
-			$errors[] = "The email address '" . $_POST['email'] . "' is already in use.";
+			$errors[] = "The email address " . $_POST['email'] . " is already in use.";
 		}
 	}
 	if(empty($errors)) {
@@ -37,15 +38,15 @@ if (!empty($_POST)) {
 		$alerts[] = "You have successfully registered as " . $_POST['username'] . "!";
 		$alerts[] = "You will receive an email shortly allowing you to activate your account.";
 		$_SESSION['alerts'] = $alerts;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $_POST['username']);
 		exit();
 	} else {
 		$_SESSION["errors"] = $errors;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $_POST['username']);
 		exit();
 	}
 } else {
-	header("Location: http://" . $_SERVER["SERVER_NAME"]);
+	go_home();
 	exit();
 }
 ?>

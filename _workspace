@@ -1,5 +1,13 @@
 <NotepadPlus>
     <Project name="Clanimate">
+        <Folder name="actions">
+            <File name="C:\Wamp\www\actions\login.php" />
+            <File name="C:\Wamp\www\actions\register.php" />
+            <File name="C:\Wamp\www\actions\change_email.php" />
+            <File name="C:\Wamp\www\actions\change_password.php" />
+            <File name="C:\Wamp\www\actions\activate.php" />
+            <File name="C:\Wamp\www\actions\logout.php" />
+        </Folder>
         <Folder name="core">
             <Folder name="database">
                 <File name="C:\Wamp\www\core\database\connect.php" />
@@ -7,9 +15,7 @@
             <Folder name="functions">
                 <File name="C:\Wamp\www\core\functions\general.php" />
                 <File name="C:\Wamp\www\core\functions\hash.php" />
-                <File name="C:\Wamp\www\core\functions\logout.php" />
                 <File name="C:\Wamp\www\core\functions\users.php" />
-                <File name="C:\Wamp\www\core\functions\login.php" />
             </Folder>
             <File name="C:\Wamp\www\core\init.php" />
         </Folder>
@@ -17,35 +23,53 @@
             <File name="C:\Wamp\www\css\style.css" />
         </Folder>
         <Folder name="img">
-            <File name="C:\Wamp\www\img\favicon.png" />
             <Folder name="svg">
-                <File name="www\img\svg\brush_icon.svg" />
-                <File name="www\img\svg\circle_icon.svg" />
-                <File name="www\img\svg\line_icon.svg" />
-                <File name="www\img\svg\logo.svg" />
-                <File name="www\img\svg\manipulate_icon.svg" />
-                <File name="www\img\svg\pan_icon.svg" />
-                <File name="www\img\svg\square_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\brush_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\circle_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\eraser_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\line_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\load_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\logo.svg" />
+                <File name="C:\Wamp\www\img\svg\manipulate_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\new_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\pan_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\pause_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\play_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\publish_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\redo_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\reset_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\save_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\settings_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\square_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\undo_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\zoom_actual_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\zoom_extents_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\zoom_selection_icon.svg" />
+                <File name="C:\Wamp\www\img\svg\zoom_stage_icon.svg" />
             </Folder>
+            <File name="C:\Wamp\www\img\favicon.png" />
+            <File name="C:\Wamp\www\img\Thumbs.db" />
         </Folder>
         <Folder name="includes">
             <Folder name="layout">
+                <File name="C:\Wamp\www\includes\layout\editor_scripts.php" />
                 <File name="C:\Wamp\www\includes\layout\head.php" />
                 <File name="C:\Wamp\www\includes\layout\header.php" />
                 <File name="C:\Wamp\www\includes\layout\menu.php" />
                 <File name="C:\Wamp\www\includes\layout\sidecolumn.php" />
-                <File name="C:\Wamp\www\includes\layout\editor_scripts.php" />
             </Folder>
             <Folder name="overall">
                 <File name="C:\Wamp\www\includes\overall\top.php" />
             </Folder>
             <Folder name="widgets">
+                <File name="C:\Wamp\www\includes\widgets\change_email.php" />
+                <File name="C:\Wamp\www\includes\widgets\change_password.php" />
                 <File name="C:\Wamp\www\includes\widgets\login.php" />
                 <File name="C:\Wamp\www\includes\widgets\register.php" />
-                <File name="C:\Wamp\www\includes\widgets\usercount.php" />
                 <File name="C:\Wamp\www\includes\widgets\userinfo.php" />
-                <File name="C:\Wamp\www\includes\widgets\change_password.php" />
-                <File name="C:\Wamp\www\includes\widgets\change_email.php" />
+                <File name="C:\Wamp\www\includes\widgets\uservoice.php" />
+                <File name="C:\Wamp\www\includes\widgets\recover_password.php" />
+                <File name="C:\Wamp\www\includes\widgets\recover_username.php" />
             </Folder>
         </Folder>
         <Folder name="js">
@@ -54,6 +78,7 @@
             <File name="C:\Wamp\www\js\paper.js" />
             <File name="C:\Wamp\www\js\site.js" />
             <File name="C:\Wamp\www\js\ui.js" />
+            <File name="C:\Wamp\www\js\uservoice.php" />
         </Folder>
         <File name="C:\Wamp\www\deny.php" />
         <File name="C:\Wamp\www\editor.php" />

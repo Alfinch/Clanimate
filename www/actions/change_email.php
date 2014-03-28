@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 
-if (!empty($_POST)) {
+if (!empty($_POST) && logged_in()) {
 	foreach ($_POST as $key=>$value) {
 		if (empty($value)) {
 			$errors[] = "All fields are required.";
@@ -14,7 +14,7 @@ if (!empty($_POST)) {
 		} else if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
 			$errors[] = "A valid email address is required.";
 		} else if (email_exists(trim($_POST['email']))) {
-			$errors[] = $user_data['email'] . " is already a registered email address.";
+			$errors[] = "The email address " . $_POST['email'] . " is already in use.";
 		}
 	}
 	if (empty($errors)) {
@@ -22,11 +22,11 @@ if (!empty($_POST)) {
 		$alerts[] = "You have requested your email be changed to " . trim($_POST['email']) . ".";
 		$alerts[] = "You will receive an email shortly allowing you to confirm this.";
 		$_SESSION['alerts'] = $alerts;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $user_data['username']);
 		exit();
 	} else {
 		$_SESSION["errors"] = $errors;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $_SESSION["page"] . ".php");
+		go_to_page($_SESSION['page'], $user_data['username']);
 		exit();
 	}
 } else if (isset($_GET['username'], $_GET['email_code'])) {
@@ -38,14 +38,15 @@ if (!empty($_POST)) {
 	} else {
 		$alerts[] = "You have successfully changed your email address.";
 		$_SESSION['alerts'] = $alerts;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . $target);
+		go_home();
 		exit();
 	}
 	
 	$_SESSION["errors"] = $errors;
-	header("Location: http://" . $_SERVER["SERVER_NAME"] . $target);
+	go_home();
+	exit();
+} else {
+	go_home();
 	exit();
 }
-header("Location: http://" . $_SERVER["SERVER_NAME"]);
-exit();
 ?>
