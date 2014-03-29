@@ -1,125 +1,126 @@
 Clanimate object model
 
 data
-  
-  delete_group()
-  delete_layer(int layer)
-  from_JSON()
-  get_frame_num()
-  get_group_frame()
-  get_layer_name(int layer)
-  get_layer_num()
-  get_target_frame()
-  get_target_layer()
-  hide_layer(int layer)
-  is_layer_visible(int layer)
-  new_group()
-  new_layer(string name)
-  redo()
-  rename_layer(int layer, string name)
-  set_frames(int value)
-  target_cell(int layer, int frame)
-  to_JSON()
-  undo()
-  unhide_layer(int layer)
+
+  bool             delete_group      (int layer, int frame)
+  bool             delete_layer      (int layer)
+  bool             from_JSON         (String json)
+  Ractangle | bool get_frame_extents ()
+  int              get_frame_num     ()
+  int              get_group_frame   ()
+  String | bool    get_layer_name    (int layer)
+  int              get_layer_num     ()
+  int              get_target_frame  ()
+  int              get_target_layer  ()
+  bool             hide_layer        (int layer)
+  bool             is_layer_visible  (int layer)
+  bool             new_group         (int layer, int frame)
+  int              new_layer         (String name)
+  bool             redo              ()
+  bool             rename_layer      (int index, String name)
+  void             set_frames        (int value)
+  bool             target_cell       (int layer, int frame)
+  String           to_JSON           ()
+  bool             undo              ()
+  bool             unhide_layer      (int layer)
 
   settings
-
-    get(string key)
-    set(string key, any value)
+  
+    mixed get (String key)
+    bool  set (String key, mixed value)
 
   tools
-
-    getDefault()
-    set(string id)
+  
+    String getDefault ()
+    bool   set        (String id)
 
 ui
 
-  prompt(object spec)
-    message: string
-    [input: bool]
-    [placeholder: string]
-    button1: object
-      name: string
-      [callback: function]
-    [button2: object]
-      name: string
-      [callback: function]
-
-  tooltip
-
-    set(object spec)
-      element: element
-      message: string
-      position: string ["above", "right", "below", "left"]
-      [target: element]
-
-    remove(element element)
-
-  slider(object spec)
-    parent: element
-    child: element
-    upper: float
-    [lower: float]
-	[initial: float]
-    callback: function
-
-  toolOptions
-
-    toggle()
+  void prompt (Object spec)
+    String message
+    bool   input       optional
+    String placeholder optional
+    Object button1
+      String   name
+      Function callback optional
+    Object button2     optional
+      String   name
+      Function callback optional
 
   stage
 
-	center(int x, int y);
-    setCursor(string style)
-    update()
+	void center    (int x, int y);
+    bool setCursor (String["cursor"|"draw"|"grab"|"grabbing"|"none"|"pointer"] style)
+    void update    ()
+	void zoom      (float factor)
 
   timeline
     
-    get_layer(int layer)
-    get_top_layer()
-    new_layer(int index, string name)
-    set_frames(int value)
+    Layer | bool get_layer     (int index)
+    Layer        get_top_layer ()
+    void         new_layer     (int index, String name)
+    void         set_frames    (int value)
+	
+	scrollbars
+	
+	  void update_horizontal ()
+	  void update_vertical   ()
 
     layer
 
-      deselect()
-      get_cell(int frameIndex)
-      hide()
-      new_cell()
-	remove()
-      rename(string name)
-      select()
-      unhide()
+      void defocus  ()
+      void deselect ()
+	  void focus    ()
+      Cell get_cell (int index)
+      void hide     ()
+      void new_cell ()
+	  void remove   ()
+      void rename   (String name)
+      void select   ()
+      void unhide   ()
 
       cell
+	  
+        void defocus       ()
+        void deselect      ()
+		void focus         ()
+        void remove        ()
+        void select        ()
+        void set_empty     ()
+        void set_empty_key ()
+        void set_key       ()
 
-        deselect()
-        remove()
-        select()
-        set_empty()
-        set_empty_key()
-        set_key()
+  toolOptions
+
+    void toggle ()
+	
+  tooltip
+
+    void set (Object spec)
+      element  Element
+      message  String
+      position String["above"|"right"|"below"|"left"]
+      target   Element                                optional
+
+    void remove (Element element)
 
 controller
 
-  delete_keycell()
-  delete_layer(int layerIndex)
-  draw()
-  load()
-  new_keycell()
-  new_layer()
-  play()
-  pause()
-  redo()
-  rename_layer()
-  save()
-  select_cell(int layerIndex, int frameIndex)
-  select_frame(int frameIndex)
-  select_layer(int layerIndex)
-  set_color(string color)
-  set_frames(int value)
-  set_tool(string toolId)
-  toggle_fullscreen()
-  toggle_layer(int layerIndex)
-  undo()
+  void delete_keycell    ()
+  void delete_layer      (int layerIndex)
+  void draw              ()
+  void new_keycell       ()
+  void new_layer         ()
+  void play              ()
+  void pause             ()
+  void redo              ()
+  void rename_layer      ()
+  void select_cell       (int layerIndex, int frameIndex)
+  void select_frame      (int frameIndex)
+  void select_layer      (int layerIndex)
+  void set_color         (String color)
+  void set_frames        (int value)
+  void set_tool          (String toolId)
+  void toggle_fullscreen ()
+  void toggle_layer      (int layerIndex)
+  void undo              ()

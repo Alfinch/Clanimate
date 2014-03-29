@@ -10,6 +10,33 @@ controller = (function(){
     tickTimer,
     
     // Public functions
+	
+	// Removes everything from a keycell
+	clear_keycell = function() {
+        var l = data.get_target_layer(),
+            n = data.get_layer_name(l),
+            f = data.get_target_frame(),
+        callback = function() {
+            if (data.delete_group(l, f)) {
+                ui.timeline
+                    .get_layer(l)
+                    .get_cell(f)
+                    .set_empty_key();
+                ui.stage
+                    .update();
+            }
+        };
+        ui.prompt({
+            message:      "Clear keyframe " + f + " on layer '" + n + "'?",
+            button1: {
+                name:     "Clear",
+                callback: callback
+            },
+            button2: {
+                name:     "Cancel"
+            }
+        });
+	},
     
     // Removes the current keycell
     delete_keycell = function() {
@@ -17,7 +44,7 @@ controller = (function(){
             n = data.get_layer_name(l),
             f = data.get_target_frame(),
         callback = function() {
-            if (data.delete_group()) {
+            if (data.delete_group(l, f)) {
                 ui.timeline
                     .get_layer(l)
                     .get_cell(f)
@@ -84,20 +111,14 @@ controller = (function(){
             .set_key();
     },
     
-    // Loads a project with a given id
-    load = function(id) {
-        
-    },
-    
-    // Creates a new keycell at the current cell
+    // Creates a new keycell at the current frame
     new_keycell = function() {
-        var l, c;
-        if (data.new_group()) {
-            l = data.get_target_layer();
-            c = data.get_target_frame();
+        var l = data.get_target_layer(),
+            f = data.get_target_frame();
+        if (data.new_group(l, f)) {
             ui.timeline
                 .get_layer(l)
-                .get_cell(c)
+                .get_cell(f)
                 .set_empty_key();
             ui.stage.update();
         }
@@ -173,7 +194,16 @@ controller = (function(){
     
     // Redoes the previously undone action
     redo = function() {
-        data.redo();
+        if (data.redo()) {
+			ui.stage.update();
+		} else {
+			ui.prompt({
+				message:  "There is nothing to redo",
+				button1: {
+					name: "Okay"
+				}
+			});
+		}
     },
     
     // Renames the layer at the given index
@@ -209,11 +239,6 @@ controller = (function(){
                 name:     "Cancel"
             }
         });
-    },
-    
-    // Saves the current project
-    save = function() {
-        
     },
     
     // Selects the the cell at the given layer and frame
@@ -376,7 +401,16 @@ controller = (function(){
     
     // Undoes the previous action
     undo = function() {
-        data.undo();
+        if (data.undo()) {
+			ui.stage.update();
+		} else {
+			ui.prompt({
+				message:  "There is nothing to undo",
+				button1: {
+					name: "Okay"
+				}
+			});
+		}
     },
 	
 	// Zooms the stage by a factor of 1, everything shown actual size

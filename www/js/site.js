@@ -145,13 +145,13 @@ window.onload = function() {
 	// undo handler
 	undo = document.getElementById("undo");
 	undo.addEventListener("mouseup", function() {
-		// Undo last action
+		controller.undo();
 	});
 	
 	// redo handler
 	redo = document.getElementById("redo");
 	redo.addEventListener("mouseup", function() {
-		// Redo last action
+		controller.redo();
 	});
     
     // Tool buttons
@@ -166,6 +166,12 @@ window.onload = function() {
             controller.set_tool(el.getAttribute("id"));
         });
     });
+	toolOptionsButton = document.getElementById("drawingToolOptionsButton");
+	ui.tooltip.set({
+		element: toolOptionsButton,
+		message: "Drawing options",
+		position: "right"
+	});
     
     // addLayer handler
     addLayer = document.getElementById("addLayer");

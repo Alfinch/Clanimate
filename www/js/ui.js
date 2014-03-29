@@ -125,8 +125,15 @@ ui = (function() {
 		
         // Sets the mouse cursor visible on the stage
         set_cursor = function(style) {
-            cc.classList.remove("cursor", "draw", "grab", "grabbing", "none", "pointer");
-            cc.classList.add(style);
+			var validStyles = ["cursor", "draw", "grab", "grabbing", "none", "pointer"];
+			if (validStyles.indexOf(style) != -1) {
+				validStyles.forEach(function(item) {
+					cc.classList.remove(item);
+				});
+				cc.classList.add(style);
+				return true;
+			}
+			return false;
         },
         
         // Clears, resizes and redraws the stage
@@ -167,127 +174,13 @@ ui = (function() {
         pointerCellArray = [],
         selectedCell     = null,
         selectedLayer    = null,
-        
-		// Private objects
-		
-		// Scrollbars
-		
-		scrollbars = (function() {
-            var o = {},
-			
-			// Private variables
-			
-			headerCellsElement = document.getElementById("headerCells"),
-			layerRowsElement = document.getElementById("layerRows"),
-			layerControlsElement = document.getElementById("layerControls"),
-			hBar  = document.getElementById("timelineHScroll"),
-			vBar  = document.getElementById("timelineVScroll"),
-			hGrip = hBar.children[0],
-			vGrip = vBar.children[0],
-			
-			// Public functions
-			
-			update_horizontal = function() {
-				hGrip.style.width = (
-					layerRowsElement.clientWidth *
-					hBar.offsetWidth /
-					layerRowsElement.scrollWidth
-				) + "px";
-				hGrip.style.left  = (
-					layerRowsElement.scrollLeft *
-					hBar.offsetWidth /
-					layerRowsElement.scrollWidth
-				) + "px";
-			},
-			
-			update_vertical = function() {
-				vGrip.style.height = (
-					layerRowsElement.clientHeight *
-					vBar.offsetHeight /
-					layerRowsElement.scrollHeight
-				) + "px";
-				vGrip.style.top = (
-					layerRowsElement.scrollTop *
-					vBar.offsetHeight /
-					layerRowsElement.scrollHeight
-				) + "px";
-			};
-			
-			// Setup
-			
-			hGrip.addEventListener("mousedown", function(e) {
-				var downX = e.clientX,
-					downS = parseFloat(getComputedStyle(hGrip)['left']),
-					
-				mouse_move_handler = function(e) {
-					var dx   = e.clientX - downX,
-						left = downS + dx,
-						lMax = hBar.offsetWidth - hGrip.offsetWidth;
-					
-					left = left < 0 ? 0 : left > lMax ? lMax : left;
-					hGrip.style.left = left + "px";
-					
-					headerCellsElement.scrollLeft =
-					layerRowsElement.scrollLeft =
-						layerRowsElement.scrollWidth *
-						parseFloat(getComputedStyle(hGrip)['left']) /
-						hBar.offsetWidth;
-				},
-				
-				mouse_up_handler = function(e) {
-					window.removeEventListener("mousemove", mouse_move_handler);
-					window.removeEventListener("mouseup", mouse_up_handler);
-				};
-				
-				e.stopPropagation();
-				
-				window.addEventListener("mousemove", mouse_move_handler);
-				window.addEventListener("mouseup", mouse_up_handler);
-			});
-			
-			vGrip.addEventListener("mousedown", function(e) {
-				var downY = e.clientY,
-					downS = parseFloat(getComputedStyle(vGrip)['top']),
-					
-				mouse_move_handler = function(e) {
-					var dy   = e.clientY - downY,
-						top  = downS + dy,
-						tMax = vBar.offsetHeight - vGrip.offsetHeight;
-					
-					top = top < 0 ? 0 : top > tMax ? tMax : top;
-					vGrip.style.top = top + "px";
-					
-					layerControlsElement.scrollTop =
-					layerRowsElement.scrollTop =
-						layerRowsElement.scrollHeight *
-						parseFloat(getComputedStyle(vGrip)['top']) /
-						vBar.offsetHeight;
-				},
-				
-				mouse_up_handler = function(e) {
-					window.removeEventListener("mousemove", mouse_move_handler);
-					window.removeEventListener("mouseup", mouse_up_handler);
-				};
-				
-				e.stopPropagation();
-				
-				window.addEventListener("mousemove", mouse_move_handler);
-				window.addEventListener("mouseup", mouse_up_handler);
-			});
-			
-			// Assignment
-			
-			o.update_vertical   = update_vertical;
-			o.update_horizontal = update_horizontal;
-			
-			return o;
-		}()),
 		
         // Private functions
         
         // Creates new frame index cell on the timeline
         new_index_cell = function(frameIndex) {
             var o = {},
+				span = 0,
             
             // Private variables
             
@@ -295,16 +188,30 @@ ui = (function() {
             indexCell  = document.createElement("div"),
             
             // Public functions
+			
+			get_span = function() {
+				return span;
+			},
             
             remove = function() {
                 indexCells.removeChild(indexCell);
             };
-            
-            o.remove = remove;
+			
+			// Setup
             
             indexCell.classList.add("indexCell");
             indexCell.innerHTML = frameIndex;
             indexCells.appendChild(indexCell);
+			
+			do {
+				span += 1;
+				indexCell.style.width = ((span * 18) + ((span - 1) * 2) - 2) + "px";
+			} while (indexCell.scrollWidth > indexCell.clientWidth);
+            
+			// Assignment
+			
+			o.get_span = get_span;
+            o.remove   = remove;
             
             indexCellArray[frameIndex] = o;
         },
@@ -312,6 +219,7 @@ ui = (function() {
         // Creates new pointer cell on the timeline
         new_pointer_cell = function(frameIndex) {
             var o = {},
+				span = 0,
             
             // Private variables
             
@@ -332,6 +240,10 @@ ui = (function() {
                 pointerCell.classList.add("hover");
             },
             
+			get_span = function() {
+				return span;
+			},
+			
             remove = function() {
                 pointers.removeChild(pointerCell);
             },
@@ -340,11 +252,7 @@ ui = (function() {
                 pointerCell.classList.add("selected");
             };
             
-            o.deselect = deselect;
-            o.focus    = focus;
-            o.defocus  = defocus;
-            o.remove   = remove;
-            o.select   = select;
+			// Setup
             
             pointerCell.classList.add("pointerCell");
             pointers.appendChild(pointerCell);
@@ -369,6 +277,14 @@ ui = (function() {
                     .get_cell(frameIndex)
                     .defocus();
             });
+			
+			// Assignment
+			
+            o.deselect = deselect;
+            o.focus    = focus;
+            o.defocus  = defocus;
+            o.remove   = remove;
+            o.select   = select;
             
             pointerCellArray[frameIndex] = o;
         },
@@ -393,7 +309,7 @@ ui = (function() {
         
         // Returns the layer with the given index
         get_layer = function(index) {
-            return layers[index];
+            return layers[index] || false;
         },
         
         // Returns the top layer
@@ -421,10 +337,6 @@ ui = (function() {
             removeButton  = document.createElement("div"),
             selected      = false,
 			
-			// Private objects
-			
-			
-            
             // Public functions
             
             defocus = function() {
@@ -669,9 +581,20 @@ ui = (function() {
         // Sets the number of frames in the animation
         set_frames = function(value) {
             var i, j, l;
+			function cell_occluded(i, step) {
+				step = step || 0;
+				step += 1;
+				if (indexCellArray[i-step] != null) {
+					return (indexCellArray[i-step].get_span() > step);
+				} else if (i === 1) {
+					return false;
+				} else {
+					return cell_occluded(i, step);
+				}
+			}
             if(value > frames) {
                 for (i = frames + 1; i <= value; i += 1) {
-                    new_index_cell(i);
+					if (!cell_occluded(i)) new_index_cell(i);
                     new_pointer_cell(i);
                     for (j = 1; j < layers.length; j += 1) {
                         l = layers[j];
@@ -682,7 +605,7 @@ ui = (function() {
                 }
             } else {
                 for (i = frames; i > value; i -= 1) {
-                    indexCellArray[i].remove();
+                    if (indexCellArray[i] != null) indexCellArray[i].remove();
                     pointerCellArray[i].remove();
                     for (j = 1; j < layers.length; j += 1) {
                         l = layers[j];
@@ -693,7 +616,121 @@ ui = (function() {
                 }
             }
             frames = value;
-        };
+        },
+		
+		// Public objects
+		
+		// Scrollbars
+		scrollbars = (function() {
+            var o = {},
+			
+			// Private variables
+			
+			headerCellsElement = document.getElementById("headerCells"),
+			layerRowsElement = document.getElementById("layerRows"),
+			layerControlsElement = document.getElementById("layerControls"),
+			hBar  = document.getElementById("timelineHScroll"),
+			vBar  = document.getElementById("timelineVScroll"),
+			hGrip = hBar.children[0],
+			vGrip = vBar.children[0],
+			
+			// Public functions
+			
+			update_horizontal = function() {
+				hGrip.style.width = (
+					layerRowsElement.clientWidth *
+					hBar.offsetWidth /
+					layerRowsElement.scrollWidth
+				) + "px";
+				hGrip.style.left  = (
+					layerRowsElement.scrollLeft *
+					hBar.offsetWidth /
+					layerRowsElement.scrollWidth
+				) + "px";
+			},
+			
+			update_vertical = function() {
+				vGrip.style.height = (
+					layerRowsElement.clientHeight *
+					vBar.offsetHeight /
+					layerRowsElement.scrollHeight
+				) + "px";
+				vGrip.style.top = (
+					layerRowsElement.scrollTop *
+					vBar.offsetHeight /
+					layerRowsElement.scrollHeight
+				) + "px";
+			};
+			
+			// Setup
+			
+			hGrip.addEventListener("mousedown", function(e) {
+				var downX = e.clientX,
+					downS = parseFloat(getComputedStyle(hGrip)['left']),
+					
+				mouse_move_handler = function(e) {
+					var dx   = e.clientX - downX,
+						left = downS + dx,
+						lMax = hBar.offsetWidth - hGrip.offsetWidth;
+					
+					left = left < 0 ? 0 : left > lMax ? lMax : left;
+					hGrip.style.left = left + "px";
+					
+					headerCellsElement.scrollLeft =
+					layerRowsElement.scrollLeft =
+						layerRowsElement.scrollWidth *
+						parseFloat(getComputedStyle(hGrip)['left']) /
+						hBar.offsetWidth;
+				},
+				
+				mouse_up_handler = function(e) {
+					window.removeEventListener("mousemove", mouse_move_handler);
+					window.removeEventListener("mouseup", mouse_up_handler);
+				};
+				
+				e.stopPropagation();
+				
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+			});
+			
+			vGrip.addEventListener("mousedown", function(e) {
+				var downY = e.clientY,
+					downS = parseFloat(getComputedStyle(vGrip)['top']),
+					
+				mouse_move_handler = function(e) {
+					var dy   = e.clientY - downY,
+						top  = downS + dy,
+						tMax = vBar.offsetHeight - vGrip.offsetHeight;
+					
+					top = top < 0 ? 0 : top > tMax ? tMax : top;
+					vGrip.style.top = top + "px";
+					
+					layerControlsElement.scrollTop =
+					layerRowsElement.scrollTop =
+						layerRowsElement.scrollHeight *
+						parseFloat(getComputedStyle(vGrip)['top']) /
+						vBar.offsetHeight;
+				},
+				
+				mouse_up_handler = function(e) {
+					window.removeEventListener("mousemove", mouse_move_handler);
+					window.removeEventListener("mouseup", mouse_up_handler);
+				};
+				
+				e.stopPropagation();
+				
+				window.addEventListener("mousemove", mouse_move_handler);
+				window.addEventListener("mouseup", mouse_up_handler);
+			});
+			
+			// Assignment
+			
+			o.update_vertical   = update_vertical;
+			o.update_horizontal = update_horizontal;
+			
+			return o;
+		}());
 		
 		// Assignment
         
@@ -702,131 +739,6 @@ ui = (function() {
         o.get_top_layer = get_top_layer;
         o.new_layer     = new_layer;
         o.set_frames    = set_frames;
-        
-        return o;
-    }()),
-    
-	// Adds a tooltip to an element
-    tooltip = (function() {
-        var o = {},
-        
-        // Private variables
-        
-        delay          = 700,
-        tooltipElement = document.getElementById("tooltip"),
-        timeout,
-        tooltipRect,
-        tooltips       = [],
-        
-        // Private functions
-        
-        new_tooltip = function(element, message, position, target) {
-            var o = {},
-            
-            // Private variables
-            
-            leftOffset,
-            target     = target || element,
-            targetRect,
-            
-            // Private functions
-            
-            mouse_move_handler = function() {
-                tooltipElement.classList.add("hidden");
-                clearTimeout(timeout);
-                timeout = setTimeout(show_tooltip, delay);
-            },
-            
-            mouse_out_handler = function() {
-                clearTimeout(timeout);
-                tooltipElement.classList.add("hidden");
-            },
-            
-            mouse_over_handler = function() {
-                timeout = setTimeout(show_tooltip, delay);
-            },
-            
-            show_tooltip = function() {
-                tooltipElement.classList.remove("hidden","above","right","below","left");
-                tooltipElement.innerHTML = o.message;
-                targetRect = target.getBoundingClientRect();
-                tooltipRect = tooltipElement.getBoundingClientRect();
-                
-                switch (position) {
-                    case "right":
-                        tooltipElement.classList.add("right");
-                        tooltipElement.style.left = (targetRect.left + targetRect.width + 7) + "px";
-                        tooltipElement.style.top = targetRect.top + ((targetRect.height - tooltipRect.height) * 0.5) + "px";
-                        break;
-                    case "below":
-                        tooltipElement.classList.add("below");
-                        tooltipElement.style.top = (targetRect.bottom + 7) + "px";
-                        tooltipElement.style.left = targetRect.left + ((targetRect.width - tooltipRect.width) * 0.5) + "px";
-                        break;
-                    case "left":
-                        tooltipElement.classList.add("left");
-                        tooltipElement.style.left = (targetRect.left - tooltipRect.width - 7) + "px";
-                        tooltipElement.style.top = targetRect.top + ((targetRect.height - tooltipRect.height) * 0.5) + "px";
-                        break;
-                    default: // "above"
-                        tooltipElement.classList.add("above");
-                        tooltipElement.style.top = (targetRect.top - tooltipRect.height - 7) + "px";
-                        tooltipElement.style.left = targetRect.left + ((targetRect.width - tooltipRect.width) * 0.5) + "px";
-                        break;
-                }
-            },
-            
-            // Public functions
-            
-            remove = function(target) {
-                element.removeEventListener("mousemove", mouse_move_handler);
-                element.removeEventListener("mouseout", mouse_out_handler);
-                element.removeEventListener("mouseover", mouse_over_handler);
-            };
-            
-            // Setup
-            
-            element.addEventListener("mousemove", mouse_move_handler);
-            element.addEventListener("mouseout", mouse_out_handler);
-            element.addEventListener("mouseover", mouse_over_handler);
-            
-            // Assignment
-            
-            o.message  = message;
-            o.remove   = remove;
-            o.element  = element;
-            o.position = position;
-            o.target   = target;
-            
-            tooltips.push(o);
-        },
-        
-        // Public functions
-        
-        remove = function(element) {
-            var i;
-            for (i = 0; i < tooltips.length; i += 1) {
-                if (tooltips[i].element === element) {
-                    tooltips[i].remove();
-                }
-            }
-        },
-        
-        set = function(spec) {
-            var i;
-            for (i = 0; i < tooltips.length; i += 1) {
-                if (tooltips[i].element === spec.element) {
-                    tooltips[i].message  = spec.message;
-                    tooltips[i].position = spec.position;
-                    tooltips[i].target   = spec.target || spec.element;
-                    return;
-                }
-            }
-            new_tooltip(spec.element, spec.message, spec.position, spec.target);
-        };
-        
-        o.set    = set;
-        o.remove = remove;
         
         return o;
     }()),
@@ -949,7 +861,7 @@ ui = (function() {
         
         // Public functions
         
-        toggle = function(e) {
+        toggle = function() {
             overlay.classList.toggle("hidden");
             toolOptionsElement.classList.toggle("hidden");
             if(toolOptionsElement.classList.contains("hidden")) {
@@ -966,11 +878,6 @@ ui = (function() {
         set_button_graphic();
 		
         toolOptionsButton.addEventListener("mouseup", toggle);
-        tooltip.set({
-            element: toolOptionsButton,
-            message: "Drawing options",
-            position: "right"
-        });
         
         sliders.push(
 		slider({
@@ -1118,6 +1025,131 @@ ui = (function() {
         // Assignment
         
         o.toggle = toggle;
+        
+        return o;
+    }()),
+    
+	// Adds a tooltip to an element
+    tooltip = (function() {
+        var o = {},
+        
+        // Private variables
+        
+        delay          = 700,
+        tooltipElement = document.getElementById("tooltip"),
+        timeout,
+        tooltipRect,
+        tooltips       = [],
+        
+        // Private functions
+        
+        new_tooltip = function(element, message, position, target) {
+            var o = {},
+            
+            // Private variables
+            
+            leftOffset,
+            target     = target || element,
+            targetRect,
+            
+            // Private functions
+            
+            mouse_move_handler = function() {
+                tooltipElement.classList.add("hidden");
+                clearTimeout(timeout);
+                timeout = setTimeout(show_tooltip, delay);
+            },
+            
+            mouse_out_handler = function() {
+                clearTimeout(timeout);
+                tooltipElement.classList.add("hidden");
+            },
+            
+            mouse_over_handler = function() {
+                timeout = setTimeout(show_tooltip, delay);
+            },
+            
+            show_tooltip = function() {
+                tooltipElement.classList.remove("hidden","above","right","below","left");
+                tooltipElement.innerHTML = o.message;
+                targetRect = target.getBoundingClientRect();
+                tooltipRect = tooltipElement.getBoundingClientRect();
+                
+                switch (position) {
+                    case "right":
+                        tooltipElement.classList.add("right");
+                        tooltipElement.style.left = (targetRect.left + targetRect.width + 7) + "px";
+                        tooltipElement.style.top = targetRect.top + ((targetRect.height - tooltipRect.height) * 0.5) + "px";
+                        break;
+                    case "below":
+                        tooltipElement.classList.add("below");
+                        tooltipElement.style.top = (targetRect.bottom + 7) + "px";
+                        tooltipElement.style.left = targetRect.left + ((targetRect.width - tooltipRect.width) * 0.5) + "px";
+                        break;
+                    case "left":
+                        tooltipElement.classList.add("left");
+                        tooltipElement.style.left = (targetRect.left - tooltipRect.width - 7) + "px";
+                        tooltipElement.style.top = targetRect.top + ((targetRect.height - tooltipRect.height) * 0.5) + "px";
+                        break;
+                    default: // "above"
+                        tooltipElement.classList.add("above");
+                        tooltipElement.style.top = (targetRect.top - tooltipRect.height - 7) + "px";
+                        tooltipElement.style.left = targetRect.left + ((targetRect.width - tooltipRect.width) * 0.5) + "px";
+                        break;
+                }
+            },
+            
+            // Public functions
+            
+            remove = function(target) {
+                element.removeEventListener("mousemove", mouse_move_handler);
+                element.removeEventListener("mouseout", mouse_out_handler);
+                element.removeEventListener("mouseover", mouse_over_handler);
+            };
+            
+            // Setup
+            
+            element.addEventListener("mousemove", mouse_move_handler);
+            element.addEventListener("mouseout", mouse_out_handler);
+            element.addEventListener("mouseover", mouse_over_handler);
+            
+            // Assignment
+            
+            o.message  = message;
+            o.remove   = remove;
+            o.element  = element;
+            o.position = position;
+            o.target   = target;
+            
+            tooltips.push(o);
+        },
+        
+        // Public functions
+        
+        remove = function(element) {
+            var i;
+            for (i = 0; i < tooltips.length; i += 1) {
+                if (tooltips[i].element === element) {
+                    tooltips[i].remove();
+                }
+            }
+        },
+        
+        set = function(spec) {
+            var i;
+            for (i = 0; i < tooltips.length; i += 1) {
+                if (tooltips[i].element === spec.element) {
+                    tooltips[i].message  = spec.message;
+                    tooltips[i].position = spec.position;
+                    tooltips[i].target   = spec.target || spec.element;
+                    return;
+                }
+            }
+            new_tooltip(spec.element, spec.message, spec.position, spec.target);
+        };
+        
+        o.set    = set;
+        o.remove = remove;
         
         return o;
     }());

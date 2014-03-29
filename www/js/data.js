@@ -16,16 +16,31 @@ data = (function() {
     targetGroupFrame = null,
     targetGroup      = null,
     targetLayer      = 1,
+	undoStack        = [],
+	redoStack        = [],
     visibleGroups    = [],
     
     // Private functions
+	
+	// Adds an action to the undo stack
+	add_action = function(action) {
+		undoStack.push(action);
+		redoStack = [];
+		console.log(undoStack);
+	},
     
 	// Adds a path to the current target group
 	add_stroke = function(stroke, subtract) {
 		var i, j, color, splitPaths, subtract = subtract || false,
-			paths = targetGroup.removeChildren(),
-			strokeColor = stroke.fillColor;
+			paths, strokeColor = stroke.fillColor,
 			
+			action = {
+				type: "group",
+				group: targetGroup,
+				oldGroup: targetGroup.clone(false)
+			};
+		
+		paths = targetGroup.removeChildren();
 		stroke.remove();
 			
 		console.log("===== Adding stroke =====");
@@ -84,6 +99,9 @@ data = (function() {
 			stroke.selectedColor = "#FF3333";
 			targetGroup.addChild(stroke);
 		}
+		
+		action.newGroup = targetGroup.clone(false);
+		add_action(action);
 	},
 	
 	// Separates all disconnected pathItems from a compound path
@@ -169,10 +187,10 @@ data = (function() {
 	
     // Removes the group at the current target cell and returns true
     // Returns false if the current target cell does not contain a group
-    delete_group = function() {
-        if (cells[targetLayer][targetFrame] != null) {
-            cells[targetLayer][targetFrame].remove();
-            cells[targetLayer][targetFrame] = undefined;
+    delete_group = function(layer, frame) {
+        if (cells[layer][frame] != null) {
+            cells[layer][frame].remove();
+            cells[layer][frame] = undefined;
             target_cell(targetLayer, targetFrame);
             return true;
         }
@@ -236,7 +254,7 @@ data = (function() {
     // Returns false if the layer does not exist
     get_layer_name = function(layer) {
         var l = get_project_layer(layer);
-        return l.data.name;
+        return l ? l.data.name : false;
     },
     
     // Returns the current number of layers
@@ -278,12 +296,14 @@ data = (function() {
     
     // Creates a new group in the current target cell and retruns true
     // Returns false if the cell is already occupied by a group
-    new_group = function() {
+    new_group = function(layer, frame) {
         var g, l;
-        if (cells[targetLayer][targetFrame] == null) {
+        if (cells[layer][frame] == null) {
             g = new Group();
-            l = get_project_layer(targetLayer);
-            cells[targetLayer][targetFrame] = g;
+			g.data.layer = layer;
+			g.data.frame = frame;
+            l = get_project_layer(layer);
+            cells[layer][frame] = g;
             targetGroup = g;
             l.addChild(g);
             target_cell(targetLayer, targetFrame);
@@ -300,7 +320,7 @@ data = (function() {
         layer.data.index = layerIndex;
         layer.data.name = name != null ? name : "Layer " + layerIndex;
         cells[layerIndex] = [];
-        cells[layerIndex][1] = new Group();
+		new_group(layerIndex, 1);
         target_cell(layerIndex, targetFrame);
         return layerIndex;
     },
@@ -308,13 +328,39 @@ data = (function() {
     // Redoes the previously undone action and returns true
     // Returns false if there is nothing to redo
     redo = function() {
-        
+		if (redoStack.length === 0) return false;
+        var i, action = redoStack.pop();
+		
+		if (action.type === "group") {
+			if (action.oldGroup === false) {
+				
+			} else {
+				action.group.removeChildren();
+				for (i = 0; i < action.newGroup.children.length; i += 1) {
+					action.newGroup.children[i].copyTo(action.group);
+				}
+				if (action.group.children.length > 0) {
+					ui.timeline
+						.get_layer(action.group.data.layer)
+						.get_cell(action.group.data.frame)
+						.set_key();
+				}
+			}
+			
+		} else if (action.type === "layer") {
+			
+		} else if (action.type === "setting") {
+			action.redo();
+		}
+		
+		undoStack.push(action);
+		return true;
     },
     
     // Renames the layer with the given index and returns true
     // Returns false if the layer does not exist
-    rename_layer = function(layer, name) {
-        var l = get_project_layer(layer);
+    rename_layer = function(index, name) {
+        var l = get_project_layer(index);
         if (l !== false) {
             l.data.name = name;
             return true;
@@ -330,11 +376,11 @@ data = (function() {
     // Targets the the cell at the given layer and frame and returns true
     // Targets the nearest previous cell with a group if the target cell is empty
     // Returns false if the target layer does not exist
-    target_cell = function(layerIndex, frameIndex) {
+    target_cell = function(layer, frame) {
         var i, j, g;
 		
 		// Check if the given layer actually exists
-        if (cells[layerIndex] == null) {
+        if (cells[layer] == null) {
             return false;
         }
 		
@@ -349,7 +395,7 @@ data = (function() {
             if (cells[i] != null) {
 			
 				// For each cell starting with the current frame and counting backwards...
-                for (j = frameIndex; j > 0; j -= 1) {
+                for (j = frame; j > 0; j -= 1) {
 				
 					// If there is a group in this cell
                     g = cells[i][j];
@@ -360,7 +406,7 @@ data = (function() {
                         visibleGroups.push(g);
 						
 						// If this is the currently selected layer, set this group as the target group for drawing
-                        if (i === layerIndex) {
+                        if (i === layer) {
                             targetGroup = g;
                             targetGroupFrame = j;
                         }
@@ -371,8 +417,8 @@ data = (function() {
                 }
             }
         }
-        targetLayer = layerIndex;
-        targetFrame = frameIndex;
+        targetLayer = layer;
+        targetFrame = frame;
         return true;
     },
     
@@ -387,7 +433,27 @@ data = (function() {
     // Undoes the previous action and returns true
     // Returns false if there is nothing to undo
     undo = function() {
-        
+		if (undoStack.length === 0) return false;
+		var i, action = undoStack.pop();
+		
+		if (action.type === "group") {
+			action.group.removeChildren();
+			for (i = 0; i < action.oldGroup.children.length; i += 1) {
+				action.oldGroup.children[i].copyTo(action.group);
+			}
+			if (action.group.children.length === 0) {
+                ui.timeline
+                    .get_layer(action.group.data.layer)
+                    .get_cell(action.group.data.frame)
+                    .set_empty_key();
+			}
+			
+		} else if (action.type === "set") {
+			action.undo();
+		}
+		
+		redoStack.push(action);
+		return true;
     },
     
     // Unhides the layer with the given index and returns true
@@ -411,7 +477,7 @@ data = (function() {
         // Private variables
         
         values = {
-            frameRate:   30,
+            frameRate:   24,
             stageHeight: 450,
             stageWidth:  800,
             color: new Color(0),
@@ -926,6 +992,7 @@ data = (function() {
 
     o.delete_group      = delete_group;
     o.delete_layer      = delete_layer;
+	o.from_JSON         = from_JSON;
 	o.get_frame_extents = get_frame_extents;
     o.get_frame_num     = get_frame_num;
     o.get_group_frame   = get_group_frame;
@@ -941,6 +1008,7 @@ data = (function() {
     o.rename_layer      = rename_layer;
     o.set_frames        = set_frames;
     o.target_cell       = target_cell;
+	o.to_JSON           = to_JSON;
     o.undo              = undo;
     o.unhide_layer      = unhide_layer;
     
