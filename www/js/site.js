@@ -235,11 +235,11 @@ window.onload = function() {
         message: "Go back to the first frame",
         position: "above"
     });
-    ui.tooltip.set({
+    /* ui.tooltip.set({
         element: zoomSelection,
         message: "Zoom in on the current selection",
         position: "above"
-    });
+    });*/
     ui.tooltip.set({
         element: zoomActual,
         message: "Zoom to actual size",

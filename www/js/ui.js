@@ -425,7 +425,8 @@ ui = (function() {
                 
                 cell.addEventListener("mouseup", function(e) {
                     e.stopPropagation();
-                    if (this.classList.contains("selected") && (
+                    if (frameIndex !== 1 &&
+						this.classList.contains("selected") && (
                         this.classList.contains("emptyKeyCell") ||
                         this.classList.contains("keyCell"))) {
                         controller.delete_keycell();

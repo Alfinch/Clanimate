@@ -2,26 +2,33 @@ Clanimate object model
 
 data
 
-  bool             delete_group      (int layer, int frame)
-  bool             delete_layer      (int layer)
+  // Memory
   bool             from_JSON         (String json)
-  Ractangle | bool get_frame_extents ()
-  int              get_frame_num     ()
-  int              get_group_frame   ()
+  String           to_JSON           ()
+  bool             undo              ()
+  bool             redo              ()
+  
+  // Layers
+  bool             delete_layer      (int layer)
   String | bool    get_layer_name    (int layer)
   int              get_layer_num     ()
-  int              get_target_frame  ()
   int              get_target_layer  ()
   bool             hide_layer        (int layer)
   bool             is_layer_visible  (int layer)
-  bool             new_group         (int layer, int frame)
   int              new_layer         (String name)
-  bool             redo              ()
   bool             rename_layer      (int index, String name)
+  
+  // Groups
+  bool             delete_group      (int layer, int frame)
+  bool             new_group         (int layer, int frame, bool noUndo)
+  
+  // Generic
+  Ractangle | bool get_frame_extents ()
+  int              get_frame_num     ()
+  int              get_group_frame   ()
+  int              get_target_frame  ()
   void             set_frames        (int value)
   bool             target_cell       (int layer, int frame)
-  String           to_JSON           ()
-  bool             undo              ()
   bool             unhide_layer      (int layer)
 
   settings

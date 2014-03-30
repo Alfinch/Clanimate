@@ -35,7 +35,10 @@ data = (function() {
 			
 			action = {
 				type: "group",
-				group: targetGroup,
+				targetGroup: {
+					layer: targetGroup.data.layer,
+					frame: targetGroup.data.frame
+				},
 				oldGroup: targetGroup.clone(false)
 			};
 		
@@ -144,6 +147,13 @@ data = (function() {
 		
 		return returnPaths;
 	}, */
+	
+	// Returns the group at the given layer and frame
+	// Returns false if the location is empty
+	get_group = function(layer, frame) {
+		var g = cells[layer][frame] || false;
+		return g;
+	},
     
     // Returns a project layer with the given index
     // Returns false if no layer with the given index is found
@@ -172,11 +182,28 @@ data = (function() {
 	
     // Removes the group at the current target cell and returns true
     // Returns false if the current target cell does not contain a group
-    delete_group = function(layer, frame) {
+    delete_group = function(layer, frame, noUndo) {
+		var g, action, noUndo = noUndo || false;
         if (cells[layer][frame] != null) {
-            cells[layer][frame].remove();
+			g = cells[layer][frame];
             cells[layer][frame] = undefined;
             target_cell(targetLayer, targetFrame);
+			
+			if (!noUndo) {
+				action = {
+					type: "group",
+					targetGroup: {
+						layer: layer,
+						frame: frame
+					},
+					oldGroup: g.clone(false),
+					newGroup: false
+				};
+				add_action(action);
+			}
+			
+            g.remove();
+			
             return true;
         }
         return false;
@@ -281,8 +308,9 @@ data = (function() {
     
     // Creates a new group in the current target cell and retruns true
     // Returns false if the cell is already occupied by a group
-    new_group = function(layer, frame) {
-        var g, l;
+    new_group = function(layer, frame, noUndo) {
+        var g, l, action, noUndo = noUndo || false;
+			
         if (cells[layer][frame] == null) {
             g = new Group();
 			g.data.layer = layer;
@@ -292,6 +320,20 @@ data = (function() {
             targetGroup = g;
             l.addChild(g);
             target_cell(targetLayer, targetFrame);
+			
+			if (!noUndo) {
+				action = {
+					type: "group",
+					targetGroup: {
+						layer: layer,
+						frame: frame
+					},
+					oldGroup: false,
+					newGroup: g.clone(false)
+				};
+				add_action(action);
+			}
+			
             return true;
         }
         return false;
@@ -305,7 +347,7 @@ data = (function() {
         layer.data.index = layerIndex;
         layer.data.name = name != null ? name : "Layer " + layerIndex;
         cells[layerIndex] = [];
-		new_group(layerIndex, 1);
+		new_group(layerIndex, 1, true);
         target_cell(layerIndex, targetFrame);
         return layerIndex;
     },
@@ -314,20 +356,41 @@ data = (function() {
     // Returns false if there is nothing to redo
     redo = function() {
 		if (redoStack.length === 0) return false;
-        var i, action = redoStack.pop();
+        var i,
+			action = redoStack.pop(),
+			group  = get_group(action.targetGroup.layer, action.targetGroup.frame);
+			
+		console.log(action);
+		console.log("Redos remaining: " + redoStack.length);
 		
 		if (action.type === "group") {
-			if (action.newGroup === false) {
+		
+			// Create group
+			if (action.oldGroup === false && group === false) {
+				new_group(action.targetGroup.layer, action.targetGroup.frame, true);
+				ui.timeline
+					.get_layer(action.targetGroup.layer)
+					.get_cell(action.targetGroup.frame)
+					.set_empty_key();
+				
+			// Delete group
+			} else if (action.newGroup === false  && group !== false) {
+				delete_group(action.targetGroup.layer, action.targetGroup.frame, true);
+				ui.timeline
+					.get_layer(action.targetGroup.layer)
+					.get_cell(action.targetGroup.frame)
+					.set_empty();
 			
+			// Modify group
 			} else {
-				action.group.removeChildren();
+				group.removeChildren();
 				for (i = 0; i < action.newGroup.children.length; i += 1) {
-					action.newGroup.children[i].copyTo(action.group);
+					action.newGroup.children[i].copyTo(group);
 				}
-				if (action.group.children.length > 0) {
+				if (group.children.length > 0) {
 					ui.timeline
-						.get_layer(action.group.data.layer)
-						.get_cell(action.group.data.frame)
+						.get_layer(action.targetGroup.layer)
+						.get_cell(action.targetGroup.frame)
 						.set_key();
 				}
 			}
@@ -419,18 +482,50 @@ data = (function() {
     // Returns false if there is nothing to undo
     undo = function() {
 		if (undoStack.length === 0) return false;
-		var i, action = undoStack.pop();
+        var i,
+			action = undoStack.pop(),
+			group  = get_group(action.targetGroup.layer, action.targetGroup.frame);
+			
+		console.log(action);
+		console.log("Undos remaining: " + undoStack.length);
 		
 		if (action.type === "group") {
-			action.group.removeChildren();
-			for (i = 0; i < action.oldGroup.children.length; i += 1) {
-				action.oldGroup.children[i].copyTo(action.group);
-			}
-			if (action.group.children.length === 0) {
-                ui.timeline
-                    .get_layer(action.group.data.layer)
-                    .get_cell(action.group.data.frame)
-                    .set_empty_key();
+		
+			// Undo Create group
+			if (action.oldGroup === false && group !== false) {
+				if (delete_group(action.targetGroup.layer, action.targetGroup.frame, true)) {
+					ui.timeline
+						.get_layer(action.targetGroup.layer)
+						.get_cell(action.targetGroup.frame)
+						.set_empty();
+				};
+				
+			// Undo Delete group
+			} else if (action.newGroup === false  && group === false) {
+				new_group(action.targetGroup.layer, action.targetGroup.frame, true);
+				group = get_group(action.targetGroup.layer, action.targetGroup.frame);
+				for (i = 0; i < action.oldGroup.children.length; i += 1) {
+					action.oldGroup.children[i].copyTo(group);
+				}
+				if (group.children.length > 0) {
+					ui.timeline
+						.get_layer(action.targetGroup.layer)
+						.get_cell(action.targetGroup.frame)
+						.set_key();
+				}
+			
+			// Undo Modify group
+			} else {
+				group.removeChildren();
+				for (i = 0; i < action.oldGroup.children.length; i += 1) {
+					action.oldGroup.children[i].copyTo(group);
+				}
+				if (group.children.length === 0) {
+					ui.timeline
+						.get_layer(action.targetGroup.layer)
+						.get_cell(action.targetGroup.frame)
+						.set_empty_key();
+				}
 			}
 			
 		} else if (action.type === "set") {
