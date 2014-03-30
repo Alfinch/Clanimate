@@ -335,7 +335,21 @@ ul, ol {
 				margin-bottom: 16px;
 			}
 			#middleSection.page>div p {
+				background: #EEE;
+				padding: 16px;
 				margin-bottom: 16px;
+				text-indent: 32px;
+				line-height: 20px;
+				text-align: justify;
+			}
+			#splashLogo {
+				position: relative;
+				max-width: 400px;
+				margin: 30px 0;
+				left: 50%;
+				transform: translateX(-50%);
+				-ms-transform: translateX(-50%);
+				-webkit-transform: translateX(-50%);
 			}
 		/* #page */
 	/* #middleSection */
