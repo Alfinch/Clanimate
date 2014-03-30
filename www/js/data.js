@@ -214,7 +214,7 @@ data = (function() {
     delete_layer = function(layer, noUndo) {
         var l, i, action, noUndo = noUndo || false;
         if (cells[layer] != null) {
-            cells[layer] = undefined;
+            cells[layer] = null;
             l = get_project_layer(layer);
 			
 			if (!noUndo) {
@@ -429,6 +429,7 @@ data = (function() {
 				layer.data.index = action.newLayer.data.index;
 				layer.data.name = action.newLayer.data.name;
 				cells[action.newLayer.data.index] = [];
+				new_group(layer.data.index, 1, true);
 			
 				ui.timeline
 					.new_layer(layer.data.index, layer.data.name);
@@ -444,7 +445,9 @@ data = (function() {
 		}
 		
 		undoStack.push(action);
-		target_cell(targetLayer, targetFrame);
+		if (!target_cell(targetLayer, targetFrame)) {
+			target_cell(get_top_project_layer().data.index, targetFrame);
+		}
 		return true;
     },
     
@@ -591,7 +594,7 @@ data = (function() {
 				layers += 1;
 				layer.data.index = action.oldLayer.data.index;
 				layer.data.name = action.oldLayer.data.name;
-				cells[action.oldLayer.data.index] = [];
+				cells[layer.data.index] = [];
 				
 				// Sort the project layers to ensure they are displayed in the correct order
 				project.layers.sort(function(a, b) {
@@ -604,8 +607,7 @@ data = (function() {
 				// Insert children from the old layer
 				for (i = 0; i < action.oldLayer.children.length; i += 1) {
 					if (action.oldLayer.children[i]._class === "Group") {
-						action.oldLayer.children[i].copyTo(layer);
-						cells[layer.data.index][action.oldLayer.children[i].data.frame] = layer.lastChild;
+						cells[layer.data.index][action.oldLayer.children[i].data.frame] = action.oldLayer.children[i].copyTo(layer);;
 						
 						if (action.oldLayer.children[i].children.length === 0) {
 							ui.timeline
@@ -626,7 +628,9 @@ data = (function() {
 		}
 		
 		redoStack.push(action);
-		target_cell(targetLayer, targetFrame);
+		if (!target_cell(targetLayer, targetFrame)) {
+			target_cell(get_top_project_layer().data.index, targetFrame);
+		}
 		return true;
     },
     

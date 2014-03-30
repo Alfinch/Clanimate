@@ -17,6 +17,13 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	user-select: none;
+	-o-user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
 }
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
@@ -52,13 +59,6 @@ body {
 	color: #666;
 	background: #FFF;
 	cursor: default;
-	user-select: none;
-	-o-user-select: none;
-	-ms-user-select: none;
-	-moz-user-select: none;
-	-moz-user-select: -moz-none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
 }
 p {
 	margin: 0;
@@ -132,20 +132,27 @@ ul, ol {
 		}
 		#menu {
 			float: left;
-			height: 50px;
-			margin: 10px 0;
+			height: 70px;
 			border-left: 2px dotted #CCC;
 		}
 			#menu li {
+				position: relative;
 				float: left;
-				height: 50px;
-				padding: 0 20px;
+				height: 70px;
 				border-right: 2px dotted #CCC;
 			}
 				#menu li a {
 					float: left;
-					height: 20px;
-					margin: 30px 0 0 0;
+					height: 30px;
+					padding: 40px 20px 0;
+				}
+				#menu li a:hover {
+					height: 26px;
+					border-bottom: 4px solid #F99;
+				}
+				#menu li a.selected {
+					height: 26px;
+					border-bottom: 4px solid #F33;
 				}
 			/* #menu li */
 		/* #menu */

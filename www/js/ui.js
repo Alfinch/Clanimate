@@ -693,6 +693,7 @@ ui = (function() {
 					downS = parseFloat(getComputedStyle(hGrip)['left']),
 					
 				mouse_move_handler = function(e) {
+					e.preventDefault();
 					var dx   = e.clientX - downX,
 						left = downS + dx,
 						lMax = hBar.offsetWidth - hGrip.offsetWidth;
