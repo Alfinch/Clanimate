@@ -29,8 +29,8 @@ data = (function() {
 	},
     
 	// Adds a path to the current target group
-	add_stroke = function(stroke, subtract) {
-		var i, j, color, splitPaths, subtract = subtract || false,
+	add_stroke = function(stroke/*, subtract*/) {
+		var i, j, color, splitPaths, /*subtract = subtract || false,*/
 			paths, strokeColor = stroke.fillColor,
 			
 			action = {
@@ -80,20 +80,9 @@ data = (function() {
 				targetGroup.addChild(paths[i]);
 			}
 		} */
-		if (subtract === false) {
-			stroke.fillColor = strokeColor;
-			stroke.selectedColor = "#FF3333";
-			targetGroup.addChild(stroke);
-		} else {
-			var path;
-			for (i = 0; i < targetGroup.children.length; i += 1) {
-				path = targetGroup.children[i];
-				path.remove();
-				color = path.fillColor;
-				targetGroup.children[i] = path.subtract(stroke);
-				targetGroup.children[i].fillColor = color;
-			}
-		}
+		stroke.fillColor = strokeColor;
+		stroke.selectedColor = "#FF3333";
+		targetGroup.addChild(stroke);
 		
 		action.newGroup = targetGroup.clone(false);
 		add_action(action);
@@ -329,7 +318,7 @@ data = (function() {
 		
 		if (action.type === "group") {
 			if (action.newGroup === false) {
-				
+			
 			} else {
 				action.group.removeChildren();
 				for (i = 0; i < action.newGroup.children.length; i += 1) {
