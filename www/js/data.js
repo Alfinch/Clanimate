@@ -83,9 +83,9 @@ data = (function() {
 				targetGroup.addChild(paths[i]);
 			}
 		} */
+		targetGroup.addChild(stroke);
 		stroke.fillColor = strokeColor;
 		stroke.selectedColor = "#FF3333";
-		targetGroup.addChild(stroke);
 		
 		action.newGroup = targetGroup.clone(false);
 		add_action(action);
@@ -211,16 +211,28 @@ data = (function() {
     
     // Removes the layer with the given index and returns true
     // Returns false if the layer does not exist
-    delete_layer = function(layer) {
-        var l, i;
+    delete_layer = function(layer, noUndo) {
+        var l, i, action, noUndo = noUndo || false;
         if (cells[layer] != null) {
             cells[layer] = undefined;
             l = get_project_layer(layer);
+			
+			if (!noUndo) {
+				action = {
+					type: "layer",
+					targetLayer: layer,
+					oldLayer: l.clone(false),
+					newLayer: false
+				};
+				add_action(action);
+			}
+			
             l.remove();
             layers -= 1;
             l = get_top_project_layer();
             i = l.data.index;
             controller.select_layer(i);
+			
             return true;
         }
         return false;
@@ -340,15 +352,29 @@ data = (function() {
     },
     
     // Creates a new layer at the top of the stack and returns its index
-    new_layer = function(name) {
-        var layer = new Layer();
+    new_layer = function(name, noUndo) {
+        var layer = new Layer(),
+			noUndo = noUndo || false,
+			action;
+			
         layerIndex += 1;
         layers += 1;
         layer.data.index = layerIndex;
-        layer.data.name = name != null ? name : "Layer " + layerIndex;
+        layer.data.name = name || "Layer " + layerIndex;
         cells[layerIndex] = [];
 		new_group(layerIndex, 1, true);
         target_cell(layerIndex, targetFrame);
+			
+		if (!noUndo) {
+			action = {
+				type: "layer",
+				targetLayer: layerIndex,
+				oldLayer: false,
+				newLayer: layer.clone(false)
+			};
+			add_action(action);
+		}
+			
         return layerIndex;
     },
     
@@ -358,12 +384,10 @@ data = (function() {
 		if (redoStack.length === 0) return false;
         var i,
 			action = redoStack.pop(),
-			group  = get_group(action.targetGroup.layer, action.targetGroup.frame);
-			
-		console.log(action);
-		console.log("Redos remaining: " + redoStack.length);
+			group, layer;
 		
 		if (action.type === "group") {
+			group = get_group(action.targetGroup.layer, action.targetGroup.frame);
 		
 			// Create group
 			if (action.oldGroup === false && group === false) {
@@ -396,12 +420,31 @@ data = (function() {
 			}
 			
 		} else if (action.type === "layer") {
+			layer = get_project_layer(action.targetLayer);
 			
-		} else if (action.type === "setting") {
-			action.redo();
+			// Create layer
+			if (action.oldLayer === false && layer === false) {
+				layer = new Layer();
+				layers += 1;
+				layer.data.index = action.newLayer.data.index;
+				layer.data.name = action.newLayer.data.name;
+				cells[action.newLayer.data.index] = [];
+			
+				ui.timeline
+					.new_layer(layer.data.index, layer.data.name);
+				
+			// Delete layer
+			} else if (action.newLayer === false && layer !== false) {
+				if (delete_layer(action.targetLayer, true)) {
+					ui.timeline
+						.get_layer(action.targetLayer)
+						.remove();
+				};
+			}
 		}
 		
 		undoStack.push(action);
+		target_cell(targetLayer, targetFrame);
 		return true;
     },
     
@@ -484,12 +527,10 @@ data = (function() {
 		if (undoStack.length === 0) return false;
         var i,
 			action = undoStack.pop(),
-			group  = get_group(action.targetGroup.layer, action.targetGroup.frame);
-			
-		console.log(action);
-		console.log("Undos remaining: " + undoStack.length);
+			group, layer;
 		
 		if (action.type === "group") {
+			group = get_group(action.targetGroup.layer, action.targetGroup.frame);
 		
 			// Undo Create group
 			if (action.oldGroup === false && group !== false) {
@@ -512,6 +553,11 @@ data = (function() {
 						.get_layer(action.targetGroup.layer)
 						.get_cell(action.targetGroup.frame)
 						.set_key();
+				} else {
+					ui.timeline
+						.get_layer(action.targetGroup.layer)
+						.get_cell(action.targetGroup.frame)
+						.set_empty_key();
 				}
 			
 			// Undo Modify group
@@ -528,11 +574,59 @@ data = (function() {
 				}
 			}
 			
-		} else if (action.type === "set") {
-			action.undo();
+		} else if (action.type === "layer") {
+			layer = get_project_layer(action.targetLayer);
+			
+			// Undo Create layer
+			if (action.oldLayer === false && layer !== false) {
+				if (delete_layer(action.targetLayer, true)) {
+					ui.timeline
+						.get_layer(action.targetLayer)
+						.remove();
+				};
+				
+			// Undo Delete layer
+			} else if (action.newLayer === false && layer === false) {
+				layer = new Layer();
+				layers += 1;
+				layer.data.index = action.oldLayer.data.index;
+				layer.data.name = action.oldLayer.data.name;
+				cells[action.oldLayer.data.index] = [];
+				
+				// Sort the project layers to ensure they are displayed in the correct order
+				project.layers.sort(function(a, b) {
+					return a.data.index - b.data.index;
+				});
+				
+				ui.timeline
+					.new_layer(layer.data.index, layer.data.name);
+				
+				// Insert children from the old layer
+				for (i = 0; i < action.oldLayer.children.length; i += 1) {
+					if (action.oldLayer.children[i]._class === "Group") {
+						action.oldLayer.children[i].copyTo(layer);
+						cells[layer.data.index][action.oldLayer.children[i].data.frame] = layer.lastChild;
+						
+						if (action.oldLayer.children[i].children.length === 0) {
+							ui.timeline
+								.get_layer(layer.data.index)
+								.get_cell(action.oldLayer.children[i].data.frame)
+								.set_empty_key();
+						} else {
+							ui.timeline
+								.get_layer(layer.data.index)
+								.get_cell(action.oldLayer.children[i].data.frame)
+								.set_key();
+						}
+					}
+				}
+				
+				controller.select_cell(targetLayer, targetFrame);
+			}
 		}
 		
 		redoStack.push(action);
+		target_cell(targetLayer, targetFrame);
 		return true;
     },
     

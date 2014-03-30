@@ -355,6 +355,10 @@ ui = (function() {
             get_cell = function(index) {
                 return cells[index];                
             },
+			
+			get_index = function() {
+				return layerIndex;
+			},
             
             // Changes the hideButton graphic to hidden
             hide = function() {
@@ -459,6 +463,7 @@ ui = (function() {
                 document.getElementById("layerRows")
                     .removeChild(layerCells);
                 set_timeline_height();
+				layers[layerIndex] = null;
             },
             
             // Changes the nameString for this layer
@@ -546,7 +551,17 @@ ui = (function() {
             
             // Add new row to table
             layerCells.classList.add("layerCells");
-            layerRows.insertBefore(layerCells, layerRows.firstChild);
+            layerCells.setAttribute("data-index", layerIndex);
+			if (layerRows.children.length > 0) {
+				for (var i = 0; i < layerRows.children.length; i++) {
+					if (layerRows.children[i].getAttribute("data-index") < layerIndex) {
+						layerRows.insertBefore(layerCells, layerRows.children[i]);
+						break;
+					}
+				}
+			} else {
+				layerRows.appendChild(layerCells);
+			}
             
             // Add new cells to row
             for (i = 1; i <= frames; i += 1) {
@@ -555,26 +570,34 @@ ui = (function() {
             get_cell(1).set_empty_key();
             
             // Add html elements to dom
-            layerControls.insertBefore(layerControl, layerControls.firstChild);
-            
-            // Select this new layer
-            select();
+            layerControl.setAttribute("data-index", layerIndex);
+			if (layerControls.children.length > 0) {
+				for (var i = 0; i < layerControls.children.length; i++) {
+					if (layerControls.children[i].getAttribute("data-index") < layerIndex) {
+						layerControls.insertBefore(layerControl, layerControls.children[i]);
+						break;
+					}
+				}
+			} else {
+				layerControls.appendChild(layerControl);
+			}
             
             set_timeline_height();
             stage.update();
 			
 			// Assignment
             
-            o.defocus  = defocus;
-            o.deselect = deselect;
-            o.focus    = focus;
-            o.get_cell = get_cell;
-            o.hide     = hide;
-            o.new_cell = new_cell;
-            o.remove   = remove;
-            o.rename   = rename;
-            o.select   = select;
-            o.unhide   = unhide;
+            o.defocus   = defocus;
+            o.deselect  = deselect;
+            o.focus     = focus;
+            o.get_cell  = get_cell;
+			o.get_index = get_index;
+            o.hide      = hide;
+            o.new_cell  = new_cell;
+            o.remove    = remove;
+            o.rename    = rename;
+            o.select    = select;
+            o.unhide    = unhide;
             
             layers[layerIndex] = o;
         },

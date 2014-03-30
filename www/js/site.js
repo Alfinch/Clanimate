@@ -11,7 +11,7 @@
 window.onload = function() {
     var sw, sh, bg,
         layerIndex, layerName, frameIndex,
-        i, initFrames = 20,
+        i, initFrames = 50,
 		settings,
 		newAnim, save, load, publish,
         play, pause, reset, tbo, tlo,
@@ -36,14 +36,20 @@ window.onload = function() {
     ui.timeline.set_frames(initFrames);
     
     // Add the first project layer
-    layerIndex = data.new_layer();
+    layerIndex = data.new_layer("Layer 1", true);
     layerName  = data.get_layer_name(layerIndex);
     frameIndex = data.get_target_frame();
-    ui.timeline.new_layer(layerIndex, layerName);
+    ui.timeline
+		.new_layer(layerIndex, layerName);
+	ui.timeline
+		.get_layer(layerIndex)
+		.select();
     ui.timeline
         .get_layer(layerIndex)
         .get_cell(frameIndex)
         .select();
+	ui.timeline.scrollbars
+		.update_horizontal();
     
     // Select the brush tool
     controller.set_tool("brush");
@@ -62,7 +68,7 @@ window.onload = function() {
 	// new handler
 	newAnim = document.getElementById("new");
 	newAnim.addEventListener("mouseup", function() {
-		// Create a new animation
+		controller.new_animation();
 	});
 	
 	// save handler

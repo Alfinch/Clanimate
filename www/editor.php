@@ -6,13 +6,13 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="subheader">
 	<ul class="submenu">
-		<li id="settings"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/settings_icon.svg" alt="Settings icon"/><span>Settings</span></li>
-	</ul>
-	<ul class="submenu">
 		<li id="new"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/new_icon.svg" alt="New animation icon"/><span>New Animation</span></li>
 		<li id="save"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/save_icon.svg" alt="Save animation icon"/><span>Save Animation</span></li>
 		<li id="load"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/load_icon.svg" alt="Load animation icon"/><span>Load Animation</span></li>
 		<li id="publish"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/publish_icon.svg" alt="Publish animation icon"/><span>Publish Animation</span></li>
+	</ul>
+	<ul class="submenu">
+		<li id="settings"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/settings_icon.svg" alt="Settings icon"/><span>Settings</span></li>
 	</ul>
 	<ul class="submenu">
 		<li id="play"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/play_icon.svg" alt="Play animation icon"/><span>Play</span></li>

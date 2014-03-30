@@ -75,16 +75,17 @@ ui
 
     layer
 
-      void defocus  ()
-      void deselect ()
-	  void focus    ()
-      Cell get_cell (int index)
-      void hide     ()
-      void new_cell ()
-	  void remove   ()
-      void rename   (String name)
-      void select   ()
-      void unhide   ()
+      void defocus   ()
+      void deselect  ()
+	  void focus     ()
+      Cell get_cell  (int index)
+	  int  get_index ()
+      void hide      ()
+      void new_cell  ()
+	  void remove    ()
+      void rename    (String name)
+      void select    ()
+      void unhide    ()
 
       cell
 	  
@@ -118,6 +119,7 @@ controller
   void draw              ()
   void new_keycell       ()
   void new_layer         ()
+  void new_animation     ()
   void play              ()
   void pause             ()
   void redo              ()

@@ -136,6 +136,9 @@ controller = (function(){
 					.update_vertical();
                 ui.timeline
                     .get_layer(layerIndex)
+                    .select();
+                ui.timeline
+                    .get_layer(layerIndex)
                     .get_cell(f)
                     .select();
             } else {
@@ -168,6 +171,23 @@ controller = (function(){
             }
         });
     },
+	
+	// Reloads the editor, creating an empty animation
+	new_animation = function() {
+		var callback = function() {
+			window.location.reload();
+		}
+        ui.prompt({
+            message:      "Create a new animation? All unsaved work will be lost!",
+            button1: {
+                name:     "Create",
+                callback: callback
+            },
+            button2: {
+                name:     "Cancel"
+            }
+        });
+	},
     
     // Pauses the animation if playing
     pause = function() {
@@ -468,6 +488,7 @@ controller = (function(){
     o.draw                = draw;
     o.new_keycell         = new_keycell;
     o.new_layer           = new_layer;
+	o.new_animation       = new_animation;
     o.pause               = pause;
     o.play                = play;
     o.redo                = redo;
