@@ -26,7 +26,6 @@ data = (function() {
 	add_action = function(action) {
 		undoStack.push(action);
 		redoStack = [];
-		console.log(undoStack);
 	},
     
 	// Adds a path to the current target group
@@ -40,37 +39,26 @@ data = (function() {
 				oldGroup: targetGroup.clone(false)
 			};
 		
-		paths = targetGroup.removeChildren();
+		//paths = targetGroup.removeChildren();
 		stroke.remove();
-			
-		console.log("===== Adding stroke =====");
-		
+		/*
 		// For each path in the current target group...
 		for (i = 0; i < paths.length; i += 1) {
 		
 			// If the stroke intersects...
 			if (paths[i].hitTest(stroke.firstSegment.point)  != null ||
 				paths[i].getIntersections(stroke).length > 0) {
-			
-				console.log("Hit at path " + (i + 1) + "!");
 				
 				// If the colours of this path and the stroke match, unite them
 				if (paths[i].fillColor.equals(stroke.fillColor) && subtract === false) {
-				
-					console.log("Color match - uniting paths.");
-					
 					stroke.remove();
 					stroke = stroke.unite(paths[i]);
 					stroke.fillColor = strokeColor;
 				// If the colours do not match, subtract the stroke from the path uderneath
 				} else {
-				
-					console.log("No match - subtracting from path.");
-					
 					color = paths[i].fillColor;
 					paths[i] = paths[i].subtract(stroke);
 					paths[i].fillColor = color;
-					console.log("Type is " + paths[i]._type + " after subtract.");
 					
 					// If the path is compound, seperate the children then add them to the target group individually
 					if (paths[i]._type === "compound-path") {
@@ -85,19 +73,26 @@ data = (function() {
 					} else {
 						paths[i].selectedColor = "#FF3333";
 						targetGroup.addChild(paths[i]);
-					}
+					//}
 				}
 			} else {
 				paths[i].selectedColor = "#FF3333";
 				targetGroup.addChild(paths[i]);
 			}
-		}
+		} */
 		if (subtract === false) {
-			console.log("Adding new stroke to target group.");
-			
 			stroke.fillColor = strokeColor;
 			stroke.selectedColor = "#FF3333";
 			targetGroup.addChild(stroke);
+		} else {
+			var path;
+			for (i = 0; i < targetGroup.children.length; i += 1) {
+				path = targetGroup.children[i];
+				path.remove();
+				color = path.fillColor;
+				targetGroup.children[i] = path.subtract(stroke);
+				targetGroup.children[i].fillColor = color;
+			}
 		}
 		
 		action.newGroup = targetGroup.clone(false);
@@ -106,6 +101,7 @@ data = (function() {
 	
 	// Separates all disconnected pathItems from a compound path
 	// Returns an array of pathItems
+	/*
 	split_compound_path = function(compoundPath) {
 		var i, j, k, compoundChildren, returnPaths = [], hits = [];
 	
@@ -158,7 +154,7 @@ data = (function() {
 		}
 		
 		return returnPaths;
-	},
+	}, */
     
     // Returns a project layer with the given index
     // Returns false if no layer with the given index is found
@@ -332,7 +328,7 @@ data = (function() {
         var i, action = redoStack.pop();
 		
 		if (action.type === "group") {
-			if (action.oldGroup === false) {
+			if (action.newGroup === false) {
 				
 			} else {
 				action.group.removeChildren();
@@ -608,15 +604,16 @@ data = (function() {
             
             if (!this.firstDrag) {
 				this.leftPath.reverse();
-                this.leftPath.simplify(4);
-                this.rightPath.simplify(4);
+                this.leftPath.smooth();
+                this.rightPath.smooth();
+                this.leftPath.simplify();
+                this.rightPath.simplify();
                 this.stroke = this.rightPath.clone();
                 this.stroke.arcTo(this.leftPath.firstSegment.point);
                 this.stroke.join(this.leftPath.clone());
                 this.stroke.arcTo(this.stroke.firstSegment.point);
 				this.stroke.closePath();
 				this.stroke.reduce();
-				this.stroke = this.stroke.unite(this.stroke);
                 this.stroke.fillColor = settings.get("color");
             }
             
@@ -648,13 +645,8 @@ data = (function() {
             );
             r = d.length * 0.5;
             
-            this.stroke = new CompoundPath({
-                children: [
-                    new Path.Circle(c, r + (settings.get("strokeWidth") * 0.5)),
-                    new Path.Circle(c, r - (settings.get("strokeWidth") * 0.5))
-                ],
-                fillColor: settings.get("color")
-            });
+            this.stroke = new Path.Circle(c, r);
+            this.stroke.fillColor = settings.get("color");
         };
         
         tools.circle.onMouseUp = function(event) {
@@ -664,6 +656,7 @@ data = (function() {
         };
 		
 		// Eraser tool
+		/*
         tools.eraser = new Tool();
         tools.eraser.minDistance = settings.get("strokeWidth") * 0.5;
         
@@ -742,7 +735,7 @@ data = (function() {
             
             add_stroke(this.stroke, true);
             controller.draw();
-        };
+        }; */
         
         // Line tool
         tools.line = new Tool();
@@ -813,7 +806,7 @@ data = (function() {
         };
         
         // Manipulate tool
-        tools.manipulate = new Tool();
+        /*tools.manipulate = new Tool();
 		
         tools.manipulate.onSelect = function() {
             ui.stage.set_cursor("cursor");
@@ -888,6 +881,7 @@ data = (function() {
 			}
 			view.draw();
         };
+		*/
         
         // Pan tool
         tools.pan = new Tool();
@@ -940,8 +934,7 @@ data = (function() {
         };
         
         tools.square.onMouseDrag = function(e) {
-            var d, c, sw;
-            sw = settings.get("strokeWidth");
+            var d;
             
             if (this.stroke != null) {
                 this.stroke.remove();
@@ -952,27 +945,16 @@ data = (function() {
                 e.point.y - e.downPoint.y
             );
             
-            this.stroke = new CompoundPath({
-                children: [
-                    new Path.Rectangle(
-                        new Point(0, 0),
-                        new Size(
-                            Math.abs(d.x) + sw,
-                            Math.abs(d.y) + sw
-                        )
-                    ),
-                    new Path.Rectangle(
-                        new Point(0, 0),
-                        new Size(
-                            Math.abs(d.x) - sw,
-                            Math.abs(d.y) - sw
-                        )
-                    )
-                ],
-                fillColor: settings.get("color"),
-            });
-            this.stroke.children[0].position =
-            this.stroke.children[1].position =
+            this.stroke = new Path.Rectangle(
+				new Point(0, 0),
+				new Size(
+					Math.abs(d.x),
+					Math.abs(d.y)
+				)
+			)
+            this.stroke.fillColor = settings.get("color");
+			
+            this.stroke.position =
             new Point(
                 e.downPoint.x + (d.x * 0.5),
                 e.downPoint.y + (d.y * 0.5)

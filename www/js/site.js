@@ -15,7 +15,7 @@ window.onload = function() {
 		settings,
 		newAnim, save, load, publish,
         play, pause, reset, tbo, tlo,
-		zoomSelection, zoomActual, zoomStage, zoomExtents,
+		/*zoomSelection,*/ zoomActual, zoomStage, zoomExtents,
 		undo, redo,
         toolButtons, toolOptionsButton, toolOptions,
         addLayer, setFrames;
@@ -119,10 +119,11 @@ window.onload = function() {
     });
 	
 	// zoomSelection handler
+	/*
 	zoomSelection = document.getElementById("zoomSelection");
 	zoomSelection.addEventListener("mouseup", function() {
 		controller.zoom_selection();
-	});
+	}); */
 	
 	// zoomActual handler
 	zoomActual = document.getElementById("zoomActual");

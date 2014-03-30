@@ -20,7 +20,7 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		<li id="reset"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/reset_icon.svg" alt="Reset animation icon"/><span>Reset</li>
 	</ul>
 	<ul class="submenu">
-		<li id="zoomSelection"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_selection_icon.svg" alt="Zoom selection icon"/><span>Zoom Selection</span></li>
+		<!--<li id="zoomSelection"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_selection_icon.svg" alt="Zoom selection icon"/><span>Zoom Selection</span></li>-->
 		<li id="zoomActual"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_actual_icon.svg" alt="Zoom actual icon"/><span>Zoom Actual</span></li>
 		<li id="zoomStage"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_stage_icon.svg" alt="Zoom stage icon"/><span>Zoom Stage</span></li>
 		<li id="zoomExtents"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/zoom_extents_icon.svg" alt="Zoom extents icon"/><span>Zoom Extents</span></li>
@@ -37,9 +37,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				<div id="pan" class="tool">
 					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/pan_icon.svg" alt="Pan tool icon"/>
 				</div>
-				<div id="manipulate" class="tool">
+				<!--<div id="manipulate" class="tool">
 					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/manipulate_icon.svg" alt="Manipulate tool icon"/>
-				</div>
+				</div>-->
 			</div>
 			<div id="drawingToolOptions">
 				<div id="drawingToolOptionsButton">
@@ -59,9 +59,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				<div id="line" class="tool">
 					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/line_icon.svg" alt="Line tool icon"/>
 				</div>
-				<div id="eraser" class="tool">
+				<!--<div id="eraser" class="tool">
 					<img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/eraser_icon.svg" alt="Eraser tool icon"/>
-				</div>
+				</div>-->
 			</div>
 		</div>
 		<div id="toolbarOverlay" class="hidden"></div>
