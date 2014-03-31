@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 $_SESSION['page'] = "profile";
-protect_page($page);
+protect_page();
 if (isset($_GET['username']) && !empty($_GET['username'])) {
 	$username = $_GET['username'];
 	if (user_exists($username)) {

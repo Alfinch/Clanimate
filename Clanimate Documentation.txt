@@ -33,8 +33,10 @@ data
 
   settings
   
-    mixed get (String key)
-    bool  set (String key, mixed value)
+    mixed  get     (String key)
+	Object get_all ()
+    bool   set     (String key, mixed value)
+	bool   set_all (Object)
 
   tools
   
@@ -124,6 +126,7 @@ controller
   void pause             ()
   void redo              ()
   void rename_layer      ()
+  void save              ()
   void select_cell       (int layerIndex, int frameIndex)
   void select_frame      (int frameIndex)
   void select_layer      (int layerIndex)

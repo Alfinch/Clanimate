@@ -110,6 +110,48 @@ controller = (function(){
             .get_cell(drawFrame)
             .set_key();
     },
+	
+	// Loads an animation with a given id
+	load = function(id) {
+		var animData = false,
+			requestString = "id=" + id;
+			request = new XMLHttpRequest();
+			
+		request.open('GET', '/actions/load_animation.php', false);
+
+		request.onreadystatechange = function() {
+			if (this.readyState === 4){
+				if (this.status >= 200 && this.status < 400){
+					animData = JSON.parse(this.responseText);
+					data.from_JSON(animData);
+					ui.prompt({
+						message:      "The animation was successfully loaded!",
+						button1: {
+							name:     "Okay"
+						},
+					});
+				} else {
+					ui.prompt({
+						message:      "Sorry, the animation failed to load.",
+						button1: {
+							name:     "Okay"
+						},
+					});
+				}
+			}
+		};
+
+		request.onerror = function() {
+			ui.prompt({
+				message:      "Sorry, there was an error connecting to the server. Check your internet connection and try again.",
+				button1: {
+					name:     "Okay"
+				},
+			});
+		};
+
+		request.send(requestString);
+	},
     
     // Creates a new keycell at the current frame
     new_keycell = function() {
@@ -260,6 +302,95 @@ controller = (function(){
             }
         });
     },
+	
+	// Saves the current animation
+	save = function() {
+        var animData, requestString, request, response,
+			saveID = data.settings.get("saveID"),
+		
+        callback = function(input) {
+			input = input || data.settings.get("title");
+            if (input.length > 1024) {
+                ui.prompt({
+                    message:  "Animation name too long.<br/>Enter a name 1024 or less characters in length.",
+                    button1: {
+                        name: "Okay",
+                        callback: function() {
+                            save();
+                        }
+                    }
+                });
+            } else {
+                data.settings.set("title", input);
+				
+				animData = data.to_JSON();
+				
+				requestString = "id=" + saveID + "&data=" + animData + "&title=" + input;
+				
+				request = new XMLHttpRequest();
+					
+				request.open('POST', '/actions/save_animation.php', false);
+				
+				request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				request.setRequestHeader("Content-length", requestString.length);
+				request.setRequestHeader("Connection", "close");
+
+				request.onreadystatechange = function() {
+					if (this.readyState === 4){
+						if (this.status >= 200 && this.status < 400){
+							response = JSON.parse(this.responseText);
+							if (response.success) {
+								ui.prompt({
+									message:      "Your animation was saved!",
+									button1: {
+										name:     "Okay"
+									},
+								});
+								data.settings.set("saveID", response.id);
+							} else {
+								ui.prompt({
+									message:      response.error,
+									button1: {
+										name:     "Okay"
+									},
+								});
+							}
+						} else {
+							ui.prompt({
+								message:      "Sorry, there was a server error. Try saving again.",
+								button1: {
+									name:     "Okay"
+								},
+							});
+						}
+					}
+				};
+
+				request.onerror = function() {
+					ui.prompt({
+						message:      "Sorry, there was an error connecting to the server. Check your internet connection and try again.",
+						button1: {
+							name:     "Okay"
+						},
+					});
+				};
+
+				request.send(requestString);
+            }
+        };
+        ui.prompt({
+            message:      "Save animation",
+            input:        (saveID === "false" ? true : false),
+            placeholder:  data.settings.get("title"),
+            button1: {
+                name:     "Save",
+                callback: callback
+            },
+            button2: {
+                name:     "Cancel"
+            }
+        });
+	},
     
     // Selects the the cell at the given layer and frame
     select_cell = function(layerIndex, frameIndex) {
@@ -486,6 +617,7 @@ controller = (function(){
     o.delete_keycell      = delete_keycell;
     o.delete_layer        = delete_layer;
     o.draw                = draw;
+	o.load                = load;
     o.new_keycell         = new_keycell;
     o.new_layer           = new_layer;
 	o.new_animation       = new_animation;
@@ -493,6 +625,7 @@ controller = (function(){
     o.play                = play;
     o.redo                = redo;
     o.rename_layer        = rename_layer;
+	o.save                = save;
     o.select_cell         = select_cell;
     o.select_frame        = select_frame;
     o.select_layer        = select_layer;

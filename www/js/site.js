@@ -74,7 +74,7 @@ window.onload = function() {
 	// save handler
 	save = document.getElementById("save");
 	save.addEventListener("mouseup", function() {
-		// Save current animation
+		controller.save();
 	});
 	
 	// load handler
@@ -199,6 +199,10 @@ window.onload = function() {
 		ui.timeline.scrollbars
 			.update_horizontal();
     });
+	
+	window.onbeforeunload = function(e) {
+		return "If you go now any unsaved data will be lost!";
+	};
     
     // Tooltips
     ui.tooltip.set({

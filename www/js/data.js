@@ -243,6 +243,13 @@ data = (function() {
     // Returns false if unsuccessful
     from_JSON = function(json) {
         var o = JSON.parse(json);
+		
+		project.clear();
+		project.importJSON(o.project);
+		settings.set_all(o.settings);
+		
+        json = JSON.stringify(o);
+        return json;
     },
 	
 	// Returns the bounding rectangle for everything in the current frame
@@ -520,6 +527,10 @@ data = (function() {
     // Returns false if unsuccessful
     to_JSON = function() {
         var json, o = {};
+		
+		o.project  = project.exportJSON();
+		o.settings = settings.get_all();
+		
         json = JSON.stringify(o);
         return json;
     },
@@ -658,12 +669,19 @@ data = (function() {
             frameRate:   24,
             stageHeight: 450,
             stageWidth:  800,
+			title: "Untitled",
+			saveID: "false",
             color: new Color(0),
             strokeWidth: 8,
 			zoomPadding: 8
         },
         
         // Public functions
+		
+		// Returns all settings
+		get_all = function() {
+			return values;
+		},
         
         // Returns the setting linked to the given key
         // Returns false if the setting is undefined
@@ -679,10 +697,20 @@ data = (function() {
                 return true;
             }
             return false;
-        };
+        },
+		
+        // Changes the values of all settings based on a spec object
+		set_all = function(spec) {
+			for (key in spec) {
+				if (!set(key, spec[key])) return false;
+			}
+			return true;
+		};
         
-        o.get = get;
-        o.set = set;
+        o.get     = get;
+		o.get_all = get_all;
+        o.set     = set;
+		o.set_all = set_all;
         
         return o;
     }()),

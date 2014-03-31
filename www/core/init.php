@@ -3,6 +3,7 @@ session_start();
 //error_reporting(false);
 
 require_once("database/connect.php");
+require_once("functions/animations.php");
 require_once("functions/general.php");
 require_once("functions/users.php");
 

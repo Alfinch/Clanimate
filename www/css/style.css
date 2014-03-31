@@ -335,10 +335,18 @@ ul, ol {
 				margin-bottom: 16px;
 			}
 			#middleSection.page>div p {
+				text-indent: 32px;
+			}
+			#middleSection.page>div li {
+				list-style: inside disc;
+				text-indent: 16px;
+				
+			}
+			#middleSection.page>div p,
+			#middleSection.page>div ul {
 				background: #EEE;
 				padding: 16px;
 				margin-bottom: 16px;
-				text-indent: 32px;
 				line-height: 20px;
 				text-align: justify;
 			}
