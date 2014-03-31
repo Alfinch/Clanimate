@@ -669,9 +669,10 @@ data = (function() {
             frameRate:   24,
             stageHeight: 450,
             stageWidth:  800,
-			title: "Untitled",
-			saveID: "false",
-            color: new Color(0),
+			title:       "Untitled",
+			saveID:      "false",
+			published:   "false",
+            color:       new Color(0),
             strokeWidth: 8,
 			zoomPadding: 8
         },
@@ -814,8 +815,6 @@ data = (function() {
             
             if (!this.firstDrag) {
 				this.leftPath.reverse();
-                this.leftPath.smooth();
-                this.rightPath.smooth();
                 this.leftPath.simplify();
                 this.rightPath.simplify();
                 this.stroke = this.rightPath.clone();

@@ -120,8 +120,8 @@ controller = (function(){
 		request.open('GET', '/actions/load_animation.php', false);
 
 		request.onreadystatechange = function() {
-			if (this.readyState === 4){
-				if (this.status >= 200 && this.status < 400){
+			if (this.readyState === 4) {
+				if (this.status >= 200 && this.status < 400) {
 					animData = JSON.parse(this.responseText);
 					data.from_JSON(animData);
 					ui.prompt({
@@ -253,6 +253,82 @@ controller = (function(){
             }, 1000 / data.settings.get("frameRate"));
         }
     },
+	
+	// Publishes the current animation
+	publish = function() {
+		var request, requestString, response,
+			published = data.settings.get("published"),
+			saveID = data.settings.get("saveID"),
+		
+		callback = function() {
+			requestString = "?id=" + saveID + "&published=" + (published === "true" ? "false" : "true");
+			
+			request = new XMLHttpRequest();
+			request.open("GET", "/actions/publish_animation.php" + requestString, false);
+
+			request.onreadystatechange = function() {
+				if (this.readyState === 4) {
+					if (this.status >= 200 && this.status < 400) {
+						response = JSON.parse(this.responseText);
+						if (response.success) {
+							data.settings.set("published", (published === "true" ? "false" : "true"));
+							ui.prompt({
+								message:      "Your animation was " + (published === "true" ? "un-published" : "published") + ".",
+								button1: {
+									name:     "Okay"
+								},
+							});
+						} else {
+							ui.prompt({
+								message:      response.error,
+								button1: {
+									name:     "Okay"
+								},
+							});
+						}
+					} else {
+						ui.prompt({
+							message:      "Sorry, there was a server error. Try saving again.",
+							button1: {
+								name:     "Okay"
+							},
+						});
+					}
+				}
+			};
+
+			request.onerror = function() {
+				ui.prompt({
+					message:      "Sorry, there was an error connecting to the server. Check your internet connection and try again.",
+					button1: {
+						name:     "Okay"
+					},
+				});
+			};
+			
+			request.send();
+		};
+		
+		if (data.settings.get("saveID") === "false") {
+			ui.prompt({
+				message:  "You need to save your animation before you can publish it!",
+				button1: {
+					name: "Okay"
+				}
+			});
+		} else {
+			ui.prompt({
+				message:  (published === "true" ? "Un-publish" : "Publish") + " this animation?<br>You can always " + (published === "true" ? "re-publish" : "un-publish") + " it later.",
+				button1: {
+					name: "Okay",
+					callback: callback
+				},
+				button2: {
+					name: "Cancel"
+				}
+			});
+		}
+	},
     
     // Redoes the previously undone action
     redo = function() {
@@ -496,6 +572,14 @@ controller = (function(){
             }
         });
     },
+	
+	// Shows the load animation dialog
+	show_load_dialog = function() {
+	},
+	
+	// Shows the settings dialog
+	show_settings_dialog = function() {
+	},
     
     // Pauses the animation and returns to the first frame if playing
     stop = function() {
@@ -622,6 +706,7 @@ controller = (function(){
     o.new_layer           = new_layer;
 	o.new_animation       = new_animation;
     o.pause               = pause;
+	o.publish             = publish;
     o.play                = play;
     o.redo                = redo;
     o.rename_layer        = rename_layer;

@@ -14,6 +14,14 @@ function load_animation($id) {
 	return $query ? mysql_result($query, 0) : false;
 }
 
+function publish_animation($id, $published) {
+	$id = (int)$id;
+	$published = ($published === "true" ? 1 : 0);
+	$queryString = "update `animations` set `published` = $published where `id` = '$id'";
+	$query = mysql_query($queryString);
+	return $query ? true : false;
+}
+
 function save_animation($id, $data, $title) {
 	$id    = (int)$id;
 	$data  = sanitize($data);

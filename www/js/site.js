@@ -62,7 +62,7 @@ window.onload = function() {
 	// settings handler
     settings = document.getElementById("settings");
     settings.addEventListener("mouseup", function() {
-		// Show animation settings
+		controller.show_settings_dialog();
     });
 	
 	// new handler
@@ -80,13 +80,13 @@ window.onload = function() {
 	// load handler
 	load = document.getElementById("load");
 	load.addEventListener("mouseup", function() {
-		// Load current animation
+		controller.show_load_dialog();
 	});
 	
 	// publish handler
 	publish = document.getElementById("publish");
 	publish.addEventListener("mouseup", function() {
-		// Publish current animation
+		controller.publish();
 	});
     
 	// play / pause handlers
