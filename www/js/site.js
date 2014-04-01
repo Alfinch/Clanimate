@@ -9,9 +9,8 @@
 (function() {
 
 window.onload = function() {
-    var sw, sh, bg,
+    var sw, sh, bg, i,
         layerIndex, layerName, frameIndex,
-        i, initFrames = 50,
 		settings,
 		newAnim, save, load, publish,
         play, pause, reset, tbo, tlo,
@@ -32,8 +31,7 @@ window.onload = function() {
     bg.fillColor = "#FFF";
     
     // Add the initial frames
-    data.set_frames(initFrames);
-    ui.timeline.set_frames(initFrames);
+    ui.timeline.set_frames(data.settings.get("frames"));
     
     // Add the first project layer
     layerIndex = data.new_layer("Layer 1", true);
@@ -55,7 +53,7 @@ window.onload = function() {
     controller.set_tool("brush");
 	
 	// Center the stage
-	controller.zoom_actual();
+	controller.zoom_stage();
     
     // Events
 	
@@ -90,26 +88,16 @@ window.onload = function() {
 	});
     
 	// play / pause handlers
-	tbo = document.getElementById("toolbarOverlay");
-	tlo = document.getElementById("timelineOverlay");
     play = document.getElementById("play");
     pause = document.getElementById("pause");
     play.addEventListener("mouseup", function() {;
 		if (!play.classList.contains("selected")) {
 			controller.play();
-			play.classList.add("selected");
-			pause.classList.remove("selected");
-			tbo.classList.remove("hidden");
-			tlo.classList.remove("hidden");
 		}
     });
     pause.addEventListener("mouseup", function() {
 		if (!pause.classList.contains("selected")) {
 			controller.pause();
-			pause.classList.add("selected");
-			play.classList.remove("selected");
-			tbo.classList.add("hidden");
-			tlo.classList.add("hidden");
 		}
     });
 	
@@ -118,10 +106,6 @@ window.onload = function() {
     reset.addEventListener("mouseup", function() {
 		controller.pause();
 		controller.select_frame(1);
-		pause.classList.add("selected");
-		play.classList.remove("selected");
-		tbo.classList.add("hidden");
-		tlo.classList.add("hidden");
     });
 	
 	// zoomSelection handler

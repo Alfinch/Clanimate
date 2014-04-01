@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="260" width="260" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="26" width="26" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
  <metadata id="metadata7">
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -10,6 +10,5 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <path id="rect3805" fill="#333333" d="m130,120-20-20-50,0l-20,20v110h180v-110z"/>
- <path id="path3906" fill="#333333" d="M202.22,110,174.57,96.096,146.6,109.42,152.26,80.639,130,59.982,161.14,56.096,175.36,30,188.96,56.383,220,60.913,197.26,81.105z"/>
+ <path id="rect3805" fill="#333333" d="M17.538,3,16.112,5.6094,13,5.9969,15.225,8.0625,14.659,10.941,17.456,9.6094,20.222,11,19.725,8.1094,22,6.0906,18.897,5.6375,17.538,3zm-11.538,7l-2,2v11h18v-11h-9l-2-2h-5z"/>
 </svg>

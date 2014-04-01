@@ -7,8 +7,168 @@ ui = (function() {
     
     // Public functions
     
+    // Displays the settings dialog
+    settings_dialog = function(spec) {
+        var overlay, overlayContainer, settingsDialog, sb1, sb2,
+			titleInput, frameRateInput, stageHeightInput, stageWidthInput,
+        
+        close = function() {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("dim");
+            overlayContainer.classList.add("hidden");
+            settingsDialog.classList.add("hidden");
+            window.removeEventListener("keydown", enter_handler);
+            overlay.removeEventListener("mouseup", close);
+            settingsDialog.removeEventListener("mouseup", propagation_block);
+            sb1.removeEventListener("mouseup", sb1_handler);
+            sb2.removeEventListener("mouseup", close);
+			titleInput.value = null;
+			frameRateInput.value = null;
+			stageHeightInput.value = null;
+			stageWidthInput.value = null;
+        },
+        
+        enter_handler = function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+				sb1_handler();
+            }
+        },
+        
+        sb1_handler = function(e){
+			if (titleInput.value) data.settings.set("title",       titleInput.value);
+			if (frameRateInput.value) data.settings.set("frameRate",   parseInt(frameRateInput.value));
+			if (stageHeightInput.value) data.settings.set("stageHeight", parseInt(stageHeightInput.value));
+			if (stageWidthInput.value) data.settings.set("stageWidth",  parseInt(stageWidthInput.value));
+            close();
+        },
+        
+        propagation_block = function(e) {
+            e.stopPropagation();
+        };
+        
+        overlay          = document.getElementById("overlay");
+        overlayContainer = document.getElementById("overlayContainer");
+        settingsDialog   = document.getElementById("settingsDialog");
+		titleInput       = document.getElementById("titleInput");
+		frameRateInput   = document.getElementById("frameRateInput");
+		stageHeightInput = document.getElementById("stageHeightInput");
+		stageWidthInput  = document.getElementById("stageWidthInput");
+		sb1              = document.getElementById("settingsButton1");
+		sb2              = document.getElementById("settingsButton2");
+        
+		// Fill in values
+		titleInput.setAttribute("placeholder", spec.title);
+		frameRateInput.setAttribute("placeholder", spec.frameRate);
+		stageHeightInput.setAttribute("placeholder", spec.stageHeight);
+		stageWidthInput.setAttribute("placeholder", spec.stageWidth);
+		
+        // Display settings dialog
+        overlay.classList.remove("hidden");
+        overlay.classList.add("dim");
+        overlayContainer.classList.remove("hidden");
+        settingsDialog.classList.remove("hidden");
+        
+        // Set up settings dialog events
+        window.addEventListener("keydown", enter_handler);
+        overlay.addEventListener("mouseup", close);
+        sb1.addEventListener("mouseup", sb1_handler);
+        sb2.addEventListener("mouseup", close);
+        settingsDialog.addEventListener("mouseup", propagation_block);
+    },
+    
+    // Displays the load dialog containing a list of the user's animations
+    load_dialog = function(animations) {
+        var overlay, overlayContainer, loadDialog, loadList, cancelButton, i,
+		listItem, listButton, listSpan,
+        
+        close = function() {
+            overlay.classList.add("hidden");
+            overlay.classList.remove("dim");
+            overlayContainer.classList.add("hidden");
+            loadDialog.classList.add("hidden");
+            window.removeEventListener("keydown", enter_handler);
+            overlay.removeEventListener("mouseup", cancelButton_handler);
+            loadDialog.removeEventListener("mouseup", propagation_block);
+            cancelButton.removeEventListener("mouseup", cancelButton_handler);
+			loadList.innerHTML = "";
+        },
+		
+		load_handler = function(id) {
+			close();
+			
+			// Fixes a bug where the prompt will not appear
+			window.setTimeout( function() {
+				prompt({
+					message:      "Are you sure you want to load this animation?<br>All unsaved progress will be lost.",
+					button1: {
+						name:     "Yes",
+						callback: function() {
+							controller.load(id)
+						}
+					},
+					button2: {
+						name:     "No"
+					}
+				})
+			}, 0 );
+		},
+        
+        enter_handler = function(e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+				close();
+            }
+        },
+        
+        cancelButton_handler = function(e){
+            close();
+        },
+        
+        propagation_block = function(e) {
+            e.stopPropagation();
+        };
+        
+        overlay          = document.getElementById("overlay");
+        overlayContainer = document.getElementById("overlayContainer");
+        loadDialog       = document.getElementById("loadDialog");
+        loadList         = document.getElementById("loadList");
+        cancelButton     = document.getElementById("loadCancelButton");
+		
+		// Populate list
+		for (i = 0; i < animations.length; i += 1) {
+			listItem   = document.createElement("li");
+			listButton = document.createElement("button");
+			listSpan   = document.createElement("span");
+			
+			console.log(animations[i].published);
+			listSpan.textContent   = animations[i].title + (animations[i].published === "1" ? " [Published]" : " [Private]");
+			listButton.textContent = "Load";
+			listButton.setAttribute("value", animations[i].id)
+			listButton.addEventListener("mouseup", function() {
+				load_handler(this.value);
+			});
+			
+			listItem.appendChild(listButton);
+			listItem.appendChild(listSpan);
+			loadList.appendChild(listItem);
+		}
+        
+        // Display load dialog
+        overlay.classList.remove("hidden");
+        overlay.classList.add("dim");
+        overlayContainer.classList.remove("hidden");
+        loadDialog.classList.remove("hidden");
+        
+        // Set up load dialog events
+        
+        window.addEventListener("keydown", enter_handler);
+        overlay.addEventListener("mouseup", cancelButton_handler);
+        cancelButton.addEventListener("mouseup", cancelButton_handler);
+        loadDialog.addEventListener("mouseup", propagation_block);
+    },
+    
     // Displays a prompt to the user based on a supplied spec
-    // Returns the user's response
     prompt = function(spec) {
         var overlay, overlayContainer, prompt,
             pm, pi, pb1, pb2,
@@ -288,34 +448,35 @@ ui = (function() {
             
             pointerCellArray[frameIndex] = o;
         },
-        
-        // Resises the timeline and stage based on the number of layers
-        set_timeline_height = function() {
-            var base = 62,
-                lNum = data.get_layer_num(),
-                ms, bs, h;
-            
-            ms = document.getElementById("middleSection");
-            bs = document.getElementById("bottomSection");
-            
-            lNum = lNum > maxVisibleLayers ? maxVisibleLayers : lNum;
-            h = base + (lNum * 30);
-            
-            ms.style.bottom = h + 2 + "px";
-            bs.style.height = h + "px";
-        },
+		
+		sort_layers = function() {
+			layers.sort(function(a, b) {
+				return a.get_index - b.get_index;
+			});
+		},
         
         // Public functions
         
         // Returns the layer with the given index
         get_layer = function(index) {
-            return layers[index] || false;
+            var i;
+			for (i = 0; i < layers.length; i += 1) {
+				if (layers[i].get_index() === index) {
+					return layers[i];
+				}
+			}
+			return false;
         },
         
         // Returns the top layer
+		// Returns false when there are no layers
         get_top_layer = function() {
-            var i = layers.lastIndexOf;
-            return layers[i];
+            var i;
+			if (layers.length === 0) {
+				return false;
+			} else {
+				return layers[layers.length - 1];
+			}
         },
         
         // Creates a new layer ui
@@ -444,13 +605,13 @@ ui = (function() {
                 cell.addEventListener("mouseover", function(e) {
                     e.stopPropagation();
                     pointerCellArray[frameIndex].focus();
-                    layers[layerIndex].focus();
+                    get_layer(layerIndex).focus();
                 });
                 
                 cell.addEventListener("mouseout", function(e) {
                     e.stopPropagation();
                     pointerCellArray[frameIndex].defocus();
-                    layers[layerIndex].defocus();
+                    get_layer(layerIndex).defocus();
                 });
                 
                 cells[frameIndex] = o;
@@ -458,12 +619,13 @@ ui = (function() {
             
             // Removes the ui elements for this layer
             remove = function() {
+				var arrIndex = layers.indexOf(o);
                 document.getElementById("layerControls")
                     .removeChild(layerControl);
                 document.getElementById("layerRows")
                     .removeChild(layerCells);
-                set_timeline_height();
-				layers[layerIndex] = null;
+                set_height();
+				layers.splice(arrIndex,1);
             },
             
             // Changes the nameString for this layer
@@ -582,7 +744,6 @@ ui = (function() {
 				layerControls.appendChild(layerControl);
 			}
             
-            set_timeline_height();
             stage.update();
 			
 			// Assignment
@@ -599,12 +760,22 @@ ui = (function() {
             o.select    = select;
             o.unhide    = unhide;
             
-            layers[layerIndex] = o;
+            layers.push(o);
+            set_height();
+			sort_layers();
         },
+	
+		// Removes all of the current layers
+		remove_layers = function(){
+			var l;
+			while(l = get_top_layer()) {
+				l.remove();
+			}
+		},
         
         // Sets the number of frames in the animation
         set_frames = function(value) {
-            var i, j, l;
+            var i, j;
 			function cell_occluded(i, step) {
 				step = step || 0;
 				step += 1;
@@ -620,26 +791,36 @@ ui = (function() {
                 for (i = frames + 1; i <= value; i += 1) {
 					if (!cell_occluded(i)) new_index_cell(i);
                     new_pointer_cell(i);
-                    for (j = 1; j < layers.length; j += 1) {
-                        l = layers[j];
-                        if (l != null) {
-                            l.new_cell(i);
-                        }
+                    for (j = 0; j < layers.length; j += 1) {
+                        layers[j].new_cell(i);
                     }
                 }
             } else {
                 for (i = frames; i > value; i -= 1) {
                     if (indexCellArray[i] != null) indexCellArray[i].remove();
                     pointerCellArray[i].remove();
-                    for (j = 1; j < layers.length; j += 1) {
-                        l = layers[j];
-                        if (l != null) {
-                            l.get_cell(i).remove();
-                        }
+                    for (j = 0; j < layers.length; j += 1) {
+                        layers[j].get_cell(i).remove();
                     }
                 }
             }
             frames = value;
+        },
+        
+        // Resises the timeline and stage based on the number of layers
+        set_height = function() {
+            var base = 62,
+                lNum = layers.length,
+                ms, bs, h;
+            
+            ms = document.getElementById("middleSection");
+            bs = document.getElementById("bottomSection");
+            
+            lNum = lNum > maxVisibleLayers ? maxVisibleLayers : lNum;
+            h = base + (lNum * 30);
+            
+            ms.style.bottom = h + 2 + "px";
+            bs.style.height = h + "px";
         },
 		
 		// Public objects
@@ -760,9 +941,11 @@ ui = (function() {
 		// Assignment
         
 		o.scrollbars    = scrollbars;
+		o.set_height    = set_height;
         o.get_layer     = get_layer;
         o.get_top_layer = get_top_layer;
         o.new_layer     = new_layer;
+		o.remove_layers = remove_layers;
         o.set_frames    = set_frames;
         
         return o;
@@ -858,7 +1041,6 @@ ui = (function() {
 			data.settings.get("strokeWidth") + "px";
 			toolOptionsButton.children[0].style.backgroundColor =
 			data.settings.get("color").toCSS();
-			
 		},
 		
 		set_gradient = function (element, stops) {
@@ -1179,11 +1361,14 @@ ui = (function() {
         return o;
     }());
     
-    o.prompt      = prompt;
-    o.stage       = stage;
-    o.timeline    = timeline;
-    o.tooltip     = tooltip;
-    o.toolOptions = toolOptions;
+	o.load_dialog     = load_dialog;
+	o.settings_dialog = settings_dialog;
+    o.prompt          = prompt;
+	
+    o.stage           = stage;
+    o.timeline        = timeline;
+    o.tooltip         = tooltip;
+    o.toolOptions     = toolOptions;
         
     return o;
 }());

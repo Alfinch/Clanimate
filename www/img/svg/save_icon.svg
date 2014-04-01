@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="260" width="260" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="26" width="26" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
  <metadata id="metadata7">
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -10,5 +10,5 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <path id="path3917" fill="#333333" d="M170,30v50l-20-20-10,10,40,40,40-40-10-10-20,20v-50h-20zm-110,70l-20,20v110h180v-110h-90l-20-20h-50z"/>
+ <path id="path3917" fill="#333333" d="M17,3v5l-2-2-1,1,4,4,4-4-1-1-2,2v-5h-2zm-11,7-2,2v11h18v-11h-9l-2-2h-5z"/>
 </svg>

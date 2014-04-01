@@ -24,7 +24,6 @@ data
   
   // Generic
   Ractangle | bool get_frame_extents ()
-  int              get_frame_num     ()
   int              get_group_frame   ()
   int              get_target_frame  ()
   void             set_frames        (int value)
@@ -44,6 +43,17 @@ data
     bool   set        (String id)
 
 ui
+
+  void settings_dialog (Object spec)
+	String title
+    int    frameRate
+	int    stageHeight
+	int    stageWidth
+	
+  void load_dialog (Object-Array animations)
+    int    id
+	String title
+	bool   published
 
   void prompt (Object spec)
     String message
@@ -68,7 +78,9 @@ ui
     Layer | bool get_layer     (int index)
     Layer        get_top_layer ()
     void         new_layer     (int index, String name)
+	void         remove_layers ()
     void         set_frames    (int value)
+	void         set_height    ()
 	
 	scrollbars
 	

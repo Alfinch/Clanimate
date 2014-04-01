@@ -9,7 +9,6 @@ data = (function() {
     // Private variables
     
     cells            = [],
-    frames           = 0,
     layerIndex       = 0,
     layers           = 0,
     targetFrame      = 1,
@@ -242,14 +241,53 @@ data = (function() {
     // Loads a project from JSON and returns true
     // Returns false if unsuccessful
     from_JSON = function(json) {
-        var o = JSON.parse(json);
+        var i, j, o = JSON.parse(json);
 		
 		project.clear();
 		project.importJSON(o.project);
+		
 		settings.set_all(o.settings);
 		
-        json = JSON.stringify(o);
-        return json;
+		cells            = [];
+		layerIndex       = project.layers[(project.layers.length - 1)].data.index;
+		layers           = project.layers.length;
+		targetGroupFrame = null;
+		targetGroup      = null;
+		undoStack        = [];
+		redoStack        = [];
+		visibleGroups    = [];
+		
+		ui.timeline.remove_layers();
+		ui.timeline.set_frames(settings.get("frames"));
+		for (i = 1; i < project.layers.length; i++) {
+			project.layers[i].visible = true;
+			cells[project.layers[i].data.index] = [];
+			ui.timeline.new_layer(
+				project.layers[i].data.index,
+				project.layers[i].data.name
+			);
+			for (j = 0; j < project.layers[i].children.length; j++) {
+				if (project.layers[i].children[j]._class === "Group") {
+					cells[project.layers[i].data.index][project.layers[i].children[j].data.frame] = project.layers[i].children[j];
+					project.layers[i].children[j].visible = false;
+					if (project.layers[i].children[j].children.length > 0) {
+						ui.timeline
+							.get_layer(project.layers[i].data.index)
+							.get_cell(project.layers[i].children[j].data.frame)
+							.set_key();
+					} else {
+						ui.timeline
+							.get_layer(project.layers[i].data.index)
+							.get_cell(project.layers[i].children[j].data.frame)
+							.set_empty_key();
+					}
+				}
+			}
+		}
+		controller.select_cell(layerIndex, 1);
+		ui.timeline.scrollbars.update_horizontal();
+		ui.timeline.scrollbars.update_vertical();
+        return true;
     },
 	
 	// Returns the bounding rectangle for everything in the current frame
@@ -471,7 +509,7 @@ data = (function() {
     
     // Set the number of frames in the animation to the specified value
     set_frames = function(value) {
-        frames = value > 0 ? value : 1;
+        settings.set("frames", (value > 0 ? value : 1));
     },
     
     // Targets the the cell at the given layer and frame and returns true
@@ -666,6 +704,7 @@ data = (function() {
         // Private variables
         
         values = {
+			frames:      50,
             frameRate:   24,
             stageHeight: 450,
             stageWidth:  800,
@@ -681,7 +720,15 @@ data = (function() {
 		
 		// Returns all settings
 		get_all = function() {
-			return values;
+			return {
+				frames:      values.frames,
+				frameRate:   values.frameRate,
+				stageHeight: values.stageHeight,
+				stageWidth:  values.stageWidth,
+				title:       values.title,
+				saveID:      values.saveID,
+				published:   values.published
+			};
 		},
         
         // Returns the setting linked to the given key
@@ -702,6 +749,7 @@ data = (function() {
 		
         // Changes the values of all settings based on a spec object
 		set_all = function(spec) {
+			var key;
 			for (key in spec) {
 				if (!set(key, spec[key])) return false;
 			}
@@ -724,6 +772,7 @@ data = (function() {
         
         tools = {},
         defaultTool = "brush",
+		previousTool = "brush",
         currentTool = defaultTool,
         
         // Public functions
@@ -735,6 +784,7 @@ data = (function() {
                 if (tools[currentTool].onDeselect != null) {
                     tools[currentTool].onDeselect();
                 }
+				previousTool = currentTool;
                 currentTool = name;
                 tools[name].activate();
                 if (tools[name].onSelect != null) {
@@ -1134,6 +1184,18 @@ data = (function() {
 		tools.pan.onDeselect = function() {
 			canvas.removeEventListener("mousedown", tools.pan.mouse_down_handler);
 		};
+		
+		// Playing tool (No interaction)
+        tools.playing = new Tool();
+        
+        tools.playing.onSelect = function() {
+            ui.stage.set_cursor("cursor");
+        };
+        
+        tools.playing.onMouseDown = function(event) {
+            controller.pause();
+			set(previousTool);
+        };
         
         // Square tool
         tools.square = new Tool();
@@ -1185,7 +1247,6 @@ data = (function() {
     o.delete_layer      = delete_layer;
 	o.from_JSON         = from_JSON;
 	o.get_frame_extents = get_frame_extents;
-    o.get_frame_num     = get_frame_num;
     o.get_group_frame   = get_group_frame;
     o.get_layer_name    = get_layer_name;
     o.get_layer_num     = get_layer_num;

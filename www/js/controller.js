@@ -113,23 +113,27 @@ controller = (function(){
 	
 	// Loads an animation with a given id
 	load = function(id) {
-		var animData = false,
-			requestString = "id=" + id;
+		var response, requestString = "?id=" + id,
 			request = new XMLHttpRequest();
 			
-		request.open('GET', '/actions/load_animation.php', false);
+		request.open("GET", "/actions/load_animation.php" + requestString, false);
 
 		request.onreadystatechange = function() {
 			if (this.readyState === 4) {
 				if (this.status >= 200 && this.status < 400) {
-					animData = JSON.parse(this.responseText);
-					data.from_JSON(animData);
-					ui.prompt({
-						message:      "The animation was successfully loaded!",
-						button1: {
-							name:     "Okay"
-						},
-					});
+					response = JSON.parse(this.responseText);
+					if (response.success) {
+						data.from_JSON(JSON.stringify(response.data));
+						data.settings.set("saveID", id);
+						zoom_stage();
+					} else {
+						ui.prompt({
+							message:      response.error,
+							button1: {
+								name:     "Okay"
+							},
+						});
+					}
 				} else {
 					ui.prompt({
 						message:      "Sorry, the animation failed to load.",
@@ -150,7 +154,7 @@ controller = (function(){
 			});
 		};
 
-		request.send(requestString);
+		request.send();
 	},
     
     // Creates a new keycell at the current frame
@@ -235,6 +239,10 @@ controller = (function(){
     pause = function() {
         if (playing) {
             playing = false;
+			document.getElementById("pause").classList.add("selected");
+			document.getElementById("play").classList.remove("selected");
+			document.getElementById("toolbarOverlay").classList.add("hidden");
+			document.getElementById("timelineOverlay").classList.add("hidden");
             window.clearInterval(tickTimer);
         }
     },
@@ -243,9 +251,14 @@ controller = (function(){
     play = function() {
         if (!playing) {
             playing = true;
+			document.getElementById("play").classList.add("selected");
+			document.getElementById("pause").classList.remove("selected");
+			document.getElementById("toolbarOverlay").classList.remove("hidden");
+			document.getElementById("timelineOverlay").classList.remove("hidden");
+			data.tools.set("playing");
             tickTimer = window.setInterval(function() {
                 var newFrame = data.get_target_frame() + 1;
-                if (newFrame > data.get_frame_num()) {
+                if (newFrame > data.settings.get("frames")) {
                     select_frame(1);
                 } else {
                     select_frame(newFrame);
@@ -332,6 +345,7 @@ controller = (function(){
     
     // Redoes the previously undone action
     redo = function() {
+		pause();
         if (data.redo()) {
 			ui.stage.update();
 		} else {
@@ -549,7 +563,7 @@ controller = (function(){
         ui.prompt({
             message:      "Enter number of frames:",
             input:        true,
-            placeholder:  data.get_frame_num(),
+            placeholder:  data.settings.get("frames"),
             button1: {
                 name:     "Set",
                 callback: callback
@@ -575,10 +589,56 @@ controller = (function(){
 	
 	// Shows the load animation dialog
 	show_load_dialog = function() {
+		var response, requestString = "?user=true&private=true&limit=0",
+			request = new XMLHttpRequest();
+			
+		request.open("GET", "/actions/get_animation_list.php" + requestString, false);
+
+		request.onreadystatechange = function() {
+			if (this.readyState === 4) {
+				if (this.status >= 200 && this.status < 400) {
+					response = JSON.parse(this.responseText);
+					if (response.success) {
+						ui.load_dialog(response.list);
+					} else {
+						ui.prompt({
+							message:      response.error,
+							button1: {
+								name:     "Okay"
+							},
+						});
+					}
+				} else {
+					ui.prompt({
+						message:      "Sorry, the server failed to retreive your animations. Try again.",
+						button1: {
+							name:     "Okay"
+						},
+					});
+				}
+			}
+		};
+
+		request.onerror = function() {
+			ui.prompt({
+				message:      "Sorry, there was an error connecting to the server. Check your internet connection and try again.",
+				button1: {
+					name:     "Okay"
+				},
+			});
+		};
+
+		request.send();
 	},
 	
 	// Shows the settings dialog
 	show_settings_dialog = function() {
+		ui.settings_dialog({
+			title: data.settings.get("title"),
+			frameRate: data.settings.get("frameRate"),
+			stageHeight: data.settings.get("stageHeight"),
+			stageWidth: data.settings.get("stageWidth")
+		});
 	},
     
     // Pauses the animation and returns to the first frame if playing
@@ -636,6 +696,7 @@ controller = (function(){
     
     // Undoes the previous action
     undo = function() {
+		pause();
         if (data.undo()) {
 			ui.stage.update();
 		} else {
@@ -675,8 +736,9 @@ controller = (function(){
 	},
 	
 	// Zooms in to show the current selection as large as possible
+	/*
 	zoom_selection = function() {
-	},
+	},*/
 	
 	// Zooms in to show the stage as large as possible
 	zoom_stage = function() {
@@ -698,31 +760,33 @@ controller = (function(){
 		}
 	};
     
-    o.delete_keycell      = delete_keycell;
-    o.delete_layer        = delete_layer;
-    o.draw                = draw;
-	o.load                = load;
-    o.new_keycell         = new_keycell;
-    o.new_layer           = new_layer;
-	o.new_animation       = new_animation;
-    o.pause               = pause;
-	o.publish             = publish;
-    o.play                = play;
-    o.redo                = redo;
-    o.rename_layer        = rename_layer;
-	o.save                = save;
-    o.select_cell         = select_cell;
-    o.select_frame        = select_frame;
-    o.select_layer        = select_layer;
-    o.set_frames          = set_frames;
-    o.set_tool            = set_tool;
-    o.toggle_fullscreen   = toggle_fullscreen;
-    o.toggle_layer        = toggle_layer;
-    o.undo                = undo;
-	o.zoom_actual         = zoom_actual;
-	o.zoom_extents        = zoom_extents;
-	o.zoom_selection      = zoom_selection;
-	o.zoom_stage          = zoom_stage;
+    o.delete_keycell       = delete_keycell;
+    o.delete_layer         = delete_layer;
+    o.draw                 = draw;
+	o.load                 = load;
+    o.new_keycell          = new_keycell;
+    o.new_layer            = new_layer;
+	o.new_animation        = new_animation;
+    o.pause                = pause;
+	o.publish              = publish;
+    o.play                 = play;
+    o.redo                 = redo;
+    o.rename_layer         = rename_layer;
+	o.save                 = save;
+    o.select_cell          = select_cell;
+    o.select_frame         = select_frame;
+    o.select_layer         = select_layer;
+    o.set_frames           = set_frames;
+    o.set_tool             = set_tool;
+	o.show_load_dialog     = show_load_dialog;
+	o.show_settings_dialog = show_settings_dialog;
+    o.toggle_fullscreen    = toggle_fullscreen;
+    o.toggle_layer         = toggle_layer;
+    o.undo                 = undo;
+	o.zoom_actual          = zoom_actual;
+	o.zoom_extents         = zoom_extents;
+	//o.zoom_selection       = zoom_selection;
+	o.zoom_stage           = zoom_stage;
     
     return o;
 }());

@@ -118,13 +118,24 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				<button id="promptButton2">No</button>
 			</div>
 		</div>
-		<div id="settings" class="hidden">
+		<div id="settingsDialog" class="hidden">
+			<p>Settings</p>
+			<span>Title:</span><input id="titleInput" type="text" placeholder="placeholder" /><br>
+			<span>Framerate:</span><input id="frameRateInput" type="text" placeholder="placeholder" /><br>
+			<span>Stage Height:</span><input id="stageHeightInput" type="text" placeholder="placeholder" /><br>
+			<span>Stage Width:</span><input id="stageWidthInput" type="text" placeholder="placeholder" /><br>
+			<div id="settingsButtons">
+				<button id="settingsButton1">Confirm</button>
+				<button id="settingsButton2">Cancel</button>
+			</div>
 		</div>
-		<div id="save" class="hidden">
-		</div>
-		<div id="load" class="hidden">
-		</div>
-		<div id="publish" class="hidden">
+		<div id="loadDialog" class="hidden">
+			<p>Load an animation</p>
+			<ol id="loadList">
+			</ol>
+			<div>
+				<button id="loadCancelButton">Cancel</button>
+			</div>
 		</div>
 	</div>
 </div>

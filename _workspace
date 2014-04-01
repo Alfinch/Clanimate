@@ -8,6 +8,9 @@
             <File name="C:\Wamp\www\actions\activate.php" />
             <File name="C:\Wamp\www\actions\logout.php" />
             <File name="C:\Wamp\www\actions\recover_account.php" />
+            <File name="C:\Wamp\www\actions\save_animation.php" />
+            <File name="C:\Wamp\www\actions\load_animation.php" />
+            <File name="C:\Wamp\www\actions\publish_animation.php" />
         </Folder>
         <Folder name="core">
             <Folder name="database">
@@ -17,6 +20,7 @@
                 <File name="C:\Wamp\www\core\functions\general.php" />
                 <File name="C:\Wamp\www\core\functions\hash.php" />
                 <File name="C:\Wamp\www\core\functions\users.php" />
+                <File name="C:\Wamp\www\core\functions\animations.php" />
             </Folder>
             <File name="C:\Wamp\www\core\init.php" />
         </Folder>
@@ -70,8 +74,6 @@
                 <File name="C:\Wamp\www\includes\widgets\register.php" />
                 <File name="C:\Wamp\www\includes\widgets\userinfo.php" />
                 <File name="C:\Wamp\www\includes\widgets\uservoice.php" />
-                <File name="C:\Wamp\www\includes\widgets\recover_password.php" />
-                <File name="C:\Wamp\www\includes\widgets\recover_username.php" />
             </Folder>
         </Folder>
         <Folder name="js">

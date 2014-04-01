@@ -9,11 +9,11 @@ if (!empty($_GET) && logged_in()) {
 		$errors[] = "Invalid request.";
 	} else {
 		if (animation_exists($_GET['id'])) {
-			if (user_owns_animation($_SESSION['id'], $_GET['id'])) {
+			if (user_owns_animation($_SESSION['id'], $_GET['id']) || animation_is_published($_GET['id'])) {
 				$animationData = load_animation($_GET['id']);
 				$success = "true";
 			} else {
-				$errors[] = "You do not have permission to modify this animation.";
+				$errors[] = "You do not have permission to load this animation.";
 			}
 		} else {
 			$errors[] = "The requested animation does not exist.";
