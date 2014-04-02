@@ -121,9 +121,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		<div id="settingsDialog" class="hidden">
 			<p>Settings</p>
 			<span>Title:</span><input id="titleInput" type="text" placeholder="placeholder" /><br>
-			<span>Framerate:</span><input id="frameRateInput" type="text" placeholder="placeholder" /><br>
-			<span>Stage Height:</span><input id="stageHeightInput" type="text" placeholder="placeholder" /><br>
-			<span>Stage Width:</span><input id="stageWidthInput" type="text" placeholder="placeholder" /><br>
+			<span>Framerate (fps):</span><input id="frameRateInput" type="text" placeholder="placeholder" /><br>
+			<span>Stage Height (px):</span><input id="stageHeightInput" type="text" placeholder="placeholder" /><br>
+			<span>Stage Width (px):</span><input id="stageWidthInput" type="text" placeholder="placeholder" /><br>
 			<div id="settingsButtons">
 				<button id="settingsButton1">Confirm</button>
 				<button id="settingsButton2">Cancel</button>

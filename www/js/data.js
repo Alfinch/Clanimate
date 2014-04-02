@@ -751,6 +751,7 @@ data = (function() {
 					new Path.Rectangle(new Point(0, 0), new Size(values.stageWidth, values.stageHeight));
 					project.layers[0].children[0].fillColor = "#FFF";
 					project.layers[i].activate();
+					controller.zoom_stage();
 				};
                 return true;
             }
