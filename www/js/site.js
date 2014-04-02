@@ -268,6 +268,11 @@ window.onload = function() {
         position: "above"
     });
     ui.tooltip.set({
+        element: onionSkin,
+        message: "Onion Skin",
+        position: "above"
+    });
+    ui.tooltip.set({
         element: addLayer,
         message: "Add a new layer",
         position: "above"
