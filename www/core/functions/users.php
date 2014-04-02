@@ -154,6 +154,16 @@ function id_from_username($username) {
 	}
 }
 
+function username_from_id($id) {
+	$id = (int)$id;
+	$queryString = "select `username` from `users` where `id` = '$id'";
+	$query = mysql_query($queryString);
+	if ($query) {
+		$username = mysql_result($query, 0, 0);
+		return $username;
+	}
+}
+
 function id_from_email($email) {
 	$email = sanitize($email);
 	$queryString = "select `id` from `users` where `email` = '$email'";

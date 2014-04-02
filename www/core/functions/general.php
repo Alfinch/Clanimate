@@ -53,13 +53,10 @@ function go_home() {
 	header("Location: http://" . $_SERVER["SERVER_NAME"]);
 }
 
-function go_to_page($page, $username) {
+function go_to_page($page) {
 	if (empty($page)) {
 		go_home();
 	} else {
-		if ($page === 'profile' && isset($username)) {
-			$page = "user/" + $username;
-		}
 		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $page . "/");
 	}
 }

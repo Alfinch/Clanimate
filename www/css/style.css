@@ -338,10 +338,34 @@ ul, ol {
 			#middleSection.page>div p {
 				text-indent: 32px;
 			}
-			#middleSection.page>div li {
+			.underline {
+				text-decoration: underline;
+			}
+			.textList>li {
 				list-style: inside disc;
 				text-indent: 16px;
 				
+			}
+			.animationList>li {
+				list-style: none;
+				text-indent: 0;
+			}
+			.buttonLink {
+				display: inline-block;
+				box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				border: 2px solid #CCC;
+				font-weight: bold;
+				background: #CCC;
+				color: #333;
+				height: 28px;
+				padding: 0 20px;
+				margin: 4px 8px 4px 0;
+				clear: both;
+				vertical-align: middle;
+			}
+			.buttonLink:hover {
+				background: #FFF;
 			}
 			#middleSection.page>div p,
 			#middleSection.page>div ul {

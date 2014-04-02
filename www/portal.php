@@ -5,7 +5,15 @@ include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="middleSection" class="page">
 	<div>
-		<h1>Portal</h1>
+		<h1>Most recent animations by all users:</h1>
+		<ul class="animationList">
+			<?php
+				$animationList = list_animations(50);
+				foreach($animationList as $animation) {
+					echo "<li><a class=\"buttonLink\" href=\"http://" . $_SERVER["SERVER_NAME"] . "/player/" . $animation["id"] . "/\">Watch</a>" . "<span>&quot;" . $animation["title"] . "&quot; by <a class=\"underline\" href=\"http://" . $_SERVER["SERVER_NAME"] . "/user/" . username_from_id($animation["user_id"]) . "/\">" . username_from_id($animation["user_id"]) . "</a><span></li>\n";
+				}
+			?>
+		</ul>
 	</div>
 </div>
 </div>

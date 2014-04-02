@@ -15,6 +15,20 @@ function animation_is_published($id) {
 	return $result === "1";
 }
 
+function list_animations($limit) {
+	$queryString = "select `id`, `user_id`, `title` from `animations` where `published` = 1";
+	if ($limit > 0) $queryString .= " limit 0, $limit";
+	$query = mysql_query($queryString);
+	if ($query) {
+		$anim_array = [];
+		while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
+			$anim_array[] = $row;
+		}
+		return $anim_array;
+	}
+	return false;
+}
+
 function list_user_animations($user_id, $show_private, $limit) {
 	$show_private = $show_private || false;
 	$user_id = (int)$user_id;
@@ -24,7 +38,7 @@ function list_user_animations($user_id, $show_private, $limit) {
 	if ($query) {
 		$anim_array = [];
 		while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
-			if ($row["published"] === 1 || $show_private) {
+			if ($row["published"] === "1" || $show_private) {
 				$anim_array[] = [
 					"id"        => $row["id"],
 					"title"     => $row["title"],
