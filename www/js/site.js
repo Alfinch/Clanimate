@@ -180,6 +180,8 @@ window.onload = function() {
     window.addEventListener("resize", function() {
         ui.stage
 			.update();
+		controller
+			.zoom_stage();
 		ui.timeline.scrollbars
 			.update_horizontal();
     });
@@ -269,9 +271,16 @@ window.onload = function() {
         message: "Set number of frames",
         position: "above"
     });
-	if (projectData != null) {
-		data.from_JSON(projectData);
-	}
+	(function(){
+		var exists;
+		try {
+			if (projectData)
+				exists = true;
+		} catch(e) { exists = false; }
+		if (exists) {
+			data.from_JSON(projectData);
+		}
+	}());
 };
 
 }());

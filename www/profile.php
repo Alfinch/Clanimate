@@ -25,7 +25,7 @@ include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 				foreach($animationList as $animation) {
 					$editLink = $private ? "<a class=\"buttonLink\" href=http://" . $_SERVER["SERVER_NAME"] . "/editor/" . $animation["id"] . "/>Edit</a>" : "";
 					$published = $private ? ($animation["published"] === "1" ? " [PUBLISHED]" : " [PRIVATE]") : "";
-					echo "<li><a class=\"buttonLink\" href=http://" . $_SERVER["SERVER_NAME"] . "/player/" . $animation["id"] . "/>Watch</a>" . $editLink . "<span>" . $animation["title"] . $published . "<span></li>\n";
+					echo "<li><a class=\"buttonLink\" href=http://" . $_SERVER["SERVER_NAME"] . "/player/" . $animation["id"] . "/>Watch</a>" . $editLink . "<span>\"" . $animation["title"] . "\"" . $published . "<span></li>\n";
 				}
 			?>
 		</ul>

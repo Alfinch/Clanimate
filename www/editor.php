@@ -147,10 +147,10 @@ if (isset($_GET) && !empty($_GET['id'])) {
 			$animationData = load_animation($_GET['id']);
 			$script = "var projectData = JSON.stringify(" . $animationData . ");";
 		} else {
-			$script = "ui.prompt({message: 'You do not have permission to load this animation.', button1: {name: 'Okay'}});";
+			$script = "var projectData = null;ui.prompt({message: 'You do not have permission to load this animation.', button1: {name: 'Okay'}});";
 		}
 	} else {
-		$script = "ui.prompt({message: 'The requested animation does not exist.', button1: {name: 'Okay'}});";
+		$script = "var projectData = null;ui.prompt({message: 'The requested animation does not exist.', button1: {name: 'Okay'}});";
 	}
 	echo <<<EOF
 <script type="text/javascript">

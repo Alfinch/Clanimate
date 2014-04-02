@@ -23,7 +23,7 @@ if (empty($_POST) === false) {
 			
 			$_SESSION['id'] = $login;
 			$_SESSION['alerts'] = $alerts;
-			go_to_page($_SESSION['page'], $username);
+			go_to_page($_SESSION['page']);
 			exit();
 		} else {
 			$errors[] = "Incorrect username or password.";
@@ -32,7 +32,7 @@ if (empty($_POST) === false) {
 	
 	$_SESSION["errors"] = $errors;
 	if (isset($_GET['from']) && !empty($_GET['from'])) {
-		go_to_page($_SESSION['page'], $username);
+		go_to_page($_SESSION['page']);
 		exit();
 	} else {
 		go_home();
