@@ -287,6 +287,7 @@ data = (function() {
 		controller.select_cell(layerIndex, 1);
 		ui.timeline.scrollbars.update_horizontal();
 		ui.timeline.scrollbars.update_vertical();
+		controller.zoom_stage();
         return true;
     },
 	
