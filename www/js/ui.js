@@ -141,7 +141,6 @@ ui = (function() {
 			listButton = document.createElement("button");
 			listSpan   = document.createElement("span");
 			
-			console.log(animations[i].published);
 			listSpan.textContent   = animations[i].title + (animations[i].published === "1" ? " [Published]" : " [Private]");
 			listButton.textContent = "Load";
 			listButton.setAttribute("value", animations[i].id)
@@ -624,8 +623,8 @@ ui = (function() {
                     .removeChild(layerControl);
                 document.getElementById("layerRows")
                     .removeChild(layerCells);
-                set_height();
 				layers.splice(arrIndex,1);
+                set_height();
             },
             
             // Changes the nameString for this layer

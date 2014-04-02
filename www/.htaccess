@@ -1,4 +1,7 @@
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^([a-zA-Z1-9-_]*)$ /profile.php?username=$1
+RewriteRule ^([a-zA-Z0-9-_]*)/?$ /$1.php
+RewriteRule ^user/([a-zA-Z0-9-_]*)/?$ /profile.php?username=$1
+RewriteRule ^player/([0-9]*)/?$ /player.php?id=$1
+RewriteRule ^editor/([0-9]*)/?$ /editor.php?id=$1

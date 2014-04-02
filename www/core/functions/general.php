@@ -13,14 +13,14 @@ function base_uri() {
 
 function logged_in_redirect() {
 	if (logged_in()) {
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/index.php");
+		go_home();
 		exit();
 	}
 }
 
 function protect_page() {
 	if (!logged_in()) {
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/deny.php");
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/deny/");
 		exit();
 	}
 }
@@ -58,11 +58,9 @@ function go_to_page($page, $username) {
 		go_home();
 	} else {
 		if ($page === 'profile' && isset($username)) {
-			$page = $username;
-		} else {
-			$page = $page . ".php";
+			$page = "user/" + $username;
 		}
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $page);
+		header("Location: http://" . $_SERVER["SERVER_NAME"] . "/" . $page . "/");
 	}
 }
 ?>

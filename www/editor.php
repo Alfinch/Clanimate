@@ -139,6 +139,25 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		</div>
 	</div>
 </div>
-<?php include $_SERVER['DOCUMENT_ROOT'] . "/includes/layout/editor_scripts.php" ?>
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/includes/layout/editor_scripts.php";
+if (isset($_GET) && !empty($_GET['id'])) {
+	if (animation_exists($_GET['id'])) {
+		if (user_owns_animation($_SESSION['id'], $_GET['id'])) {
+			$animationData = load_animation($_GET['id']);
+			$script = "var projectData = JSON.stringify(" . $animationData . ");";
+		} else {
+			$script = "ui.prompt({message: 'You do not have permission to load this animation.', button1: {name: 'Okay'}});";
+		}
+	} else {
+		$script = "ui.prompt({message: 'The requested animation does not exist.', button1: {name: 'Okay'}});";
+	}
+	echo <<<EOF
+<script type="text/javascript">
+	{$script}
+</script>
+EOF;
+}
+?>
 </body>
 </html>

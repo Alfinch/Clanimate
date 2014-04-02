@@ -740,8 +740,17 @@ data = (function() {
         // Changes the value of a setting linked to the given key
         // Returns false if the setting is undefined or the supplied value is of the wrong type
         set = function(key, value) {
+			var i;
             if (typeof(value) === typeof(values[key])) {
                 values[key] = value;
+				if (key === "stageHeight" || key === "stageWidth") {
+					i = project.activeLayer.index;
+					project.layers[0].activate();
+					project.layers[0].children[0].remove();
+					new Path.Rectangle(new Point(0, 0), new Size(values.stageWidth, values.stageHeight));
+					project.layers[0].children[0].fillColor = "#FFF";
+					project.layers[i].activate();
+				};
                 return true;
             }
             return false;

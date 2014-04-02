@@ -11,6 +11,7 @@
             <File name="C:\Wamp\www\actions\save_animation.php" />
             <File name="C:\Wamp\www\actions\load_animation.php" />
             <File name="C:\Wamp\www\actions\publish_animation.php" />
+            <File name="C:\Wamp\www\actions\get_animation_list.php" />
         </Folder>
         <Folder name="core">
             <Folder name="database">
@@ -89,5 +90,6 @@
         <File name="C:\Wamp\www\player.php" />
         <File name="C:\Wamp\www\portal.php" />
         <File name="C:\Wamp\www\profile.php" />
+        <File name="C:\Wamp\www\.htaccess" />
     </Project>
 </NotepadPlus>

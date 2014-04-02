@@ -2,8 +2,6 @@
 include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 logged_in_redirect();
 
-$target = (isset($_SESSION["page"]) ? "/" . $_SESSION["page"] . ".php" : "");
-
 if (isset($_GET["email"], $_GET["email_code"])) {
 	$email      = trim($_GET["email"]);
 	$email_code = trim($_GET["email_code"]);
@@ -15,12 +13,12 @@ if (isset($_GET["email"], $_GET["email_code"])) {
 	} else {
 		$alerts[] = "You have successfully activated your account, and may now log in.";
 		$_SESSION['alerts'] = $alerts;
-		header("Location: http://" . $_SERVER["SERVER_NAME"] . $target);
+		go_to_page($_SESSION['page']);
 		exit();
 	}
 	
 	$_SESSION["errors"] = $errors;
-	go_to_page($_SESSION['page'], $user_data['username']);
+	go_to_page($_SESSION['page']);
 	exit();
 	
 } else {

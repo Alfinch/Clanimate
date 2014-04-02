@@ -269,6 +269,9 @@ window.onload = function() {
         message: "Set number of frames",
         position: "above"
     });
+	if (projectData != null) {
+		data.from_JSON(projectData);
+	}
 };
 
 }());
