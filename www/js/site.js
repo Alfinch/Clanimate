@@ -271,6 +271,9 @@ window.onload = function() {
         message: "Set number of frames",
         position: "above"
     });
+	
+	blankProject = data.to_JSON();
+	
 	(function(){
 		var exists;
 		try {

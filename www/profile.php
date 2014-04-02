@@ -24,9 +24,9 @@ include$_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 			if ($animationList) {
 				echo "<ul class=\"animationList\">";
 				foreach($animationList as $animation) {
-					$editLink = $private ? "<a class=\"buttonLink\" href=http://" . $_SERVER["SERVER_NAME"] . "/editor/" . $animation["id"] . "/>Edit</a>" : "";
-					$published = $private ? ($animation["published"] === "1" ? " [PUBLISHED]" : " [PRIVATE]") : "";
-					echo "<li><a class=\"buttonLink\" href=http://" . $_SERVER["SERVER_NAME"] . "/player/" . $animation["id"] . "/>Watch</a>" . $editLink . "<span>\"" . $animation["title"] . "\"" . $published . "<span></li>\n";
+					$editLink = $private ? "<a class=\"buttonLink\" href=\"http://" . $_SERVER["SERVER_NAME"] . "/editor/" . $animation["id"] . "/\">Edit</a>" : "";
+					$published = ($private && $animation["published"] === "1") ? "<img src=\"http://" . $_SERVER["SERVER_NAME"] . "/img/svg/published_icon.svg\"/>" : "";
+					echo "<li><a class=\"buttonLink\" href=\"http://" . $_SERVER["SERVER_NAME"] . "/player/" . $animation["id"] . "/\">Watch</a>" . $editLink . "<span>\"" . $animation["title"] . "\" " . $published . "<span></li>\n";
 				}
 				echo "</ul>";
 			} else {

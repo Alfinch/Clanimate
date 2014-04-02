@@ -221,7 +221,7 @@ controller = (function(){
 	// Reloads the editor, creating an empty animation
 	new_animation = function() {
 		var callback = function() {
-			window.location.reload();
+			data.from_JSON(blankProject);
 		}
         ui.prompt({
             message:      "Create a new animation? All unsaved work will be lost!",

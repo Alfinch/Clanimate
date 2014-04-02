@@ -80,7 +80,7 @@ ui = (function() {
     // Displays the load dialog containing a list of the user's animations
     load_dialog = function(animations) {
         var overlay, overlayContainer, loadDialog, loadList, cancelButton, i,
-		listItem, listButton, listSpan,
+		listItem, listButton, listSpan, publishedIcon, published,
         
         close = function() {
             overlay.classList.add("hidden");
@@ -137,20 +137,26 @@ ui = (function() {
 		
 		// Populate list
 		for (i = 0; i < animations.length; i += 1) {
-			listItem   = document.createElement("li");
-			listButton = document.createElement("button");
-			listSpan   = document.createElement("span");
+			published = animations[i].published === "1" ? true : false;
+		
+			listItem      = document.createElement("li");
+			listButton    = document.createElement("button");
+			listSpan      = document.createElement("span");
+			if (published) publishedIcon = document.createElement("img");
 			
-			listSpan.textContent   = animations[i].title + (animations[i].published === "1" ? " [Published]" : " [Private]");
 			listButton.textContent = "Load";
-			listButton.setAttribute("value", animations[i].id)
-			listButton.addEventListener("mouseup", function() {
-				load_handler(this.value);
-			});
+			listButton.setAttribute("value", animations[i].id);
+			listSpan.textContent = animations[i].title + " ";
+			if (published) publishedIcon.setAttribute("src", "/img/svg/published_icon.svg")
 			
 			listItem.appendChild(listButton);
 			listItem.appendChild(listSpan);
+			if (published) listItem.appendChild(publishedIcon);
 			loadList.appendChild(listItem);
+			
+			listButton.addEventListener("mouseup", function() {
+				load_handler(this.value);
+			});
 		}
         
         // Display load dialog
