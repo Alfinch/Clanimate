@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="260" width="260" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg id="svg2" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="26" width="26" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
  <metadata id="metadata7">
   <rdf:RDF>
    <cc:Work rdf:about="">
@@ -10,17 +10,5 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <path id="path3998" d="m30,40,10-10,30,30,0-20,10,0,0,40-40,0,0-10,20,0z" fill="#333333"/>
- <path id="path3998-4" d="m230,40-10-10-30,30,0-20-10,0,0,40,40,0,0-10-20,0z" fill="#333333"/>
- <path id="path3998-8" d="m30,220,10,10,30-30,0,20,10,0,0-40-40,0,0,10,20,0z" fill="#333333"/>
- <path id="path3998-4-8" d="m230,220-10,10-30-30,0,20-10,0,0-40,40,0,0,10-20,0z" fill="#333333"/>
- <path id="path4039" d="m90,170,0-20,10,0,0,10,10,0,0,10z" fill="#333333"/>
- <path id="path4041" d="m150,170,20,0,0-20-10,0,0,10-10,0z" fill="#333333"/>
- <path id="path4039-2" d="m90,90,0,20,10,0,0-10,10,0,0-10z" fill="#333333"/>
- <path id="path4041-4" d="m150,90,20,0,0,20-10,0,0-10-10,0z" fill="#333333"/>
- <rect id="rect4076" height="10" width="20" y="90" x="120" fill="#333333"/>
- <rect id="rect4078" height="20" width="10" y="120" x="90" fill="#333333"/>
- <rect id="rect4080" height="10" width="20" y="160" x="120" fill="#333333"/>
- <rect id="rect4082" height="20" width="10" y="120" x="160" fill="#333333"/>
- <path id="rect4117" fill="#333333" d="M110,110v40h40v-40h-40zm10,10h20v20h-20v-20z"/>
+ <path id="path3998" fill="#333333" d="M4,3,3,4,6,7,4,7,4,8,8,8,8,4,7,4,7,6,4,3zm18,0-3,3,0-2-1,0,0,4,4,0,0-1-2,0,3-3-1-1zm-13,6,0,2,1,0,0-1,1,0,0-1-2,0zm3,0,0,1,2,0,0-1-2,0zm3,0,0,1,1,0,0,1,1,0,0-2-2,0zm-4,2,0,4,4,0,0-4-4,0zm-2,1,0,2,1,0,0-2-1,0zm3,0,2,0,0,2-2,0,0-2zm4,0,0,2,1,0,0-2-1,0zm-7,3,0,2,2,0,0-1-1,0,0-1-1,0zm7,0,0,1-1,0,0,1,2,0,0-2-1,0zm-4,1,0,1,2,0,0-1-2,0zm-8,2,0,1,2,0-3,3,1,1,3-3,0,2,1,0,0-4-4,0zm14,0,0,4,1,0,0-2,3,3,1-1-3-3,2,0,0-1-4,0z"/>
 </svg>

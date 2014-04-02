@@ -3,7 +3,7 @@ include $_SERVER['DOCUMENT_ROOT'] . "/core/init.php";
 $_SESSION['page'] = "portal";
 if (isset($_GET) && !empty($_GET['id'])) {
 	if (animation_exists($_GET['id'])) {
-		if (animation_is_published($_GET['id'])) {
+		if (animation_is_published($_GET['id']) || user_owns_animation($_SESSION['id'], $_GET['id'])) {
 			$animationData = load_animation($_GET['id']);
 			$script = "var projectData = JSON.stringify(" . $animationData . ");";
 		} else {
@@ -15,7 +15,6 @@ if (isset($_GET) && !empty($_GET['id'])) {
 } else {
 	go_to_page($_SESSION['page']);
 }
-protect_page();
 include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 ?>
 <div id="subheader">
