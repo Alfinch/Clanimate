@@ -14,10 +14,12 @@ data = (function() {
     targetFrame      = 1,
     targetGroupFrame = null,
     targetGroup      = null,
+	onionSkin        = false,
     targetLayer      = 1,
 	undoStack        = [],
 	redoStack        = [],
     visibleGroups    = [],
+	onionGroups      = [],
     
     // Private functions
 	
@@ -158,7 +160,7 @@ data = (function() {
     // Returns false if no layer with the given index is found
     get_project_layer = function(index) {
         var i, l;
-        for(i = 0; i < project.layers.length; i += 1) {
+        for(i = 1; i < project.layers.length; i += 1) {
             l = project.layers[i];
             if(l.data.index === index) {
                 return l;
@@ -213,7 +215,7 @@ data = (function() {
     delete_layer = function(layer, noUndo) {
         var l, i, action, noUndo = noUndo || false;
         if (cells[layer] != null) {
-            cells[layer] = null;
+            cells[layer] = undefined;
             l = get_project_layer(layer);
 			
 			if (!noUndo) {
@@ -225,8 +227,7 @@ data = (function() {
 				};
 				add_action(action);
 			}
-			
-            l.remove();
+			l.remove();
             layers -= 1;
             l = get_top_project_layer();
             i = l.data.index;
@@ -242,6 +243,7 @@ data = (function() {
     // Returns false if unsuccessful
     from_JSON = function(json) {
         var i, j, o = JSON.parse(json);
+		if (onionSkin) toggle_onion_skin();
 		
 		project.clear();
 		project.importJSON(o.project);
@@ -517,7 +519,7 @@ data = (function() {
     // Targets the nearest previous cell with a group if the target cell is empty
     // Returns false if the target layer does not exist
     target_cell = function(layer, frame) {
-        var i, j, g;
+        var i, j, k, g;
 		
 		// Check if the given layer actually exists
         if (cells[layer] == null) {
@@ -530,9 +532,34 @@ data = (function() {
         }
         visibleGroups = [];
 		
+		// Set all onion skin groups to be invisible, clear the onionGroups array
+        for (i = 0; i < onionGroups.length; i += 1) {
+			for (j = 0; j < onionGroups[i].children.length; j += 1) {
+				onionGroups[i].children[j].opacity = 1;
+			}
+            onionGroups[i].visible = false;
+        }
+        visibleGroups = [];
+		
 		// For each layer which is being used...
         for (i = 1; i < cells.length; i += 1) {
             if (cells[i] != null) {
+			
+				// Find future frame for onion skin
+				if (onionSkin) {
+				
+					// If there is a group in this cell
+                    g = cells[i][(frame+1)];
+                    if (g != null) {
+					
+						// Set it to visible
+                        g.visible = true;
+						for (j = 0; j < g.children.length; j += 1) {
+							g.children[j].opacity = 0.3;
+						}
+                        onionGroups.push(g);
+                    }
+				}
 			
 				// For each cell starting with the current frame and counting backwards...
                 for (j = frame; j > 0; j -= 1) {
@@ -555,17 +582,48 @@ data = (function() {
                         break;
                     }
                 }
+				
+				// Find past frame for onion skin
+				if (onionSkin && frame > 0 && frame === targetGroupFrame) {
+					for (j = frame - 1; j > 0; j -= 1) {
+					
+						// If there is a group in this cell
+						g = cells[i][j];
+						if (g != null) {
+						
+							// Set it to visible
+							g.visible = true;
+							for (k = 0; k < g.children.length; k += 1) {
+								g.children[k].opacity = 0.3;
+							}
+							onionGroups.push(g);
+							
+							// Go to the next layer
+							break;
+						}
+					}
+				}
             }
         }
         targetLayer = layer;
         targetFrame = frame;
         return true;
     },
+	
+	// Turns onion skin on or off
+	// Returns true for on, false for off
+	toggle_onion_skin = function() {
+		onionSkin = !onionSkin;
+		target_cell(targetLayer, targetFrame);
+		ui.stage.update();
+		return onionSkin;
+	},
     
     // Returns the current project as JSON
     // Returns false if unsuccessful
     to_JSON = function() {
         var json, o = {};
+		if (onionSkin) toggle_onion_skin();
 		
 		o.project  = project.exportJSON();
 		o.settings = settings.get_all();
@@ -647,9 +705,7 @@ data = (function() {
 				cells[layer.data.index] = [];
 				
 				// Sort the project layers to ensure they are displayed in the correct order
-				project.layers.sort(function(a, b) {
-					return a.data.index - b.data.index;
-				});
+				
 				
 				ui.timeline
 					.new_layer(layer.data.index, layer.data.name);
@@ -657,7 +713,7 @@ data = (function() {
 				// Insert children from the old layer
 				for (i = 0; i < action.oldLayer.children.length; i += 1) {
 					if (action.oldLayer.children[i]._class === "Group") {
-						cells[layer.data.index][action.oldLayer.children[i].data.frame] = action.oldLayer.children[i].copyTo(layer);;
+						cells[layer.data.index][action.oldLayer.children[i].data.frame] = action.oldLayer.children[i].copyTo(layer);
 						
 						if (action.oldLayer.children[i].children.length === 0) {
 							ui.timeline
@@ -672,8 +728,6 @@ data = (function() {
 						}
 					}
 				}
-				
-				controller.select_cell(targetLayer, targetFrame);
 			}
 		}
 		
@@ -1271,6 +1325,7 @@ data = (function() {
     o.rename_layer      = rename_layer;
     o.set_frames        = set_frames;
     o.target_cell       = target_cell;
+	o.toggle_onion_skin = toggle_onion_skin;
 	o.to_JSON           = to_JSON;
     o.undo              = undo;
     o.unhide_layer      = unhide_layer;

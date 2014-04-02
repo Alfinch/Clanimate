@@ -456,7 +456,7 @@ ui = (function() {
 		
 		sort_layers = function() {
 			layers.sort(function(a, b) {
-				return a.get_index - b.get_index;
+				return a.get_index() - b.get_index();
 			});
 		},
         
@@ -716,7 +716,7 @@ ui = (function() {
                 target: layerControl
             });
             
-            // Add new row to table
+            // Add new row to timeline
             layerCells.classList.add("layerCells");
             layerCells.setAttribute("data-index", layerIndex);
 			if (layerRows.children.length > 0) {
@@ -766,8 +766,8 @@ ui = (function() {
             o.unhide    = unhide;
             
             layers.push(o);
-            set_height();
 			sort_layers();
+            set_height();
         },
 	
 		// Removes all of the current layers

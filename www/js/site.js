@@ -15,7 +15,7 @@ window.onload = function() {
 		newAnim, save, load, publish,
         play, pause, reset, tbo, tlo,
 		/*zoomSelection,*/ zoomActual, zoomStage, zoomExtents,
-		undo, redo,
+		undo, redo, onionSkin,
         toolButtons, toolOptionsButton, toolOptions,
         addLayer, setFrames;
     
@@ -143,6 +143,12 @@ window.onload = function() {
 	redo = document.getElementById("redo");
 	redo.addEventListener("mouseup", function() {
 		controller.redo();
+	});
+	
+	// redo handler
+	onionSkin = document.getElementById("onionSkin");
+	onionSkin.addEventListener("mouseup", function() {
+		controller.toggle_onion_skin();
 	});
     
     // Tool buttons

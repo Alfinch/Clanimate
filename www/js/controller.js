@@ -693,6 +693,11 @@ controller = (function(){
                 .update();
         }
     },
+	
+	toggle_onion_skin = function() {
+		data.toggle_onion_skin();
+		document.getElementById("onionSkin").classList.toggle("selected");
+	},
     
     // Undoes the previous action
     undo = function() {
@@ -782,6 +787,7 @@ controller = (function(){
 	o.show_settings_dialog = show_settings_dialog;
     o.toggle_fullscreen    = toggle_fullscreen;
     o.toggle_layer         = toggle_layer;
+	o.toggle_onion_skin    = toggle_onion_skin;
     o.undo                 = undo;
 	o.zoom_actual          = zoom_actual;
 	o.zoom_extents         = zoom_extents;

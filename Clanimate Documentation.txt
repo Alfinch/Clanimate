@@ -28,6 +28,7 @@ data
   int              get_target_frame  ()
   void             set_frames        (int value)
   bool             target_cell       (int layer, int frame)
+  bool             toggle_onion_skin ()
   bool             unhide_layer      (int layer)
 
   settings
@@ -151,4 +152,5 @@ controller
   void show_settings_dialog ()
   void toggle_fullscreen    ()
   void toggle_layer         (int layerIndex)
+  void toggle_onion_skin    ()
   void undo                 ()

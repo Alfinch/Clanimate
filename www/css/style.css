@@ -185,8 +185,7 @@ ul, ol {
 				margin-right: 2px;
 				background: #FFF;
 			}
-			#play.selected,
-			#pause.selected,
+			.submenu>li.selected,
 			.submenu>li:hover {
 				background: #CCC;
 			}

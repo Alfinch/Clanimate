@@ -29,6 +29,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 		<li id="undo"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/undo_icon.svg" alt="Undo icon"/><span>Undo</span></li>
 		<li id="redo"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/redo_icon.svg" alt="Redo icon"/><span>Redo</span></li>
 	</ul>
+	<ul class="submenu">
+		<li id="onionSkin"><img src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/onion_skin_icon.svg" alt="Onion Skin Icon"/><span>Onion Skin</span></li>
+	</ul>
 </div>
 <div id="middleSection" class="editor">
 	<div id="toolbar">
