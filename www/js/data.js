@@ -554,18 +554,23 @@ data = (function() {
 			
 				// Find future frame for onion skin
 				if (onionSkin) {
-				
-					// If there is a group in this cell
-                    g = cells[i][(frame+1)];
-                    if (g != null) {
+					for (j = frame + 1; j < settings.get("frames"); j += 1) {
 					
-						// Set it to visible
-                        g.visible = true;
-						for (j = 0; j < g.children.length; j += 1) {
-							g.children[j].opacity = 0.3;
+						// If there is a group in this cell
+						g = cells[i][j];
+						if (g != null) {
+						
+							// Set it to visible
+							g.visible = true;
+							for (k = 0; k < g.children.length; k += 1) {
+								g.children[k].opacity = 0.3;
+							}
+							onionGroups.push(g);
+							
+							// Go to the next layer
+							break;
 						}
-                        onionGroups.push(g);
-                    }
+					}
 				}
 			
 				// For each cell starting with the current frame and counting backwards...
@@ -591,7 +596,7 @@ data = (function() {
                 }
 				
 				// Find past frame for onion skin
-				if (onionSkin && frame > 0 && frame === targetGroupFrame) {
+				if (onionSkin && frame === targetGroupFrame) {
 					for (j = frame - 1; j > 0; j -= 1) {
 					
 						// If there is a group in this cell
