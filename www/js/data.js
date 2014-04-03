@@ -554,7 +554,7 @@ data = (function() {
 			
 				// Find future frame for onion skin
 				if (onionSkin) {
-					for (j = frame + 1; j < settings.get("frames"); j += 1) {
+					for (j = frame + 1; j <= settings.get("frames"); j += 1) {
 					
 						// If there is a group in this cell
 						g = cells[i][j];
