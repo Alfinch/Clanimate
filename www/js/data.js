@@ -178,6 +178,13 @@ data = (function() {
             return project.layers.slice(-1)[0];
         }
     },
+	
+	insert_project_layer = function(layer) {
+		var l, i = 1;
+		while (get_project_layer(i).data.index < layer.data.index) i += 1;
+		l = get_project_layer(i);
+		layer.insertBefore(l);
+	},
     
     // Public functions
 	
@@ -705,7 +712,7 @@ data = (function() {
 				cells[layer.data.index] = [];
 				
 				// Sort the project layers to ensure they are displayed in the correct order
-				
+				insert_project_layer(layer);
 				
 				ui.timeline
 					.new_layer(layer.data.index, layer.data.name);

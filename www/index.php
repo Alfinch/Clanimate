@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'] . "/includes/overall/top.php";
 <div id="middleSection" class="page">
 	<div>
 		<img id="splashLogo" src="http://<?php echo $_SERVER["SERVER_NAME"]; ?>/img/svg/large_logo.svg" alt="large Clanimate logo" />
-		<p>Welcome to Clanimate Alpha! Clanimate is an online animation authoring and sharing tool created with HTML5 and javasctipt; it is still in development and totally free to use. Take a look at the portal to see what other users are creating, or register to begin using the editor and creating your own animations.</p>
+		<p>Welcome to Clanimate Alpha! Clanimate is an online animation authoring and sharing tool created with HTML5 and javascript; it is still in development and totally free to use. Take a look at the portal to see what other users are creating, or register to begin using the editor and creating your own animations.</p>
 		<h1>Features in progress:</h1>
 		<ul class="textList">
 			<li>Hotkeys</li>
