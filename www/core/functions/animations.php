@@ -16,7 +16,7 @@ function animation_is_published($id) {
 }
 
 function list_animations($limit) {
-	$queryString = "select `id`, `user_id`, `title` from `animations` where `published` = 1";
+	$queryString = "select `id`, `user_id`, `title` from `animations` where `published` = 1 order by `id` desc";
 	if ($limit > 0) $queryString .= " limit 0, $limit";
 	$query = mysql_query($queryString);
 	if ($query) {
@@ -32,7 +32,7 @@ function list_animations($limit) {
 function list_user_animations($user_id, $show_private, $limit) {
 	$show_private = $show_private || false;
 	$user_id = (int)$user_id;
-	$queryString = "select `id`, `title`, `published` from `animations` where `user_id` = '$user_id'";
+	$queryString = "select `id`, `title`, `published` from `animations` where `user_id` = '$user_id' order by `id` desc";
 	if ($limit > 0) $queryString .= " limit 0, $limit";
 	$query = mysql_query($queryString);
 	if ($query) {
