@@ -887,71 +887,29 @@ data = (function() {
         
         tools.brush.onMouseDown = function(event) {
             ui.stage.set_cursor("none");
-            this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
-            this.stroke.fillColor = settings.get("color");
-            this.firstDrag = true;
+            this.stroke = new Path(event.point);
+			this.stroke.lineTo(event.point);
+			this.stroke.style = {
+				strokeColor: settings.get("color"),
+				strokeWidth: settings.get("strokeWidth"),
+				strokeCap  : "round",
+				strokeJoin : "round"
+			}
+			this.firstDrag === true;
         };
         
         tools.brush.onMouseDrag = function(event) {
-            var outlineVector, leftPoint, rightPoint;
-            
-            this.stroke.remove();
-            
-            outlineVector= event.delta.normalize();
-            outlineVector.length *= settings.get("strokeWidth") * 0.5;
-            outlineVector.angle += 90;
-            
-            if (this.firstDrag) {
-                this.leftPath = new Path([
-					new Point(
-						event.lastPoint.x + outlineVector.x,
-						event.lastPoint.y + outlineVector.y
-					)
-				]);
-                this.rightPath = new Path([
-					new Point(
-						event.lastPoint.x - outlineVector.x,
-						event.lastPoint.y - outlineVector.y
-					)
-				]);
-                this.firstDrag = false;
-            }
-            
-            leftPoint = new Point(
-                event.middlePoint.x + outlineVector.x,
-                event.middlePoint.y + outlineVector.y
-            );
-            rightPoint = new Point(
-                event.middlePoint.x - outlineVector.x,
-                event.middlePoint.y - outlineVector.y
-            );
-            this.leftPath.add(leftPoint);
-            this.rightPath.add(rightPoint);
-            
-            this.stroke = this.leftPath.clone();
-			this.stroke.reverse();
-            this.stroke.arcTo(this.rightPath.firstSegment.point);
-            this.stroke.join(this.rightPath.clone());
-            this.stroke.arcTo(this.stroke.firstSegment.point);
-            this.stroke.fillColor = settings.get("color");
+			if (this.firstDrag) {
+				this.firstDrag === false;
+				this.stroke.lastSegment.remove();
+			}
+            this.stroke.lineTo(event.point);
         };
         
         tools.brush.onMouseUp = function(event) {
             ui.stage.set_cursor("draw");
-            this.stroke.remove();
-            
-            if (!this.firstDrag) {
-				this.leftPath.reverse();
-                this.leftPath.simplify();
-                this.rightPath.simplify();
-                this.stroke = this.rightPath.clone();
-                this.stroke.arcTo(this.leftPath.firstSegment.point);
-                this.stroke.join(this.leftPath.clone());
-                this.stroke.arcTo(this.stroke.firstSegment.point);
-				this.stroke.closePath();
-				this.stroke.reduce();
-                this.stroke.fillColor = settings.get("color");
-            }
+			
+			this.stroke.simplify();
             
             add_stroke(this.stroke);
             controller.draw();
@@ -1081,62 +1039,24 @@ data = (function() {
         };
         
         tools.line.onMouseDown = function(event) {
-            this.stroke = new Path.Circle(event.point, settings.get("strokeWidth") * 0.5);
-            this.stroke.fillColor = settings.get("color");
-            this.firstDrag = true;
+            this.stroke = new Path(event.point);
+			this.stroke.lineTo(event.point);
+			this.stroke.style = {
+				strokeColor: settings.get("color"),
+				strokeWidth: settings.get("strokeWidth"),
+				strokeCap  : "round",
+				strokeJoin : "round"
+			}
         };
         
         tools.line.onMouseDrag = function(event) {
-            var p1l, p1r, p2l, p2r, outlineVector;
-            
-            this.stroke.remove();
-            
-            outlineVector = new Point(
-                event.point.x - event.downPoint.x,
-                event.point.y - event.downPoint.y
-            );
-            outlineVector = outlineVector.normalize();
-            outlineVector.length *= settings.get("strokeWidth") * 0.5;
-            outlineVector.angle += 90;
-            
-            p1l = new Point(
-                event.downPoint.x + outlineVector.x,
-                event.downPoint.y + outlineVector.y
-            );
-            p1r = new Point(
-                event.downPoint.x - outlineVector.x,
-                event.downPoint.y - outlineVector.y
-            );
-            p2l = new Point(
-                event.point.x + outlineVector.x,
-                event.point.y + outlineVector.y
-            );
-            p2r = new Point(
-                event.point.x - outlineVector.x,
-                event.point.y - outlineVector.y
-            );
-            
-            
-            this.stroke = new Path(p1l);
-            this.stroke.arcTo(p1r);
-            this.stroke.lineTo(p2r);
-            this.stroke.arcTo(p2l);
-            this.stroke.closePath();
-			this.stroke.reduce();
-            this.stroke.fillColor = settings.get("color");
+			this.stroke.lastSegment.remove();
+            this.stroke.lineTo(event.point);
         };
         
         tools.line.onMouseUp = function(event) {
-            this.stroke.remove();
-            
-            if (!this.firstDrag) {
-                this.stroke = this.rightPath.clone();
-                this.stroke.arcTo(this.leftPath.firstSegment.point);
-                this.stroke.join(this.leftPath.clone());
-                this.stroke.arcTo(this.stroke.firstSegment.point);
-                this.stroke.fillColor = settings.get("color");
-            }
-            
+			this.stroke.lastSegment.remove();
+            this.stroke.lineTo(event.point);
             add_stroke(this.stroke);
             controller.draw();
         };
