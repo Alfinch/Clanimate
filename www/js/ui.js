@@ -749,10 +749,6 @@ ui = (function() {
 			} else {
 				layerControls.appendChild(layerControl);
 			}
-            
-			window.setTimeout(function(){
-				stage.update();
-			}, 0);
 			
 			// Assignment
             

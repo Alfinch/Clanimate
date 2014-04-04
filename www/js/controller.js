@@ -125,7 +125,10 @@ controller = (function(){
 					if (response.success) {
 						data.from_JSON(JSON.stringify(response.data));
 						data.settings.set("saveID", id);
-						zoom_stage();
+						window.setTimeout(function(){
+							ui.stage.update();
+							zoom_stage();
+						}, 10);
 					} else {
 						ui.prompt({
 							message:      response.error,
@@ -188,7 +191,7 @@ controller = (function(){
                     .get_cell(f)
                     .select();
 				window.setTimeout(function(){
-					zoom_stage();
+					ui.stage.update();
 				}, 10);
             } else {
                 data.delete_layer(layerIndex);

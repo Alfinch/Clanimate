@@ -54,6 +54,7 @@ window.onload = function() {
 	
 	// Center the stage
 	window.setTimeout(function(){
+		ui.stage.update();
 		controller.zoom_stage();
 	}, 10);
     
