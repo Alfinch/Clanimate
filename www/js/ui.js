@@ -303,14 +303,17 @@ ui = (function() {
         
         // Clears, resizes and redraws the stage
         update = function() {
-            var cw = parseFloat(getComputedStyle(cc).width),
-                ch = parseFloat(getComputedStyle(cc).height);
-                
-            c.setAttribute("width",  cw);
-            c.setAttribute("height", ch);
-            
-            view.viewSize = new Size(cw, ch);
-            view.draw();
+			window.setTimeout(function(){
+				var cw = parseFloat(getComputedStyle(cc).width),
+					ch = parseFloat(getComputedStyle(cc).height);
+					
+				c.setAttribute("width",  cw);
+				c.setAttribute("height", ch);
+				
+				view.viewSize = new Size(cw, ch);
+			
+				view.draw();
+			}, 10);
         },
 		
 		// Zooms the stage by a given factor

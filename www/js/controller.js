@@ -188,7 +188,6 @@ controller = (function(){
                     .get_cell(f)
                     .select();
 				zoom_stage();
-				ui.stage.update();
             } else {
                 data.delete_layer(layerIndex);
                 ui.prompt({
