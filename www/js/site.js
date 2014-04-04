@@ -53,7 +53,9 @@ window.onload = function() {
     controller.set_tool("brush");
 	
 	// Center the stage
-	controller.zoom_stage();
+	window.setTimeout(function(){
+		controller.zoom_stage();
+	}, 10);
     
     // Events
 	

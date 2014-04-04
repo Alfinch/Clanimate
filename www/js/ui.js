@@ -303,17 +303,15 @@ ui = (function() {
         
         // Clears, resizes and redraws the stage
         update = function() {
-			window.setTimeout(function(){
-				var cw = parseFloat(getComputedStyle(cc).width),
-					ch = parseFloat(getComputedStyle(cc).height);
-					
-				c.setAttribute("width",  cw);
-				c.setAttribute("height", ch);
+			var cw = parseFloat(getComputedStyle(cc).width),
+				ch = parseFloat(getComputedStyle(cc).height);
 				
-				view.viewSize = new Size(cw, ch);
+			c.setAttribute("width",  cw);
+			c.setAttribute("height", ch);
 			
-				view.draw();
-			}, 10);
+			view.viewSize = new Size(cw, ch);
+		
+			view.draw();
         },
 		
 		// Zooms the stage by a given factor
@@ -752,7 +750,9 @@ ui = (function() {
 				layerControls.appendChild(layerControl);
 			}
             
-            stage.update();
+			window.setTimeout(function(){
+				stage.update();
+			}, 0);
 			
 			// Assignment
             

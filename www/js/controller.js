@@ -187,7 +187,9 @@ controller = (function(){
                     .get_layer(layerIndex)
                     .get_cell(f)
                     .select();
-				zoom_stage();
+				window.setTimeout(function(){
+					zoom_stage();
+				}, 10);
             } else {
                 data.delete_layer(layerIndex);
                 ui.prompt({
